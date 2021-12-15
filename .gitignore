@@ -2,3 +2,5 @@
 .qmake.stash
 Makefile
 build/
+wxqt.pro
+resourceCreation/*.qrc
