@@ -1,4 +1,6 @@
 [TOC]
+### Windows
+* Is documented in a standalone [file](https://gitlab.com/joshua.tee/wxqt/-/blob/main/README_WINDOWS.md)
 ### Debian 11
 ```bash
 sudo apt install g++
@@ -24,7 +26,7 @@ sudo apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
 sudo yum install qt5-qtbase-devel
 cd wxc2
 vi makeAll.bash
-// change qmake to qmake-qt5
+# change qmake to qmake-qt5
 ```
 ### Manjaro 21.1.6+ (KDE):
 ```bash

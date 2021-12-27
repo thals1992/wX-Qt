@@ -16,6 +16,9 @@ cd ..
 if grep -q "Fedora Linux" /etc/os-release
 then
     qmake-qt5
+elif grep -q "MSYS2" /etc/os-release
+then
+    qmake6
 else
     qmake
 fi

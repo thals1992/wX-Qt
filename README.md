@@ -6,7 +6,7 @@
 Prerequisites:
 * Qt 5.12 or higher
 * C++ compiler supporting C++17 (most modern Linux distributions are fine)
-* Tested on the Linux distros mentioned below and the current version of macOS (as of Dec 2021)
+* Tested on the Linux distros mentioned below, the current version of macOS, and Windows 10. (as of Dec 2021)
 ```
 wxqt is an efficient and configurable method to access weather content from the NWS, NSSL WRF, and blitzortung.org.
 Software is provided \"as is\". Use at your own risk. Use for educational purposes and non-commercial purposes only.
@@ -44,7 +44,7 @@ FYI - you will notice that I've abstracted the native toolkit widgets. This was 
 ## Bugs (that might never get fixed)
 * In Nexrad when zooming out of in, it does not stay centered.
 * On initial nexrad launch it is not centered on radar site. Usage after this is fine.
-* At times if a network thread gets stuck it will not exit properly (you can just control-C from the terminal window to exit), **recommendation is to always start program from command line**.
+* At times if a thread gets stuck it will not exit properly, **recommendation is to always start program from command line**.
 
 ## Help
 From the main screen and nexrad radar do `Ctrl-/` (? key) to get keyboard shortcuts. Mouse over on some icons will sometimes show a label or shortcut as well.
@@ -57,7 +57,7 @@ git clone https://gitlab.com/joshua.tee/wxqt.git
 cd wxqt
 ./makeAll.bash
 ```
-3. After compilation you can simply launch with script (recommendation is to launch from command line, see BUGs above for reason)
+3. After compilation you can simply launch with script
 ```bash
 ./run.bash
 ```
