@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,34 +8,32 @@
 #include "objects/ObjectPolygonWarning.h"
 #include "util/To.h"
 
-SevereWarning::SevereWarning() {
-}
-
-SevereWarning::SevereWarning(PolygonType type) {
-    this->type = type;
+SevereWarning::SevereWarning(PolygonType type)
+    : type{ type }
+{
     generateString();
 }
 
-QString SevereWarning::getName() const {
-    if (type == PolygonType::tor) {
+string SevereWarning::getName() const {
+    if (type == Tor) {
         return "Tornado Warning";
-    } else if (type == PolygonType::tst) {
+    } else if (type == Tst) {
         return "Severe Thunderstorm Warning";
-    } else if (type == PolygonType::ffw) {
+    } else if (type == Ffw) {
         return "Flash Flood Warning";
     } else {
         return "";
     }
 }
 
-QString SevereWarning::getCount() const {
+string SevereWarning::getCount() const {
     auto i = 0;
     for (const auto& s : warningList) {
         if (s.isCurrent) {
             i += 1;
         }
     }
-    return To::String(i);
+    return To::string(i);
 }
 
 void SevereWarning::download() {
@@ -44,17 +42,17 @@ void SevereWarning::download() {
 }
 
 void SevereWarning::generateString() {
-    auto html = ObjectPolygonWarning::polygonDataByType[type]->getData();
+    const auto html = ObjectPolygonWarning::polygonDataByType[type]->getData();
     warningList = ObjectWarning::parseJson(html);
 }
 
-QString SevereWarning::getShortName() const {
+string SevereWarning::getShortName() const {
     switch (type) {
-        case PolygonType::tor:
+        case Tor:
             return "TOR";
-        case PolygonType::tst:
+        case Tst:
             return "TST";
-        case PolygonType::ffw:
+        case Ffw:
             return "FFW";
         default:
             return "";

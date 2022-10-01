@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,8 +7,13 @@
 #ifndef UIPREFERENCES_H
 #define UIPREFERENCES_H
 
+#include <string>
+#include <vector>
 #include <QMargins>
 #include "objects/PrefBool.h"
+
+using std::string;
+using std::vector;
 
 class UIPreferences {
 public:
@@ -17,18 +22,18 @@ public:
     static const int padding;
     static int mainScreenImageSize;   
     static int imageSizeNwsForecast;     
-    static int imageWithTextSize;
     static int comboBoxSize;
+    static int toolbarIconSize;
     static QMargins textPadding;
-    static QMargins zeroPadding;
-    static QString homeScreenTokens;
     static bool useNwsApi;
     static bool useNwsApiForHourly;
-    static bool lightningUseGoes;
     static bool nexradMainScreen;
     static bool mainScreenSevereDashboard;
-    static QVector<PrefBool> homeScreenItemsImage;
-    static QVector<PrefBool> homeScreenItemsText;
+    static bool nexradScrollWheelMotion;
+    static bool rememberGOES;
+    static bool rememberMosaic;
+    static vector<PrefBool> homeScreenItemsImage;
+    static vector<PrefBool> homeScreenItemsText;
 };
 
 #endif  // UIPREFERENCES_H

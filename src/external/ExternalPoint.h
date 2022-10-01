@@ -24,9 +24,9 @@
 class ExternalPoint {
 public:
     ExternalPoint();
-    ExternalPoint(float, float);
-    float x;
-    float y;
+    ExternalPoint(double, double);
+    double x{};
+    double y{};
 };
 
 #endif  // EXTERNALPOINT_H

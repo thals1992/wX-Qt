@@ -13,12 +13,11 @@
 
 #include "external/ExternalEllipsoid.h"
 
-ExternalEllipsoid::ExternalEllipsoid(double semiMajor, double semiMinor, double flattening, double inverseFlattening) {
-    this->semiMajor = semiMajor;
-    this->semiMinor = semiMinor;
-    this->flattening = flattening;
-    this->inverseFlattening = inverseFlattening;
-}
+ExternalEllipsoid::ExternalEllipsoid(double semiMajor, double semiMinor, double flattening)
+    : semiMajor{ semiMajor }
+    , semiMinor{ semiMinor }
+    , flattening{ flattening }
+{}
 
 double ExternalEllipsoid::getSemiMajorAxis() const {
     return semiMajor;
@@ -32,24 +31,13 @@ double ExternalEllipsoid::getFlattening() const {
     return flattening;
 }
 
-// double ExternalEllipsoid::getInverseFlattening() const {
-//     return inverseFlattening;
-// }
-
 ExternalEllipsoid ExternalEllipsoid::wgs84() {
     return fromAAndInverseF(6378137.0, 298.257223563);
 }
 
 // Build an Ellipsoid from the semi major axis measurement and the inverse flattening.
 ExternalEllipsoid ExternalEllipsoid::fromAAndInverseF(double semiMajor, double inverseFlattening) {
-    const double f = 1.0 / inverseFlattening;
-    const double b = (1.0 - f) * semiMajor;
-    return ExternalEllipsoid(semiMajor, b, f, inverseFlattening);
+    const auto f = 1.0 / inverseFlattening;
+    const auto b = (1.0 - f) * semiMajor;
+    return {semiMajor, b, f};
 }
-
-// Build an Ellipsoid from the semi major axis measurement and the flattening.
-// ExternalEllipsoid ExternalEllipsoid::fromAAndF(double semiMajor, double flattening) {
-//     const double inverseF = 1.0 / flattening;
-//     const double b = (1.0 - flattening) * semiMajor;
-//     return ExternalEllipsoid(semiMajor, b, flattening, inverseF);
-// }

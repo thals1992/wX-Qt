@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,43 +7,50 @@
 #ifndef OBJECTPOLYGONWARNING_H
 #define OBJECTPOLYGONWARNING_H
 
-#include <QHash>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "objects/DataStorage.h"
 #include "objects/DownloadTimer.h"
 #include "radar/PolygonType.h"
 
+using std::string;
+using std::unordered_map;
+using std::vector;
+
 class ObjectPolygonWarning {
 public:
-    static const QString pVtec;
-    static const QString baseUrl;
-    static const QHash<PolygonType, int> defaultColors;
-    static const QHash<PolygonType, QString> longName;
-    static const QVector<PolygonType> polygonList;
-    static const QStringList namesByEnumId;
-    static QHash<PolygonType, ObjectPolygonWarning *> polygonDataByType;
-    static bool areAnyEnabled();
-    static void load();
-    ObjectPolygonWarning();
     explicit ObjectPolygonWarning(const PolygonType&);
     void download();
-    QString getData();
-    void enable();
-    void disable();
-    QString typeName() const;
-    QString getTypeName() const;
-    QString prefTokenEnabled() const;
-    QString prefTokenStorage() const;
-    QString prefTokenColor() const;
+    string getData() const;
+    string typeName() const;
+    string getTypeName() const;
+    string prefTokenEnabled() const;
+    string prefTokenStorage() const;
+    string prefTokenColor() const;
     int color() const;
-    QString name() const;
-    QString urlToken() const;
-    QString url() const;
-    QString getUrl() const;
+    string name() const;
+    string urlToken() const;
+    string url() const;
+    string getUrl() const;
     int getCount() const;
-    DownloadTimer timer;
-    PolygonType type1;
+    void update();
+    PolygonType type;
     bool isEnabled;
     DataStorage storage;
+    DownloadTimer timer;
+    int colorInt;
+
+    static const string pVtec;
+    static const string baseUrl;
+    static const unordered_map<PolygonType, int> defaultColors;
+    static const unordered_map<PolygonType, string> longName;
+    static const vector<PolygonType> polygonList;
+    static const unordered_map<PolygonType, string> namesByEnumId;
+    static unordered_map<PolygonType, std::unique_ptr<ObjectPolygonWarning>> polygonDataByType;
+    static bool areAnyEnabled();
+    static void load();
 };
 
 #endif  // OBJECTPOLYGONWARNING_H

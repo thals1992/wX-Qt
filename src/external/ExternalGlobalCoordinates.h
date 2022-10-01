@@ -14,7 +14,7 @@ Encapsulation of latitude and longitude coordinates on a globe. Negative
 latitude is southern hemisphere. Negative longitude is western hemisphere.
 </p>
 <p>
-Any angle may be specified for longtiude and latitude, but all angles will be
+Any angle may be specified for longitude and latitude, but all angles will be
 canonicalized such that:
 </p>
 
@@ -28,23 +28,20 @@ canonicalized such that:
 #ifndef EXTERNALGLOBALCOORDINATES_H
 #define EXTERNALGLOBALCOORDINATES_H
 
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
 
 class ExternalGlobalCoordinates {
 public:
-    ExternalGlobalCoordinates();
     ExternalGlobalCoordinates(double, double);
-    void canonicalize();
     double getLatitude() const;
     double getLongitude() const;
     static ExternalGlobalCoordinates withPn(const ProjectionNumbers&, bool = false);
 
 private:
     // Latitude in degrees. Negative latitude is southern hemisphere. */
-    double latitude;
-
+    double latitude{};
     // Longitude in degrees. Negative longitude is western hemisphere. */
-    double longitude;
+    double longitude{};
 };
 
 #endif  // EXTERNALGLOBALCOORDINATES_H

@@ -23,12 +23,7 @@
 #include <cmath>
 #include "external/ExternalAngle.h"
 
-// ExternalGeodeticCalculator::ExternalGeodeticCalculator() {
-// }
-
-const double ExternalGeodeticCalculator::twoPi = 2.0 * M_PI;
-
-// Calculate the destination and const double bearing after traveling a specified
+// Calculate the destination and const auto bearing after traveling a specified
 // distance, and a specified starting bearing, for an initial location. This
 // is the solution to the direct geodetic problem.
 //
@@ -40,8 +35,8 @@ const double ExternalGeodeticCalculator::twoPi = 2.0 * M_PI;
 //                        be populated with the result
 // @return
 ExternalGlobalCoordinates ExternalGeodeticCalculator::calculateEndingGlobalCoordinates(ExternalGlobalCoordinates start, double startBearing, double distance) {
-        QVector<double> dlist = {0.0, 0.0};
-        return calculateEndingGlobalCoordinatesOriginal(ExternalEllipsoid::wgs84(), start, startBearing, distance, &dlist);
+    vector<double> dlist{0.0, 0.0};
+    return calculateEndingGlobalCoordinatesOriginal(ExternalEllipsoid::wgs84(), start, startBearing, distance, &dlist);
 }
 
 ExternalGlobalCoordinates ExternalGeodeticCalculator::calculateEndingGlobalCoordinatesOriginal(
@@ -49,36 +44,36 @@ ExternalGlobalCoordinates ExternalGeodeticCalculator::calculateEndingGlobalCoord
         ExternalGlobalCoordinates start,
         double startBearing,
         double distance,
-        QVector<double> * endBearing) {
-    const double a = ellipsoid.getSemiMajorAxis();
-    const double b = ellipsoid.getSemiMinorAxis();
-    const double aSquared = a * a;
-    const double bSquared = b * b;
-    const double f = ellipsoid.getFlattening();
-    const double phi1 = ExternalAngle::toRadians(start.getLatitude());
-    const double alpha1 = ExternalAngle::toRadians(startBearing);
-    const double cosAlpha1 = cos(alpha1);
-    const double sinAlpha1 = sin(alpha1);
-    const double s = distance;
-    const double tanU1 = (1.0 - f) * tan(phi1);
-    const double cosU1 = 1.0 / sqrt(1.0 + tanU1 * tanU1);
-    const double sinU1 = tanU1 * cosU1;
+        vector<double> * endBearing) {
+    const auto a = ellipsoid.getSemiMajorAxis();
+    const auto b = ellipsoid.getSemiMinorAxis();
+    const auto aSquared = a * a;
+    const auto bSquared = b * b;
+    const auto f = ellipsoid.getFlattening();
+    const auto phi1 = ExternalAngle::toRadians(start.getLatitude());
+    const auto alpha1 = ExternalAngle::toRadians(startBearing);
+    const auto cosAlpha1 = cos(alpha1);
+    const auto sinAlpha1 = sin(alpha1);
+    const auto s = distance;
+    const auto tanU1 = (1.0 - f) * tan(phi1);
+    const auto cosU1 = 1.0 / sqrt(1.0 + tanU1 * tanU1);
+    const auto sinU1 = tanU1 * cosU1;
     // eq. 1
-    const double sigma1 = atan2(tanU1, cosAlpha1);
+    const auto sigma1 = atan2(tanU1, cosAlpha1);
     // eq. 2
-    const double sinAlpha = cosU1 * sinAlpha1;
-    const double sin2Alpha = sinAlpha * sinAlpha;
-    const double cos2Alpha = 1 - sin2Alpha;
-    const double uSquared = cos2Alpha * (aSquared - bSquared) / bSquared;
+    const auto sinAlpha = cosU1 * sinAlpha1;
+    const auto sin2Alpha = sinAlpha * sinAlpha;
+    const auto cos2Alpha = 1.0 - sin2Alpha;
+    const auto uSquared = cos2Alpha * (aSquared - bSquared) / bSquared;
     // eq. 3
-    const double A = 1 + (uSquared / 16384) * (4096 + uSquared * (-768 + uSquared * (320 - 175 * uSquared)));
+    const auto A = 1.0 + (uSquared / 16384.0) * (4096.0 + uSquared * (-768.0 + uSquared * (320.0 - 175.0 * uSquared)));
     // eq. 4
-    const double B = (uSquared / 1024) * (256 + uSquared * (-128 + uSquared * (74 - 47 * uSquared)));
+    const auto B = (uSquared / 1024.0) * (256.0 + uSquared * (-128.0 + uSquared * (74.0 - 47.0 * uSquared)));
     // iterate until there is a negligible change in sigma
-    const double sOverbA = s / (b * A);
-    double sigma = sOverbA;
+    const auto sOverbA = s / (b * A);
+    auto sigma = sOverbA;
     double sinSigma;
-    double prevSigma = sOverbA;
+    auto prevSigma = sOverbA;
     double sigmaM2;
     double cosSigmaM2;
     double cos2SigmaM2;
@@ -88,23 +83,24 @@ ExternalGlobalCoordinates ExternalGeodeticCalculator::calculateEndingGlobalCoord
         cosSigmaM2 = cos(sigmaM2);
         cos2SigmaM2 = cosSigmaM2 * cosSigmaM2;
         sinSigma = sin(sigma);
-        const double cosSignma = cos(sigma);
+        const auto cosSignma = cos(sigma);
         // eq. 6
-        double deltaSigma = B * sinSigma * (cosSigmaM2 + (B / 4.0) * (cosSignma * (-1 + 2 * cos2SigmaM2) - (B / 6.0) * cosSigmaM2 * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM2)));
+        auto deltaSigma = B * sinSigma * (cosSigmaM2 + (B / 4.0) * (cosSignma * (-1.0 + 2.0 * cos2SigmaM2) - (B / 6.0) * cosSigmaM2 * (-3.0 + 4.0 * sinSigma * sinSigma) * (-3.0 + 4.0 * cos2SigmaM2)));
         // eq. 7
         sigma = sOverbA + deltaSigma;
         // break after converging to tolerance
-        if (abs(sigma - prevSigma) < 0.0000000000001) break;
+        if (abs(sigma - prevSigma) < 0.0000000000001)
+            break;
 
         prevSigma = sigma;
     }
     sigmaM2 = 2.0 * sigma1 + sigma;
     cosSigmaM2 = cos(sigmaM2);
     cos2SigmaM2 = cosSigmaM2 * cosSigmaM2;
-    const double cosSigma = cos(sigma);
+    const auto cosSigma = cos(sigma);
     sinSigma = sin(sigma);
     // eq. 8
-    const double phi2 = atan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1, (1.0 - f) * sqrt(sin2Alpha + pow(sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1, 2.0)));
+    const auto phi2 = atan2(sinU1 * cosSigma + cosU1 * sinSigma * cosAlpha1, (1.0 - f) * sqrt(sin2Alpha + pow(sinU1 * sinSigma - cosU1 * cosSigma * cosAlpha1, 2.0)));
     // eq. 9
     // This fixes the pole crossing defect spotted by Matt Feemster. When a
     // path passes a pole and essentially crosses a line of latitude twice -
@@ -113,18 +109,18 @@ ExternalGlobalCoordinates ExternalGeodeticCalculator::calculateEndingGlobalCoord
     // lines.
     // double tanLambda = sinSigma * sinAlpha1 / (cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1);
     // double lambda = Math.atan(tanLambda);
-    const double lambda = atan2(sinSigma * sinAlpha1, (cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1));
+    const auto lambda = atan2(sinSigma * sinAlpha1, (cosU1 * cosSigma - sinU1 * sinSigma * cosAlpha1));
     // eq. 10
-    const double C = (f / 16) * cos2Alpha * (4 + f * (4 - 3 * cos2Alpha));
+    const auto C = (f / 16.0) * cos2Alpha * (4.0 + f * (4.0 - 3.0 * cos2Alpha));
     // eq. 11
-    const double L = lambda - (1 - C) * f * sinAlpha * (sigma + C * sinSigma * (cosSigmaM2 + C * cosSigma * (-1 + 2 * cos2SigmaM2)));
+    const auto L = lambda - (1.0 - C) * f * sinAlpha * (sigma + C * sinSigma * (cosSigmaM2 + C * cosSigma * (-1.0 + 2.0 * cos2SigmaM2)));
     // eq. 12
-    const double alpha2 = atan2(sinAlpha, -sinU1 * sinSigma + cosU1 * cosSigma * cosAlpha1);
+    const auto alpha2 = atan2(sinAlpha, -sinU1 * sinSigma + cosU1 * cosSigma * cosAlpha1);
     // build result
-    const double latitude = ExternalAngle::toDegrees(phi2);
-    const double longitude = start.getLongitude() + ExternalAngle::toDegrees(L);
-    if (endBearing != nullptr && endBearing->size() > 0) {
+    const auto latitude = ExternalAngle::toDegrees(phi2);
+    const auto longitude = start.getLongitude() + ExternalAngle::toDegrees(L);
+    if (endBearing != nullptr && !endBearing->empty()) {
         (*endBearing)[0] = ExternalAngle::toDegrees(alpha2);
     }
-    return ExternalGlobalCoordinates(latitude, longitude);
+    return {latitude, longitude};
 }

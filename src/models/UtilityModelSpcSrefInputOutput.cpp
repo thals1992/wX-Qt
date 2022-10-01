@@ -1,38 +1,38 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelSpcSrefInputOutput.h"
-#include "common/GlobalVariables.h"
-#include "models/RunTimeData.h"
-#include "util/UtilityIO.h"
-#include "util/UtilityString.h"
+#include "UtilityModelSpcSrefInputOutput.h"
+#include "../common/GlobalVariables.h"
+#include "../objects/WString.h"
+#include "../util/UtilityIO.h"
+#include "../util/UtilityString.h"
 
-QString UtilityModelSpcSrefInputOutput::pattern1 = "([0-9]{10}z</a>&nbsp in through <b>f[0-9]{3})";
-QString UtilityModelSpcSrefInputOutput::pattern2 = "<tr><td class=.previous.><a href=sref.php\\?run=[0-9]{10}&id=SREF_H5__>([0-9]{10}z)</a></td></tr>";
+const string UtilityModelSpcSrefInputOutput::srefPattern2{"([0-9]{10}z</a>&nbsp in through <b>f[0-9]{3})"};
+const string UtilityModelSpcSrefInputOutput::srefPattern3{"<tr><td class=.previous.><a href=sref.php\\?run=[0-9]{10}&id=SREF_H5__>([0-9]{10}z)</a></td></tr>"};
 
 RunTimeData UtilityModelSpcSrefInputOutput::getRunTime() {
-    RunTimeData runData;
+    auto runData = RunTimeData{};
     auto html = UtilityIO::getHtml(GlobalVariables::nwsSPCwebsitePrefix + "/exper/sref/");
-    auto tmpTxt = UtilityString::parse(html, pattern1);
-    auto results = UtilityString::parseColumn(html, pattern2);
-    auto latestRun = tmpTxt.split("</a>")[0];
-    runData.appendListRun(latestRun.replace("z", ""));
-    for (auto result : results) {
-        runData.appendListRun(result.replace("z", ""));
+    auto tmpTxt = UtilityString::parse(html, srefPattern2);
+    auto result = UtilityString::parseColumn(html, srefPattern3);
+    auto latestRun = WString::split(tmpTxt, "</a>")[0];
+    runData.appendListRun(WString::replace(latestRun, "z", ""));
+    if (!result.empty()) {
+        for (const auto& data : result) {
+            runData.appendListRun(WString::replace(data, "z", ""));
+        }
     }
-    tmpTxt = UtilityString::parse(tmpTxt, pattern1);
-    tmpTxt = UtilityString::parse(tmpTxt, "(f[0-9]{3})");
-    runData.imageCompleteStr = tmpTxt;
-    if (runData.listRun.size() > 0) {
+//    tmpTxt = UtilityString::parse(tmpTxt, srefPattern2);
+//    tmpTxt = UtilityString::parse(tmpTxt, "(f[0-9]{3})");
+    if (!runData.listRun.empty()) {
         runData.mostRecentRun = runData.listRun[0];
     }
     return runData;
 }
 
-QString UtilityModelSpcSrefInputOutput::getImage(ObjectModel * om) {
-    auto imgUrl = GlobalVariables::nwsSPCwebsitePrefix + "/exper/sref/gifs/" + om->run.replace("z", "") + "/" + om->param + "f0" + om->timeStr.split(" ")[0] + ".gif";
-    return imgUrl;
+string UtilityModelSpcSrefInputOutput::getImageUrl(ObjectModel * om) {
+    return GlobalVariables::nwsSPCwebsitePrefix + "/exper/sref/gifs/" + WString::replace(om->run, "z", "") + "/" + om->param + "f" + om->getTime() + ".gif";
 }

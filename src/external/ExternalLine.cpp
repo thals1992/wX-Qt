@@ -15,17 +15,15 @@
 
 #include "external/ExternalLine.h"
 
-ExternalLine::ExternalLine() {
-}
-
-ExternalLine::ExternalLine(ExternalPoint start1, ExternalPoint end1) {
-    start = start1;
-    end = end1;
-    vertical = false;
-    a = 999999999.0;
-    b = 999999999.0;
+ExternalLine::ExternalLine(ExternalPoint start1, ExternalPoint end1)
+    : start{ start1 }
+    , end{ end1 }
+    , vertical{ false }
+    , a{ 999999999.0 }
+    , b{ 999999999.0 }
+{
     if (end.x - start.x != 0) {
-        a = ((end.y - start.y) / (end.x - start.x));
+        a = (end.y - start.y) / (end.x - start.x);
         b = start.y - a * start.x;
     } else {
         vertical = true;
@@ -36,11 +34,11 @@ bool ExternalLine::isVertical() const  {
     return vertical;
 }
 
-float ExternalLine::getA() const {
+double ExternalLine::getA() const {
     return a;
 }
 
-float ExternalLine::getB() const {
+double ExternalLine::getB() const {
     return b;
 }
 
@@ -48,15 +46,11 @@ ExternalPoint ExternalLine::getStart() const {
     return start;
 }
 
-// ExternalPoint ExternalLine::getEnd() const {
-//     return end;
-// }
-
 bool ExternalLine::isInside(ExternalPoint point) const {
-    const float maxX = start.x > end.x ? start.x : end.x;
-    const float minX = start.x < end.x ? start.x : end.x;
-    const float maxY = start.y > end.y ? start.y : end.y;
-    const float minY = start.y < end.y ? start.y : end.y;
+    const auto maxX = start.x > end.x ? start.x : end.x;
+    const auto minX = start.x < end.x ? start.x : end.x;
+    const auto maxY = start.y > end.y ? start.y : end.y;
+    const auto minY = start.y < end.y ? start.y : end.y;
     if ((point.x >= minX && point.x <= maxX) && (point.y >= minY && point.y <= maxY)) {
         return true;
     }

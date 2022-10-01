@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,14 +8,17 @@
 #define TABWIDGET_H
 
 #include <functional>
+#include <string>
 #include <QTabWidget>
+
+using std::function;
+using std::string;
 
 class TabWidget {
 public:
-    TabWidget();
-    explicit TabWidget(QWidget * parent);
-    void addTab(QWidget *, const QString&);
-    void connect(std::function<void(int)>);
+    explicit TabWidget(QWidget *);
+    void addTab(QWidget *, const string&);
+    void connect(const function<void(int)>&);
     void setIndex(int);
     QTabWidget * get();
 

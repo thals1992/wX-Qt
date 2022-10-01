@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,13 +7,17 @@
 #ifndef UTILITYMODELWPCGEFSINTERFACE_H
 #define UTILITYMODELWPCGEFSINTERFACE_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilityModelWpcGefsInterface {
 public:
-    static const QStringList sectors;
-    static const QStringList params;
-    static const QStringList labels;
+    static const vector<string> sectors;
+    static const vector<string> params;
+    static const vector<string> labels;
 };
 
 #endif  // UTILITYMODELWPCGEFSINTERFACE_H

@@ -1,17 +1,15 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "objects/TimeLine.h"
 
-TimeLine::TimeLine() {
-}
-
-TimeLine::TimeLine(QObject * parent, int speed, int count, std::function<void(int)> updateFn) {
-    this->count = count;
-    timeLine = new QTimeLine(speed, parent);
+TimeLine::TimeLine(QObject * parent, int speed, int count, const function<void(int)>& updateFn)
+    : count{ count }
+    , timeLine{ new QTimeLine{speed, parent} }
+{
     timeLine->setFrameRange(0, count - 1);
     timeLine->setLoopCount(0);
     QObject::connect(timeLine, &QTimeLine::frameChanged, parent, updateFn);
@@ -31,7 +29,7 @@ void TimeLine::setSpeed(int s) {
     timeLine->setDuration(s);
 }
 
-int TimeLine::getCount() {
+int TimeLine::getCount() const {
     return count;
 }
 
@@ -40,7 +38,7 @@ void TimeLine::start() {
     timeLine->start();
 }
 
-bool TimeLine::isRunning() {
+bool TimeLine::isRunning() const {
     return running;
 }
 

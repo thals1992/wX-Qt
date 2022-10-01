@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,29 +7,30 @@
 #ifndef OBJECTWARNING_H
 #define OBJECTWARNING_H
 
+#include <string>
+#include <vector>
 #include "objects/LatLon.h"
+
+using std::string;
+using std::vector;
 
 class ObjectWarning {
 public:
-    ObjectWarning();
-    ObjectWarning(QString, QString, QString, QString, QString, QString, QString, QString, QString, QString);
-    static QVector<ObjectWarning> parseJson(QString);
-    QString getClosestRadar() const;
-    QString getUrl() const;
-    QVector<LatLon> getPolygonAsLatLons(int) const;
-    QString url;
-    QString title;
-    QString area;
-    QString effective;
-    QString expires;
-    QString event;
-    QString sender;
-    QString geometry;
-    QString vtec;
-    bool isCurrent;
-
-private:
-    QString polygon;
+    ObjectWarning(const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&);
+    static vector<ObjectWarning> parseJson(const string&);
+    string getClosestRadar() const;
+    string getUrl() const;
+    vector<LatLon> getPolygonAsLatLons(int) const;
+    string url;
+    string title;
+    string area;
+    string effective;
+    string expires;
+    string event;
+    string sender;
+    string polygon;
+    string vtec;
+    bool isCurrent{};
 };
 
 #endif  // OBJECTWARNING_H

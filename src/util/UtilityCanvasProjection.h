@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,14 +7,16 @@
 #ifndef UTILITYCANVASPROJECTION_H
 #define UTILITYCANVASPROJECTION_H
 
-#include <QVector>
+#include <vector>
 #include "objects/LatLon.h"
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
+
+using std::vector;
 
 class UtilityCanvasProjection {
 public:
-    static QVector<float> computeMercatorNumbers(float, float, const ProjectionNumbers&);
-    static QVector<float> computeMercatorNumbersFromLatLon(const LatLon&, const ProjectionNumbers&);
+    static vector<double> computeMercatorNumbers(double, double, const ProjectionNumbers&);
+    static vector<double> computeMercatorNumbersFromLatLon(const LatLon&, const ProjectionNumbers&, int factor = 1.0);
 };
 
 #endif  // UTILITYCANVASPROJECTION_H

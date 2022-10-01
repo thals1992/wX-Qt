@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,17 +7,18 @@
 #ifndef UTILITYHOURLYOLDAPI_H
 #define UTILITYHOURLYOLDAPI_H
 
-#include <QHash>
-#include <QStringList>
+#include <string>
+#include <vector>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 class UtilityHourlyOldApi {
 public:
-    static QString getHourlyString(int);
+    static string getHourlyString(int);
 
 private:
-    static QString parseHourly(const QString&);
+    static string parseHourly(const string&);
 };
 
 #endif  // UTILITYHOURLYOLDAPI_H

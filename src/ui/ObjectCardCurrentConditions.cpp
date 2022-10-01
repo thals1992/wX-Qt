@@ -1,29 +1,27 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "ui/ObjectCardCurrentConditions.h"
 
-ObjectCardCurrentConditions::ObjectCardCurrentConditions() {
-}
+ObjectCardCurrentConditions::ObjectCardCurrentConditions() = default;
 
-ObjectCardCurrentConditions::ObjectCardCurrentConditions(QWidget * parent, const ObjectCurrentConditions& cc) : HBox(parent) {
-    boxText = VBox();
+ObjectCardCurrentConditions::ObjectCardCurrentConditions(QWidget * parent, const ObjectCurrentConditions& cc)
+    : HBox{}
+    , topLine{ Text{parent, cc.topLine} }
+    , middleLine{ Text{parent, cc.middleLine} }
+    , bottomLine{ Text{parent, cc.bottomLine} }
+    , photo{ Photo{parent} }
+{
     boxText.setSpacing(0);
 
-    topLine = Text(parent, cc.topLine);
     topLine.setWordWrap(false);
     topLine.setBold();
-
-    middleLine = Text(parent, cc.middleLine.trimmed());
     middleLine.setWordWrap(false);
-
-    bottomLine = Text(parent, cc.bottomLine);
     bottomLine.setWordWrap(false);
 
-    photo = Photo(parent);
     photo.setAlignment(Qt::AlignTop);
     photo.setNwsIcon(cc.iconUrl);
 

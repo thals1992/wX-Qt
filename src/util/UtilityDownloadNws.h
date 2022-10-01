@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -12,14 +12,12 @@
 
 class UtilityDownloadNws : public QObject  {
 
-    // Q_OBJECT
-
 public:
-    static QString getHourlyData(const LatLon&);
-    static QString getLocationPointData(const LatLon&);
-    static QString get7DayData(const LatLon&);
-    static QString getCap(const QString&);
-    static QString getHtmlWithXml(const QString&);
+    static string getHourlyData(const LatLon&);
+    static string getLocationPointData(const LatLon&);
+    static string get7DayData(const LatLon&);
+    static string getCap(const string&);
+    static string getHtmlWithXml(const string&);
 };
 
 #endif  // UTILITYDOWNLOADNWS_H

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,29 +7,30 @@
 #ifndef OBJECTLOCATION_H
 #define OBJECTLOCATION_H
 
-#include <QString>
+#include <string>
+#include "objects/LatLon.h"
+
+using std::string;
 
 class ObjectLocation {
 public:
     ObjectLocation();
     explicit ObjectLocation(int);
     void saveToNewSlot(int);
-    QString getLat() const;
-    QString getLon() const;
-    QString getName() const;
-    QString getWfo() const;
-    QString getRadarSite() const;
-    int locationNumber;
+    string getLat() const;
+    string getLon() const;
+    LatLon getLatLon() const;
+    string getName() const;
+    string getWfo() const;
+    string getRadarSite() const;
 
-// TODO FIXME make private
-// private:
-    QString locNumAsString;
-    QString lat;
-    QString lon;
-    QString name;
-    QString wfo;
-    QString rid;
-    QString state;
+private:
+    string locNumAsString;
+    string lat;
+    string lon;
+    string name;
+    string wfo;
+    string rid;
 };
 
 #endif  // OBJECTLOCATION_H

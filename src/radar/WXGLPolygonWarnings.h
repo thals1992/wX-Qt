@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,16 +7,22 @@
 #ifndef WXGLPOLYGONWARNINGS_H
 #define WXGLPOLYGONWARNINGS_H
 
-#include <QVector>
+#include <string>
+#include <vector>
+#include "objects/LatLon.h"
 #include "objects/ObjectPolygonWarning.h"
 #include "radar/PolygonType.h"
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
+
+using std::string;
+using std::vector;
 
 class WXGLPolygonWarnings {
 public:
-    static QVector<float> addGeneric(const ProjectionNumbers& projectionNumbers, const ObjectPolygonWarning *);
-    static QVector<float> add(const ProjectionNumbers&, const PolygonType&);
+    static vector<double> addGeneric(const ProjectionNumbers& projectionNumbers, const ObjectPolygonWarning *);
+    static vector<double> add(const ProjectionNumbers&, const PolygonType&);
     static int getCount(const PolygonType&);
+    static string show(const LatLon&);
 };
 
 #endif  // WXGLPOLYGONWARNINGS_H

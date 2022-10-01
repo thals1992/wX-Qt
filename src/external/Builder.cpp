@@ -19,12 +19,11 @@
 #*/
 
 #include "external/Builder.h"
-#include <limits>
 
-Builder::Builder() {
-    firstPoint = true;
-    isClosed = false;
-}
+Builder::Builder()
+        : firstPoint{ true }
+        , isClosed{ false }
+{}
 
 Builder Builder::addVertex(ExternalPoint point) {
     if (isClosed) {
@@ -36,7 +35,7 @@ Builder Builder::addVertex(ExternalPoint point) {
     vertexes.push_back(point);
     // add line (edge) to the polygon
     if (vertexes.size() > 1) {
-        ExternalLine line(vertexes[vertexes.size() - 2], point);
+        ExternalLine line{vertexes[vertexes.size() - 2], point};
         sides.push_back(line);
     }
     return *this;
@@ -44,7 +43,7 @@ Builder Builder::addVertex(ExternalPoint point) {
 
 void Builder::updateBoundingBox(ExternalPoint point) {
     if (firstPoint) {
-        boundingBox =  BoundingBox();
+        boundingBox =  BoundingBox{};
         boundingBox.xMax = point.x;
         boundingBox.xMin = point.x;
         boundingBox.yMax = point.y;
@@ -64,22 +63,22 @@ void Builder::updateBoundingBox(ExternalPoint point) {
     }
 }
 
-Builder * Builder::close() {
-    validate();
-    // add last Line
-    sides.push_back(ExternalLine(vertexes[vertexes.size() - 1], vertexes[0]));
-    isClosed = true;
-    return this;
-}
+// Builder * Builder::close() {
+//    validate();
+//    // add last Line
+//    sides.push_back(ExternalLine(vertexes[vertexes.size() - 1], vertexes[0]));
+//    isClosed = true;
+//    return this;
+// }
 
 ExternalPolygon Builder::build() {
     validate();
     // in case you forgot to close
     if (!isClosed) {
         // add last Line
-        sides.push_back(ExternalLine(vertexes[vertexes.size() - 1], vertexes[0]));
+        sides.emplace_back(vertexes[vertexes.size() - 1], vertexes[0]);
     }
-    return ExternalPolygon(sides, boundingBox);
+    return {sides, boundingBox};
 }
 
 void Builder::validate() {

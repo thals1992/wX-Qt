@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,11 +7,11 @@
 #include "spc/UtilitySpcCompmap.h"
 #include "common/GlobalVariables.h"
 
-QString UtilitySpcCompmap::getImage(const QString& product) {
+string UtilitySpcCompmap::getImage(const string& product) {
     return GlobalVariables::nwsSPCwebsitePrefix + "/exper/compmap/" + product + ".gif";
 }
 
-const QStringList UtilitySpcCompmap::labels = {
+const vector<string> UtilitySpcCompmap::labels{
     "IR satellite",
     "MAPS sea-level pressure (mb)",
     "2-meter temperature  (F)",
@@ -36,7 +36,7 @@ const QStringList UtilitySpcCompmap::labels = {
     "HPC 6-hr QPF (92E)"
 };
 
-const QStringList UtilitySpcCompmap::urlIndices = {
+const vector<string> UtilitySpcCompmap::urlIndices{
     "16",
     "7",
     "1",

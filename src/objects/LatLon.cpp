@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,6 +8,7 @@
 #include <cmath>
 #include <iostream>
 #include "common/GlobalVariables.h"
+#include "objects/WString.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "util/UtilityCanvasProjection.h"
@@ -16,63 +17,78 @@
 #include "util/UtilityMath.h"
 #include "util/UtilityString.h"
 
-LatLon::LatLon() {
-    latString = To::String(0.0);
-    lonString = To::String(0.0);
-    lat = 0.0;
-    lon = 0.0;
-    distance = 0;
-}
+LatLon::LatLon()
+    : latString{ To::string(0.0) }
+    , lonString{ To::string(0.0) }
+    , latNum{ 0.0 }
+    , lonNum{ 0.0 }
+{}
 
-LatLon::LatLon(double x, double y) {
-    latString = To::String(x);
-    lonString = To::String(y);
-    lat = x;
-    lon = y;
-    distance = 0;
-}
+LatLon::LatLon(double x, double y)
+    : latString{ To::string(x) }
+    , lonString{ To::string(y) }
+    , latNum{ x }
+    , lonNum{ y }
+{}
 
-LatLon::LatLon(float x, float y) {
-    latString = To::String(x);
-    lonString = To::String(y);
-    lat = x;
-    lon = y;
-    distance = 0;
-}
+LatLon::LatLon(const string& x, const string& y)
+    : latString{ x }
+    , lonString{ y }
+    , latNum{ To::Double(x) }
+    , lonNum{ To::Double(y) }
+{}
 
-LatLon::LatLon(const QString& x, const QString& y) {
-    latString = x;
-    lonString = y;
-    lat = To::Double(x);
-    lon = To::Double(y);
-    distance = 0;
-}
-
-LatLon::LatLon(const QString& temp) {
-    latString = UtilityString::substring(temp, 0, 4);
-    lonString = UtilityString::substring(temp, 4, 8);
+LatLon::LatLon(const string& temp)
+    : latString{ UtilityString::substring(temp, 0, 4) }
+    , lonString{ UtilityString::substring(temp, 4, 8) }
+{
     latString = UtilityString::addPeriodBeforeLastTwoChars(latString);
     lonString = UtilityString::addPeriodBeforeLastTwoChars(lonString);
-    auto tmpDbl = To::Float(lonString);
+    auto tmpDbl = To::Double(lonString);
     if (tmpDbl < 40.00) {
         tmpDbl += 100;
-        lonString = To::String(tmpDbl);
+        lonString = To::string(tmpDbl);
     }
-    lat = To::Float(latString);
-    lon = To::Float(lonString);
+    latNum = To::Double(latString);
+    lonNum = To::Double(lonString);
 }
 
-LatLon::LatLon(const QVector<float>& coords) {
-    latString = To::String(coords[0]);
-    lonString = To::String(coords[1]);
-    lat = coords[0];
-    lon = coords[1];
-    distance = 0;
+LatLon::LatLon(const vector<float>& coords)
+    : latString{ To::string(coords[0]) }
+    , lonString{ To::string(coords[1]) }
+    , latNum{ coords[0] }
+    , lonNum{ coords[1] }
+{}
+
+double LatLon::lat() const {
+    return latNum;
 }
 
-float LatLon::dist(LatLon location2) const {
-    const float theta = lon - location2.lon;
-    float dist = sin(UtilityMath::deg2rad(lat)) * sin(UtilityMath::deg2rad(location2.lat)) + cos(UtilityMath::deg2rad(lat)) * cos(UtilityMath::deg2rad(location2.lat)) * cos(UtilityMath::deg2rad(theta));
+double LatLon::lon() const {
+    return lonNum;
+}
+
+// void LatLon::setLon(double d) {
+//    lonString = To::string(d);
+//    lonNum = d;
+// }
+
+string LatLon::latStr() const {
+    return latString;
+}
+
+string LatLon::lonStr() const {
+    return lonString;
+}
+
+void LatLon::setLonStr(const string& s) {
+    lonString = s;
+    lonNum = To::Double(s);
+}
+
+double LatLon::dist(const LatLon& location2) const {
+    const auto theta = lon() - location2.lon();
+    auto dist = sin(UtilityMath::deg2rad(lat())) * sin(UtilityMath::deg2rad(location2.lat())) + cos(UtilityMath::deg2rad(lat())) * cos(UtilityMath::deg2rad(location2.lat())) * cos(UtilityMath::deg2rad(theta));
     dist = acos(dist);
     dist = UtilityMath::rad2deg(dist);
     dist = dist * 60.0 * 1.1515;
@@ -80,142 +96,178 @@ float LatLon::dist(LatLon location2) const {
 }
 
 // used in UtilitySwoD1 and UtilityDownloadRadar
-QString LatLon::printSpaceSeparated() const {
+string LatLon::printSpaceSeparated() const {
     return latString + " " + lonString + " ";
 }
 
+// used by UtilityNexradDraw::initGeom for location dots
+vector<double> LatLon::getProjection(const ProjectionNumbers& pn) const {
+    return UtilityCanvasProjection::computeMercatorNumbersFromLatLon(*this, pn, -1.0);
+}
+
 ExternalPoint LatLon::asPoint() const {
-    return ExternalPoint(lat, lon);
+    return {lat(), lon()};
 }
 
-QVector<float> LatLon::asList() const {
-    return {static_cast<float>(lat), static_cast<float>(lon)};
+vector<double> LatLon::asList() const {
+    return {lat(), lon()};
 }
 
-LatLon LatLon::fromList(QVector<float> coords) {
-    return LatLon(coords[0], coords[1]);
+LatLon LatLon::fromList(vector<double> coords) {
+    return {coords[0], coords[1]};
 }
 
-LatLon LatLon::fromRadarSite(const QString& radarSite) {
+LatLon LatLon::fromRadarSite(const string& radarSite) {
     const auto ridX = Utility::getRadarSiteX(radarSite);
     const auto ridY = Utility::getRadarSiteY(radarSite);
     const auto latNum = To::Double(ridX);
     const auto lonNum = -1.0 * To::Double(ridY);
-    return LatLon(latNum, lonNum);
+    return {latNum, lonNum};
 }
 
 // FIXME TODO
-QString LatLon::latForNws() const {
-    return QString::number(lat, 'g', 4);
+string LatLon::latForNws() const {
+    return QString::number(lat(), 'g', 4).toStdString();
 }
 
-QString LatLon::lonForNws() const {
-    return QString::number(lon, 'g', 4);
+string LatLon::lonForNws() const {
+    return QString::number(lon(), 'g', 4).toStdString();
 }
 
-QString LatLon::printPretty() const {
-    auto len = 7;
+string LatLon::printPretty() const {
+    const auto len = 7;
     return UtilityString::truncate(latString, len) + ", " + UtilityString::truncate(lonString, len) + " ";
 }
 
-QString LatLon::storeWatchMcdLatLon(const QString& html) {
+string LatLon::storeWatchMcdLatLon(const string& html) {
     const auto coordinates = UtilityString::parseColumn(html, "([0-9]{8}).*?");
-    QString stringValue;
-    for (const auto& coor : coordinates) {
-        stringValue += getLatLonFromString(coor).printSpaceSeparated();
+    string stringValue;
+    for (const auto& coordinate : coordinates) {
+        stringValue += getLatLonFromString(coordinate).printSpaceSeparated();
     }
     stringValue += ":";
-    return stringValue.replace(" :", ":");
+    return WString::replace(stringValue, " :", ":");
 }
 
 // 36517623 is 3651 -7623
-LatLon LatLon::getLatLonFromString(const QString& latLonString) {
-    const auto latString = latLonString.left(4);
-    const auto lonString = latLonString.right(4);
-    auto lat = To::Float(latString);
-    auto lon = To::Float(lonString);
+LatLon LatLon::getLatLonFromString(const string& latLonString) {
+    const string latString{ UtilityString::substring(latLonString, 0, 4) };
+    const string lonString{ UtilityString::substring(latLonString, 4, 8) };
+    auto lat = To::Double(latString);
+    auto lon = To::Double(lonString);
     lat /= 100.0;
     lon /= 100.0;
     if (lon < 40.0) {
         lon += 100.0;
     }
-    return LatLon(lat, -1.0f * lon);
+    return {lat, -1.0 * lon};
 }
 
-QString LatLon::getLatLon(const QString& number) {
+string LatLon::getLatLon(const string& number) {
     const auto html = UtilityIO::getHtml(GlobalVariables::nwsSPCwebsitePrefix + "/products/watch/wou" + number + ".html");
     return UtilityString::parseMultiLineLastMatch(html, GlobalVariables::pre2Pattern);
 }
 
-QVector<float> LatLon::latLonListToListOfDoubles(const QVector<LatLon>& latLons, const ProjectionNumbers& projectionNumbers) {
-    QVector<float> warningList;
-    if (latLons.size() > 0) {
-        auto startCoordinates = UtilityCanvasProjection::computeMercatorNumbersFromLatLon(latLons[0], projectionNumbers);
-        warningList += startCoordinates;
-        for (auto index : UtilityList::range2(1, latLons.size())) {
-            auto coordinates = UtilityCanvasProjection::computeMercatorNumbersFromLatLon(latLons[index], projectionNumbers);
-            warningList += coordinates;
-            warningList += coordinates;
+vector<double> LatLon::latLonListToListOfDoubles(const vector<LatLon>& latLons, const ProjectionNumbers& projectionNumbers) {
+    vector<double> warningList;
+    if (!latLons.empty()) {
+        const auto startCoordinates = UtilityCanvasProjection::computeMercatorNumbersFromLatLon(latLons[0], projectionNumbers);
+        warningList.push_back(startCoordinates[0]);
+        warningList.push_back(startCoordinates[1]);
+        for (auto index : range3(1, latLons.size(), 1)) {
+            const auto coordinates = UtilityCanvasProjection::computeMercatorNumbersFromLatLon(latLons[index], projectionNumbers);
+            warningList.push_back(coordinates[0]);
+            warningList.push_back(coordinates[1]);
+            warningList.push_back(coordinates[0]);
+            warningList.push_back(coordinates[1]);
         }
-        warningList += startCoordinates;
+        warningList.push_back(startCoordinates[0]);
+        warningList.push_back(startCoordinates[1]);
     }
     return warningList;
 }
 
-QVector<LatLon> LatLon::parseStringToLatLons(const QString& stringOfNumbers, float multiplier, bool isWarning) {
-    const auto listOfNumbers = stringOfNumbers.split(" ");
-    QVector<float> x;
-    QVector<float> y;
-    for (auto i : UtilityList::range(listOfNumbers.size())) {
+vector<LatLon> LatLon::parseStringToLatLons(const string& stringOfNumbers, int multiplier, bool isWarning) {
+    const auto listOfNumbers = WString::split(stringOfNumbers, " ");
+    vector<double> x;
+    vector<double> y;
+    for (auto i : range(listOfNumbers.size())) {
         if (!isWarning) {
             if (i % 2 == 0) {
-                y.push_back(To::Float(listOfNumbers[i]));
+                y.push_back(To::Double(listOfNumbers[i]));
             } else {
-                x.push_back(To::Float(listOfNumbers[i]) * -1.0);
+                x.push_back(To::Double(listOfNumbers[i]) * -1.0);
             }
         } else {
             if (i % 2 == 0) {
-                x.push_back(To::Float(listOfNumbers[i]) * multiplier);
+                x.push_back(To::Double(listOfNumbers[i]) * multiplier);
             } else {
-                y.push_back(To::Float(listOfNumbers[i]));
+                y.push_back(To::Double(listOfNumbers[i]));
             }
         }
     }
-    QVector<LatLon> latLons;
+    vector<LatLon> latLons;
     if (y.size() > 3 && x.size() > 3 && x.size() == y.size()) {
-        for (auto index : UtilityList::range(x.size())) {
-            const LatLon latLon(y[index], x[index]);
-            latLons.push_back(latLon);
+        for (auto index : range(x.size())) {
+            latLons.emplace_back(y[index], x[index]);
         }
     }
     return latLons;
 }
 
-QVector<LatLon> LatLon::parseStringToLatLonsForMcdLongPress(const QString& stringOfNumbers, float multiplier, bool isWarning) {
-    const auto listOfNumbers = stringOfNumbers.split(" ");
-    QVector<float> x;
-    QVector<float> y;
-    for (auto i : UtilityList::range(listOfNumbers.size())) {
+vector<LatLon> LatLon::parseStringToLatLonsForMcdLongPress(const string& stringOfNumbers, int multiplier, bool isWarning) {
+    const auto listOfNumbers = WString::split(stringOfNumbers, " ");
+    vector<double> x;
+    vector<double> y;
+    for (auto i : range(listOfNumbers.size())) {
         if (!isWarning) {
             if (i % 2 == 0) {
-                y.push_back(To::Float(listOfNumbers[i]));
+                y.push_back(To::Double(listOfNumbers[i]));
             } else {
-                x.push_back(To::Float(listOfNumbers[i]) * 1.0);
+                x.push_back(To::Double(listOfNumbers[i]) * 1.0);
             }
         } else {
             if (i % 2 == 0) {
-                x.push_back(To::Float(listOfNumbers[i]) * multiplier);
+                x.push_back(To::Double(listOfNumbers[i]) * multiplier);
             } else {
-                y.push_back(To::Float(listOfNumbers[i]));
+                y.push_back(To::Double(listOfNumbers[i]));
             }
         }
     }
-    QVector<LatLon> latLons;
+    vector<LatLon> latLons;
     if (y.size() > 3 && x.size() > 3 && x.size() == y.size()) {
-        for (int index : UtilityList::range(x.size())) {
-            const LatLon latLon(y[index], x[index]);
-            latLons.push_back(latLon);
+        for (int index : range(x.size())) {
+            latLons.emplace_back(y[index], x[index]);
         }
     }
     return latLons;
+}
+
+string LatLon::getWatchLatLon(const string& number) {
+    const auto html = UtilityIO::getHtml(GlobalVariables::nwsSPCwebsitePrefix + "/products/watch/wou" + number + ".html");
+    return parseNwsPreSecondMatch(html);
+}
+
+string LatLon::parseNwsPreSecondMatch(const string& html) {
+    const auto lines = WString::split(html, GlobalVariables::newline);
+    auto preFound = false;
+    auto endPreFound = false;
+    auto preCount = 0;
+    vector<string> modifiedLines;
+    for (const auto& line : lines) {
+        if (WString::contains(line, "<pre>")) {
+            preFound = true;
+            preCount += 1;
+            continue;
+        }
+        if (WString::contains(line, "</pre>")) {
+            if (preCount == 2) {
+                endPreFound = true;
+            }
+        }
+        if (preFound && preCount == 2 && !endPreFound) {
+            modifiedLines.push_back(line);
+        }
+    }
+    return WString::join(modifiedLines, GlobalVariables::newline);
 }

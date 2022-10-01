@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -9,12 +9,9 @@
 #include "util/UtilityUI.h"
 #include "util/UtilityList.h"
 
-HBox::HBox() {
-}
-
-HBox::HBox(QWidget * parent) {
-    this->parent = parent;
-    box = new QHBoxLayout();
+HBox::HBox()
+    : box{ new QHBoxLayout{} }
+{
     box->setSpacing(UIPreferences::boxPadding);
     box->setContentsMargins(0, 0, 0, 0);
     box->setAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -28,6 +25,10 @@ void HBox::addLayout(QLayout * w, int stretch) {
     box->addLayout(w, stretch);
 }
 
+void HBox::addStretch() {
+    box->addStretch();
+}
+
 void HBox::getAndShow(Window * win) {
     win->centralWidget->setLayout(get());
     win->show();
@@ -37,19 +38,14 @@ void HBox::setSpacing(int i) {
     box->setSpacing(i);
 }
 
-void HBox::alignCenterLeft() {
-    box->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-}
-
 QHBoxLayout * HBox::get() {
     return box;
 }
 
-void HBox::addImageRow(QStringList urls, QVector<Image>& images) {
-    for (auto index : UtilityList::range(urls.size())) {
-        auto image = Image::withIndex(parent, index);
-        images.push_back(image);
-        box->addWidget(image.get());
+void HBox::addImageRow(QWidget * parent, const vector<string>& urls, vector<Image>& images) {
+    for ([[maybe_unused]] auto index : range(urls.size())) {
+        images.emplace_back(parent);
+        box->addWidget(images.back().get());
     }
 }
 

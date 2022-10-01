@@ -1,17 +1,17 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelWpcGefsInterface.h"
+#include "UtilityModelWpcGefsInterface.h"
 
-const QStringList UtilityModelWpcGefsInterface::sectors = {
+const vector<string> UtilityModelWpcGefsInterface::sectors{
     "US",
     "AK"
 };
 
-const QStringList UtilityModelWpcGefsInterface::params = {
+const vector<string> UtilityModelWpcGefsInterface::params{
     "p06igt0p01",
     "p06igt0p1",
     "p06igt0p25",
@@ -77,6 +77,7 @@ const QStringList UtilityModelWpcGefsInterface::params = {
     "staz7gt1",
     "staz7gt2",
     "staz7gt3",
+    "2m Temps",
     "2mtlt32",
     "2mtlt0",
     "2mtltm20",
@@ -171,7 +172,7 @@ const QStringList UtilityModelWpcGefsInterface::params = {
     "capegt10000"
 };
 
-const QStringList UtilityModelWpcGefsInterface::labels = {
+const vector<string> UtilityModelWpcGefsInterface::labels{
     "6-hr precip > 0.01",
     "6-hr precip > 0.10",
     "6-hr precip > 0.25",

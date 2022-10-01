@@ -16,33 +16,22 @@
 //   Any angle may be specified for longtiude and latitude, but all angles will be
 //   canonicalized such that:
 //   </p>
-// 
+//
 //   <pre>
 //   -90 &lt= latitude &lt= +90 - 180 &lt longitude &lt= +180
 //   </pre>
-// 
+//
 //   @author Mike Gavaghan
 
 #include "external/ExternalGlobalCoordinates.h"
 
-ExternalGlobalCoordinates::ExternalGlobalCoordinates() {
-}
-
-ExternalGlobalCoordinates::ExternalGlobalCoordinates(double latitude, double longitude) {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    canonicalize();
-}
-
-void ExternalGlobalCoordinates::canonicalize() {
-}
-
-// ExternalGlobalCoordinates ExternalGlobalCoordinates::withEc(ExternalGlobalCoordinates ec, bool lonNegativeOne) {
-//     return (lonNegativeOne) ? ExternalGlobalCoordinates(ec.getLatitude(), ec.getLongitude() * -1.0) : ExternalGlobalCoordinates(ec.getLatitude(), ec.getLongitude());
-// }
+ExternalGlobalCoordinates::ExternalGlobalCoordinates(double latitude, double longitude)
+    : latitude{ latitude }
+    , longitude{ longitude }
+{}
 
 ExternalGlobalCoordinates ExternalGlobalCoordinates::withPn(const ProjectionNumbers& pn, bool lonNegativeOne) {
-    return (lonNegativeOne) ? ExternalGlobalCoordinates(pn.xDbl(), pn.yDbl() * -1.0): ExternalGlobalCoordinates(pn.xDbl(), pn.yDbl());
+    return lonNegativeOne ? ExternalGlobalCoordinates{pn.x(), pn.y() * -1.0} : ExternalGlobalCoordinates{pn.x(), pn.y()};
 }
 
 double ExternalGlobalCoordinates::getLatitude() const {

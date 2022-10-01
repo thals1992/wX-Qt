@@ -13,9 +13,10 @@
 
 #include "external/ExternalAngle.h"
 #include <cmath>
+#include <numbers>
 
 // Degrees/Radians conversion constant.
-const double ExternalAngle::piOver180 = M_PI / 180.0;
+const double ExternalAngle::piOver180{std::numbers::pi / 180.0};
 
 // Convert degrees to radians.
 double ExternalAngle::toRadians(double degrees) {

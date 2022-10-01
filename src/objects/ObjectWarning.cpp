@@ -1,62 +1,52 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "ObjectWarning.h"
 #include "common/GlobalVariables.h"
+#include "objects/WString.h"
+#include "radar/WXGLNexrad.h"
 #include "settings/UtilityLocation.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 #include "util/UtilityString.h"
-#include "util/UtilityTime.h"
-
-ObjectWarning::ObjectWarning() {
-}
 
 ObjectWarning::ObjectWarning(
-    QString url,
-    QString title,
-    QString area,
-    QString effective,
-    QString expires,
-    QString event,
-    QString sender,
-    QString polygon,
-    QString vtec,
-    QString geometry
-) {
-    this->url = url;
-    // detailed desc
-    this->title = title;
-    this->area = area;
-
-    this->effective = effective;
-    this->effective = this->effective.replace("T", " ");
-    this->effective = UtilityString::replaceRegex(this->effective, ":00-0[0-9]:00", "");
-
-    this->expires = expires;
-    this->expires = this->expires.replace("T", " ");
-    this->expires = UtilityString::replaceRegex(this->expires, ":00-0[0-9]:00", "");
-
-    this->event = event;
-    this->sender = sender;
-    this->polygon = polygon;
-    this->vtec = vtec;
-    this->geometry = geometry;
-
-    this->isCurrent = UtilityTime::isVtecCurrent(this->vtec);
-    if (vtec.startsWith("O.EXP") || vtec.startsWith("O.CAN")) {
+    const string& url,
+    const string& title,
+    const string& area,
+    const string& effective,
+    const string& expires,
+    const string& event,
+    const string& sender,
+    const string& polygon,
+    const string& vtec
+)
+    : url{ url }
+    , title{ title }
+    , area{ area }
+    , effective{ effective }
+    , expires{ expires }
+    , event{ event }
+    , sender{ sender }
+    , polygon{ polygon }
+    , vtec{ vtec }
+    , isCurrent{ WXGLNexrad::isVtecCurrent(this->vtec) }
+{
+    this->effective = WString::replace(this->effective, "T", " ");
+    this->effective = UtilityString::replaceRegex1(this->effective, ":00-0[0-9]:00", "");
+    this->expires = WString::replace(this->expires, "T", " ");
+    this->expires = UtilityString::replaceRegex1(this->expires, ":00-0[0-9]:00", "");
+    if (WString::startsWith(vtec, "O.EXP") || WString::startsWith(vtec, "O.CAN")) {
         this->isCurrent = false;
     }
 }
 
-QVector<ObjectWarning> ObjectWarning::parseJson(QString htmlF) {
-    QVector<ObjectWarning> warnings;
-    QString html = htmlF;
-    html = html.replace("\"geometry\": null,", "\"geometry\": null, \"coordinates\":[[]]}");
-
+vector<ObjectWarning> ObjectWarning::parseJson(const string& htmlF) {
+    vector<ObjectWarning> warnings;
+    const auto html = WString::replace(htmlF, "\"geometry\": null,", "\"geometry\": null, \"coordinates\":[[]]}");
     const auto urlList = UtilityString::parseColumn(html, "\"id\": \"(https://api.weather.gov/alerts/urn.*?)\"");
     const auto titleList = UtilityString::parseColumn(html, "\"description\": \"(.*?)\"");
     const auto areaDescList = UtilityString::parseColumn(html, "\"areaDesc\": \"(.*?)\"");
@@ -64,14 +54,17 @@ QVector<ObjectWarning> ObjectWarning::parseJson(QString htmlF) {
     const auto expiresList = UtilityString::parseColumn(html, "\"expires\": \"(.*?)\"");
     const auto eventList = UtilityString::parseColumn(html, "\"event\": \"(.*?)\"");
     const auto senderNameList = UtilityString::parseColumn(html, "\"senderName\": \"(.*?)\"");
-    const auto geometryList = UtilityString::parseColumn(html, "\"geometry\": (.*?),");
+//    const auto geometryList = UtilityString::parseColumn(html, "\"geometry\": (.*?),");
+    // auto data = html;
+    // data = data.replace("\n", "");
+    // data = data.replace(" ", "");
     auto data = html;
-    data = data.replace("\n", "");
-    data = data.replace(" ", "");
+    data = WString::replace(data, "\n", "");
+    data = WString::replace(data, " ", "");
     const auto listOfPolygonRaw = UtilityString::parseColumn(data, GlobalVariables::warningLatLonPattern);
     const auto vtecs = UtilityString::parseColumn(html, GlobalVariables::vtecPattern);
-    for (auto index : UtilityList::range(urlList.size())) {
-        warnings.push_back(ObjectWarning(
+    for (auto index : range(urlList.size())) {
+        warnings.emplace_back(
             Utility::safeGet(urlList, index),
             Utility::safeGet(titleList, index),
             Utility::safeGet(areaDescList, index),
@@ -80,22 +73,22 @@ QVector<ObjectWarning> ObjectWarning::parseJson(QString htmlF) {
             Utility::safeGet(eventList, index),
             Utility::safeGet(senderNameList, index),
             Utility::safeGet(listOfPolygonRaw, index),
-            Utility::safeGet(vtecs, index),
-            Utility::safeGet(geometryList, index)
-        ));
+            Utility::safeGet(vtecs, index));
     }
     return warnings;
 }
 
-QString ObjectWarning::getClosestRadar() const {
-    auto listOfPolygonRawLocal = polygon;
-    const auto data = listOfPolygonRawLocal.replace("[", "").replace("]", "").replace(",", " ").replace("-", "");
-    const auto points = data.split(" ");
+string ObjectWarning::getClosestRadar() const {
+    auto data = WString::replace(polygon, "[", "");
+    data = WString::replace(data, "]", "");
+    data = WString::replace(data, ",", " ");
+    data = WString::replace(data, "-", "");
+    auto points = WString::split(data, " ");
     if (points.size() > 2) {
         const auto lat = points[1];
         const auto lon = "-" + points[0];
         const auto radarSites = UtilityLocation::getNearestRadarSites(LatLon(lat, lon), 1, false);
-        if (radarSites.size() == 0) {
+        if (radarSites.empty()) {
             return "";
         } else {
             return radarSites[0].name;
@@ -105,17 +98,15 @@ QString ObjectWarning::getClosestRadar() const {
     }
 }
 
-QString ObjectWarning::getUrl() const {
+string ObjectWarning::getUrl() const {
     return url;
 }
 
-QVector<LatLon> ObjectWarning::getPolygonAsLatLons(int mult) const {
-    auto polygonTmp = polygon;
-    polygonTmp = polygonTmp.replace("[", "");
-    polygonTmp = polygonTmp.replace("]", "");
-    polygonTmp = polygonTmp.replace(",", " ");
-    auto latLons = LatLon::parseStringToLatLons(polygonTmp, mult, true);
-    return latLons;
+vector<LatLon> ObjectWarning::getPolygonAsLatLons(int multiplier) const {
+    auto polygonTmp = WString::replace(polygon, "[", "");
+    polygonTmp = WString::replace(polygonTmp, "]", "");
+    polygonTmp = WString::replace(polygonTmp, ",", " ");
+    return LatLon::parseStringToLatLons(polygonTmp, multiplier, true);
 }
 
 /*

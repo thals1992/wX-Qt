@@ -1,33 +1,30 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "common/GlobalVariables.h"
-#include <QVector>
 #include "misc/CapAlertXml.h"
 #include "objects/LatLon.h"
+#include "objects/WString.h"
 #include "settings/UtilityLocation.h"
 #include "util/To.h"
 #include "util/UtilityString.h"
 
-CapAlertXml::CapAlertXml() {
-}
-
-CapAlertXml::CapAlertXml(const QString& eventText) {
-    url = UtilityString::parse(eventText, "<id>(.*?)</id>");
-    title = UtilityString::parse(eventText, "<title>(.*?)</title>");
-    summary = UtilityString::parse(eventText, "<summary>(.*?)</summary>");
-    instructions = UtilityString::parse(eventText, "</description>.*?<instruction>(.*?)</instruction>.*?<areaDesc>");
-    area = UtilityString::parse(eventText, "<cap:areaDesc>(.*?)</cap:areaDesc>");
-    area = area.replace("&apos;", "'");
-    effective = UtilityString::parse(eventText, "<cap:effective>(.*?)</cap:effective>");
-    expires = UtilityString::parse(eventText, "<cap:expires>(.*?)</cap:expires>");
-    event = UtilityString::parse(eventText, "<cap:event>(.*?)</cap:event>");
-    vtec = UtilityString::parse(eventText, "<valueName>VTEC</valueName>.*?<value>(.*?)</value>");
-    zones = UtilityString::parse(eventText, "<valueName>UGC</valueName>.*?<value>(.*?)</value>");
-    polygon = UtilityString::parse(eventText, "<cap:polygon>(.*?)</cap:polygon>");
+CapAlertXml::CapAlertXml(const string& s) {
+    url = UtilityString::parse(s, "<id>(.*?)</id>");
+    title = UtilityString::parse(s, "<title>(.*?)</title>");
+    summary = UtilityString::parse(s, "<summary>(.*?)</summary>");
+    instructions = UtilityString::parse(s, "</description>.*?<instruction>(.*?)</instruction>.*?<areaDesc>");
+    area = UtilityString::parse(s, "<cap:areaDesc>(.*?)</cap:areaDesc>");
+    area = WString::replace(area, "&apos;", "'");
+    effective = UtilityString::parse(s, "<cap:effective>(.*?)</cap:effective>");
+    expires = UtilityString::parse(s, "<cap:expires>(.*?)</cap:expires>");
+    event = UtilityString::parse(s, "<cap:event>(.*?)</cap:event>");
+//    vtec = UtilityString::parse(s, "<valueName>VTEC</valueName>.*?<value>(.*?)</value>");
+//    zones = UtilityString::parse(s, "<valueName>UGC</valueName>.*?<value>(.*?)</value>");
+    polygon = UtilityString::parse(s, "<cap:polygon>(.*?)</cap:polygon>");
     text = title;
     text += GlobalVariables::newline;
     text += "Counties: ";
@@ -37,21 +34,17 @@ CapAlertXml::CapAlertXml(const QString& eventText) {
     text += GlobalVariables::newline;
     text += instructions;
     text += GlobalVariables::newline;
-    summary = summary.replace("<br>\\*", "<br><br>*");
-    points = polygon.split(" ");
+    summary = WString::replace(summary, "<br>\\*", "<br><br>*");
+    points = WString::split(polygon, " ");
 }
 
-QString CapAlertXml::getClosestRadar() const {
+string CapAlertXml::getClosestRadar() const {
     if (points.size() > 2) {
-        auto lat = To::Float(points[0].split(",")[0]);
-        auto lon = To::Float(points[0].split(",")[1]);
-        auto latLon = LatLon(lat, lon);
-        auto radarSites = UtilityLocation::getNearestRadarSites(latLon, 1, false);
-        if (radarSites.size() == 0) {
-            return "";
-        } else {
-            return radarSites[0].name;
-        }
+        const auto lat = To::Double(WString::split(points[0], ",")[0]);
+        const auto lon = To::Double(WString::split(points[0], ",")[1]);
+        const auto latLon = LatLon{lat, lon};
+        const auto radarSites = UtilityLocation::getNearestRadarSites(latLon, 1, false);
+        return radarSites[0].name;
     } else {
         return "";
     }

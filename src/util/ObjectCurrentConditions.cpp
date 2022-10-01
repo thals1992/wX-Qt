@@ -1,24 +1,25 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "util/ObjectCurrentConditions.h"
 #include "common/GlobalVariables.h"
+#include "objects/ObjectDateTime.h"
+#include "objects/WString.h"
 #include "util/ObjectMetar.h"
 #include "util/UtilityIO.h"
 
-ObjectCurrentConditions::ObjectCurrentConditions() {
-}
+string ObjectCurrentConditions::metarFileName{"stations_us4.txt"};
+bool ObjectCurrentConditions::metarSitesInitialized{false};
+vector<string> ObjectCurrentConditions::metarSites;
 
-ObjectCurrentConditions::ObjectCurrentConditions(const LatLon& latLon) {
+void ObjectCurrentConditions::process(const LatLon& latLon, int index) {
     this->latLon = latLon;
-}
-
-void ObjectCurrentConditions::process() {
-    QString stringValue = "";
-    const auto objectMetar = ObjectMetar(latLon);
+    string stringValue;
+    auto objectMetar = ObjectMetar{latLon, index};
+    objectMetar.process();
     obsStation = objectMetar.obsClosest.name;
     conditionsTimeString = objectMetar.conditionsTimeString;
     temperature = objectMetar.temperature + GlobalVariables::degreeSymbol;
@@ -32,6 +33,7 @@ void ObjectCurrentConditions::process() {
     windGust = objectMetar.windGust;
     visibility = objectMetar.visibility;
     condition = objectMetar.condition;
+    timeStringUtc = objectMetar.timeStringUtc;
     stringValue += temperature;
     if (objectMetar.windChill != "0") {
         stringValue += "(" + windChill + ")";
@@ -40,28 +42,27 @@ void ObjectCurrentConditions::process() {
     }
     stringValue += " / " + dewPoint + "(" + relativeHumidity + ")" + " - ";
     stringValue += seaLevelPressure + " - " + windDirection + " " + windSpeed;
-    if (windGust != "") {
+    if (!windGust.empty()) {
         stringValue += " G ";
     }
     stringValue += windGust + " mph" + " - " + visibility + " mi - " + condition;
     data = stringValue;
     iconUrl = objectMetar.icon;
-    rawMetar = objectMetar.rawMetar;
     status = conditionsTimeString;
     formatCurrentConditions();
 }
 
 void ObjectCurrentConditions::formatCurrentConditions() {
-    const QString separator = " - ";
-    auto dataList = data.split(separator);
-    QString topLineLocal = "";
-    QString middleLineLocal = "";
-    QString bottomLineLocal = "";
+    const string separator = " - ";
+    const auto dataList = WString::split(data, separator);
+    string topLineLocal;
+    string middleLineLocal;
+    string bottomLineLocal;
     if (dataList.size() > 4) {
-        auto items = dataList[0].split("/");
-        topLineLocal = dataList[4].replace("^ ", "") + " " + items[0] + dataList[2];
-        middleLineLocal = items[1].replace("^ ", "") + separator + dataList[1] + separator + dataList[3];
-        bottomLineLocal += status + " " + getObsFullName();
+        const auto items = WString::split(dataList[0], "/");
+        topLineLocal = WString::replace(dataList[4], "^ ", "") + " " + items[0] + dataList[2];
+        middleLineLocal = WString::replace(items[1], "^ ", "") + separator + dataList[1] + separator + dataList[3];
+        bottomLineLocal += status + GlobalVariables::newline + getObsFullName();
     }
     topLine = topLineLocal;
     middleLine = middleLineLocal;
@@ -69,12 +70,30 @@ void ObjectCurrentConditions::formatCurrentConditions() {
     summary = topLine + GlobalVariables::newline + middleLine;
 }
 
-QString ObjectCurrentConditions::getObsFullName() {
-    const auto lines = UtilityIO::rawFileToStringArray(GlobalVariables::resDir + "stations_us4.txt");
-    for (const auto& line : lines) {
-        if (line.endsWith(obsStation)) {
-            return line.split(",")[1];
+void ObjectCurrentConditions::loadMetarData() {
+    if (!metarSitesInitialized) {
+        metarSitesInitialized = true;
+        metarSites = UtilityIO::rawFileToStringArray(GlobalVariables::resDir + metarFileName);
+    }
+}
+
+string ObjectCurrentConditions::getObsFullName() const {
+    loadMetarData();
+    for (const auto& line : metarSites) {
+        if (WString::endsWith(line, obsStation)) {
+            return WString::split(line, ",")[1];
         }
     }
     return "NA";
+}
+
+// compare the timestamp in the metar to the current time
+// if older than a certain amount, download the 2nd closest site and process
+void ObjectCurrentConditions::timeCheck() {
+    const auto obsTime = ObjectDateTime::fromObs(timeStringUtc);
+    const auto currentTime = ObjectDateTime::getCurrentTimeInUTC();
+    const auto isTimeCurrent = ObjectDateTime::timeDifference(currentTime, obsTime.get(), 120);
+    if (!isTimeCurrent) {
+        process(latLon, 1);
+    }
 }

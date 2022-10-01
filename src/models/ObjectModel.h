@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,51 +7,50 @@
 #ifndef OBJECTMODEL_H
 #define OBJECTMODEL_H
 
-#include "models/RunTimeData.h"
+#include <string>
+#include <vector>
+#include "RunTimeData.h"
+
+using std::string;
+using std::vector;
 
 class ObjectModel {
 public:
-    ObjectModel();
-    explicit ObjectModel(const QString&);
-    void getPreferences();
-    void writePrefs();
-    void setModelVars(const QString&);
-    QString getTime();
-    void setupListRunZ();
-    void setupListRunZ03();
-    void assignTimeIdxF(int);
-    void timeIdxIncr();
-    void timeIdxDecr();
-    void leftClick();
-    void rightClick();
-    void setTimeArr(int, const QString&);
-    QString prefModel;
-    QString modelName;
-    QStringList params;
-    QStringList paramLabels;
-    QStringList sectors;
-    QStringList times;
-    QStringList runs;
-    QStringList models;
-    RunTimeData runTimeData;
-    QString modelToken;
-    QString prefSector;
-    QString prefParam;
-    QString prefRunPosn;
-    QString prefRunPosnIdx;
-    QString model;
-    QString run;
-    QString timeStr;
-    int timeIdx;
-    QString param;
-    QString sector;
-    int sectorInt;
-    int prodIdx;
-
-private:
+    explicit ObjectModel(const string&);
+    void getPrefs();
+    void writePrefs() const;
     void loadTimeList(int, int, int);
     void loadTimeList3(int, int, int);
     void loadRunList(int, int, int);
+    void setModelVars(const string&);
+    void setupListRunZ();
+    void setupListRunZWithStart(const string&);
+    string getTime() const;
+    void setTimeIdx(int);
+    void leftClick();
+    void rightClick();
+    void timeIdxIncr();
+    void timeIdxDecr();
+    void setTimeArr(int, const string&);
+    vector<string> params;
+    vector<string> paramLabels;
+    vector<string> sectors;
+    vector<string> times;
+    vector<string> runs;
+    vector<string> models;
+    RunTimeData runTimeData;
+    string modelToken;
+    string prefModel;
+    string prefSector;
+    string prefParam;
+    string prefRunPosn;
+    string prefRunPosnIdx;
+    string model;
+    string run;
+    string timeStr;
+    size_t timeIdx{};
+    string param;
+    string sector;
 };
 
 #endif  // OBJECTMODEL_H

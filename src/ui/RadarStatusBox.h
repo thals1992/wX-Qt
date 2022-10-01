@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,21 +7,27 @@
 #ifndef RADARSTATUSBOX_H
 #define RADARSTATUSBOX_H
 
+#include <string>
 #include <QLabel>
+#include "ui/ClickableLabel.h"
+
+using std::function;
+using std::string;
 
 class RadarStatusBox {
 public:
-    RadarStatusBox();
-    explicit RadarStatusBox(QWidget * parent);
-    void setCurrent(const QString&);
-    void setOld(const QString&);
-    QLabel * get();
+    explicit RadarStatusBox(QWidget *);
+    void setCurrent(const string&);
+    void setOld(const string&);
+    void connect(const function<void()>&);
+    ClickableLabel * get();
 
 private:
-    void setText(const QString& s);
+    void setText(const string&);
     void setBackGroundRed();
     void setBackGroundGreen();
-    QLabel * label;
+    QWidget * parent;
+    ClickableLabel * label;
 };
 
 #endif  // RADARSTATUSBOX_H

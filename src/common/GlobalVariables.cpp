@@ -1,31 +1,31 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "common/GlobalVariables.h"
 
-const QString GlobalVariables::appName = "wxqt";
-const QString GlobalVariables::aboutString(
+const string GlobalVariables::appName{"wxqt"};
+const string GlobalVariables::aboutString{
 appName + " is an efficient and configurable method to access weather content from the NWS, NSSL WRF, and blitzortung.org."
 " Software is provided \"as is\". Use at your own risk. Use for educational purposes and non-commercial purposes only."
-" Do not use for operational purposes.  Copyright 2020, 2021 joshua.tee@gmail.com ."
+" Do not use for operational purposes.  Copyright 2020, 2021, 2022 joshua.tee@gmail.com ."
 " Privacy Policy: this app does not collect any data from the user or the user’s device."
 " Please report bugs or suggestions via email. "
  + appName + " is licensed under the GNU GPLv3 license. For more information on the license please go here:"
 " http://www.gnu.org/licenses/gpl-3.0.en.html"
-);
+};
 
-const QString GlobalVariables::mainScreenShortcuts = R"mainScreenShort(
+const string GlobalVariables::mainScreenShortcuts{R"mainScreenShort(
     Ctrl-a - WFO Viewer
     Ctrl-c - GOES
     Ctrl-d - Severe Dashboard
-    Ctrl-f - SPC Fireweather Summary
+    Ctrl-f - SPC Fire Weather Summary
     Ctrl-h - Hourly
     Ctrl-i - National Images
     Ctrl-l - Lightning
-    Ctrl-m - Radad Mosaic
+    Ctrl-m - Radar Mosaic
     Ctrl-n - NCEP Model Viewer
     Ctrl-o - NHC
     Ctrl-q or Ctrl-w or Escape - Quit program
@@ -45,10 +45,10 @@ const QString GlobalVariables::mainScreenShortcuts = R"mainScreenShort(
 
     Screens with animation support Ctrl-a to stop/start
 
-    )mainScreenShort";
+    )mainScreenShort"};
 
 
-const QString GlobalVariables::nexradShortcuts = R"nexradShort(
+const string GlobalVariables::nexradShortcuts{R"nexradShort(
 
     Ctrl-DownArrow - down
     Ctrl-UpArrow - up
@@ -63,37 +63,31 @@ const QString GlobalVariables::nexradShortcuts = R"nexradShort(
     Ctrl-/ show shortcuts (this window)
 
     Ctrl-r Base Reflectivity
-    Ctrl-v Basr Velocity
+    Ctrl-v Base Velocity
     Ctrl-t Enhanced Echo Tops
     Ctrl-l Vertically Integrated Liquid
     Ctrl-c Correlation Coefficient
 
     You can right click in the radar to open a contextual menu.
 
-    )nexradShort";
+    )nexradShort"};
 
-const QString GlobalVariables::appCreatorEmail = "joshua.tee@gmail.com";
-const QString GlobalVariables::resDir = ":/res/";
-const QString GlobalVariables::imageDir = ":/images/";
-const QString GlobalVariables::newline = "\n";
-const QString GlobalVariables::degreeSymbol = QString::fromUtf8("°");
-const QString GlobalVariables::nwsSPCwebsitePrefix = "https://www.spc.noaa.gov";;
-const QString GlobalVariables::nwsWPCwebsitePrefix = "https://www.wpc.ncep.noaa.gov";
-const QString GlobalVariables::nwsAWCwebsitePrefix = "https://www.aviationweather.gov";
-const QString GlobalVariables::nwsGraphicalWebsitePrefix = "https://graphical.weather.gov";
-const QString GlobalVariables::nwsCPCNcepWebsitePrefix = "https://www.cpc.ncep.noaa.gov";
-const QString GlobalVariables::nwsGoesWebsitePrefix = "https://www.goes.noaa.gov";
-const QString GlobalVariables::nwsOpcWebsitePrefix = "https://ocean.weather.gov";
-const QString GlobalVariables::nwsNhcWebsitePrefix = "https://www.nhc.noaa.gov";
-const QString GlobalVariables::nwsRadarWebsitePrefix = "https://radar.weather.gov";
-const QString GlobalVariables::nwsMagNcepWebsitePrefix = "https://mag.ncep.noaa.gov";
-const QString GlobalVariables::nwsSwpcWebSitePrefix = "https://services.swpc.noaa.gov";
-const QString GlobalVariables::goes16Url = "https://cdn.star.nesdis.noaa.gov/";
-const QString GlobalVariables::nwsApiUrl = "https://api.weather.gov/";
-const QString GlobalVariables::tgftpSitePrefix = "https://tgftp.nws.noaa.gov/";
-const QString GlobalVariables::prePattern = "<pre.*?>(.*?)</pre>";
-const QString GlobalVariables::pre2Pattern = "<pre>(.*?)</pre>";
-const QString GlobalVariables::vtecPattern = "([A-Z0]{1}\\.[A-Z]{3}\\.[A-Z]{4}\\.[A-Z]{2}\\.[A-Z]\\.[0-9]{4}\\.[0-9]{6}T[0-9]{4}Z\\-[0-9]{6}T[0-9]{4}Z)";
-const QString GlobalVariables::warningLatLonPattern = "\"coordinates\":\\[\\[(.*?)\\]\\]\\}";
-const QString GlobalVariables::utilUsPeriodNamePattern = ".*?period-name=(.*?)>.*?";
-const QString GlobalVariables::xmlValuePattern = "<value>";
+const string GlobalVariables::appCreatorEmail{"joshua.tee@gmail.com"};
+const string GlobalVariables::resDir{":/res/"};
+const string GlobalVariables::imageDir{":/images/"};
+const string GlobalVariables::newline{"\n"};
+// const string GlobalVariables::degreeSymbol{qstring::fromUtf8("°").toStdString()};
+const string GlobalVariables::degreeSymbol{"\u00B0"};
+const string GlobalVariables::nwsSPCwebsitePrefix{"https://www.spc.noaa.gov"};
+const string GlobalVariables::nwsWPCwebsitePrefix{"https://www.wpc.ncep.noaa.gov"};
+const string GlobalVariables::nwsAWCwebsitePrefix{"https://www.aviationweather.gov"};
+const string GlobalVariables::nwsNhcWebsitePrefix{"https://www.nhc.noaa.gov"};
+const string GlobalVariables::goes16Url{"https://cdn.star.nesdis.noaa.gov/"};
+const string GlobalVariables::nwsApiUrl{"https://api.weather.gov/"};
+const string GlobalVariables::tgftpSitePrefix{"https://tgftp.nws.noaa.gov/"};
+const string GlobalVariables::prePattern{"<pre.*?>(.*?)</pre>"};
+const string GlobalVariables::pre2Pattern{"<pre>(.*?)</pre>"};
+const string GlobalVariables::vtecPattern{"([A-Z0]{1}\\.[A-Z]{3}\\.[A-Z]{4}\\.[A-Z]{2}\\.[A-Z]\\.[0-9]{4}\\.[0-9]{6}T[0-9]{4}Z\\-[0-9]{6}T[0-9]{4}Z)"};
+const string GlobalVariables::warningLatLonPattern{"\"coordinates\":\\[\\[(.*?)\\]\\]\\}"};
+const string GlobalVariables::utilUsPeriodNamePattern{".*?period-name=(.*?)>.*?"};
+const string GlobalVariables::xmlValuePattern{"<value>"};

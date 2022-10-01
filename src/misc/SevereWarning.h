@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,23 +7,27 @@
 #ifndef SEVEREWARNING_H
 #define SEVEREWARNING_H
 
-#include <QStringList>
-#include <QVector>
+#include <string>
+#include <vector>
 #include "objects/ObjectWarning.h"
 #include "radar/PolygonType.h"
 
+using std::string;
+using std::vector;
+
 class SevereWarning {
 public:
-    SevereWarning();
     explicit SevereWarning(PolygonType);
     void generateString();
-    QString getName() const;
-    QString getCount() const;
-    QString getShortName() const;
+    string getName() const;
+    string getCount() const;
+    string getShortName() const;
     void download();
+    vector<ObjectWarning> warningList;
+
+private:
     PolygonType type;
-    QString text;
-    QVector<ObjectWarning> warningList;
+    string text;
 };
 
 #endif  // SEVEREWARNING_H

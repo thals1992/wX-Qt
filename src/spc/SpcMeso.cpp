@@ -1,10 +1,11 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "spc/SpcMeso.h"
+#include <algorithm>
 #include "objects/FutureBytes.h"
 #include "spc/UtilitySpcMeso.h"
 #include "spc/UtilitySpcMesoInputOutput.h"
@@ -12,46 +13,42 @@
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 
-SpcMeso::SpcMeso(QWidget * parent) : Window(parent) {
+SpcMeso::SpcMeso(QWidget * parent)
+    : Window{parent}
+    , photo{ Photo{this, Full} }
+    , comboboxSector{ ComboBox{this, UtilitySpcMeso::sectors} }
+    , buttonBack{ Button{this, Left, ""} }
+    , buttonForward{ Button{this, Right, ""} }
+    , animateButton{ ButtonToggle{this, Play, "Animate ctrl-A"} }
+    , objectAnimate{ ObjectAnimate{this, &photo, &UtilitySpcMesoInputOutput::getAnimation, [this] { reload(); }, &animateButton} }
+    , shortcutAnimate{ Shortcut{QKeySequence{"A"}, this} }
+    , shortcutLeft{ Shortcut{Qt::Key_Left, this} }
+    , shortcutRight{ Shortcut{Qt::Key_Right, this} }
+{
     setTitle("SPC Mesoanalysis");
-    maximize();
-    boxH = HBox(this);
-    imageLayout = HBox(this);
-    boxFav = VBox(this);
-    box = VBox(this);
-    photo = Photo(this, PhotoSizeEnum::full);
-
-    buttonBack = Button(this, Icon::Left, "");
     buttonBack.connect([this] { moveLeftClicked(); });
-    buttonForward = Button(this, Icon::Right, "");
     buttonForward.connect([this] { moveRightClicked(); });
 
-    animateButton = ButtonToggle(this, Icon::Play, "Animate ctrl-A");
-    objectAnimate = new ObjectAnimate(this, &photo, &UtilitySpcMesoInputOutput::getAnimation, [this] { reload(); }, &animateButton);
-    objectAnimate->product = Utility::readPref(prefTokenProduct, "pmsl");
-    objectAnimate->sector = Utility::readPref(prefTokenSector, "19");
-    animateButton.connect([this] { objectAnimate->animateClicked(); });
-    index = UtilityList::findex(objectAnimate->product, UtilitySpcMeso::products);
-    indexSector = UtilityList::findex(objectAnimate->sector, UtilitySpcMeso::sectorCodes);
+    objectAnimate.product = Utility::readPref(prefTokenProduct, "pmsl");
+    objectAnimate.sector = Utility::readPref(prefTokenSector, "19");
+    animateButton.connect([this] { objectAnimate.animateClicked(); });
+    index = findex(objectAnimate.product, UtilitySpcMeso::products);
 
-    comboboxSector = ComboBox(this, UtilitySpcMeso::sectors);
-    comboboxSector.setIndex(UtilityList::findex(objectAnimate->sector, UtilitySpcMeso::sectorCodes));
+    comboboxSector.setIndex(findex(objectAnimate.sector, UtilitySpcMeso::sectorCodes));
     comboboxSector.connect([this] { changeSector(); });
 
     boxFav.addWidget(comboboxSector.get());
     boxFav.addWidget(animateButton.get());
-
     boxH.addWidget(buttonBack.get());
     boxH.addWidget(buttonForward.get());
     box.addLayout(boxH.get());
 
     auto j = 0;
     for (const auto& item : UtilitySpcMeso::favList) {
-        auto button = Button(this, "");
-        buttons.push_back(button);
-        button.setText(item);
-        button.connect([this, j]{ changeProductForFav(j); });
-        boxFav.addWidget(button.get());
+        buttons.emplace_back(this, None, "");
+        buttons.back().setText(item);
+        buttons.back().connect([this, j] { changeProductForFav(j); });
+        boxFav.addWidget(buttons.back().get());
         j += 1;
     }
     boxFav.addStretch();
@@ -61,80 +58,72 @@ SpcMeso::SpcMeso(QWidget * parent) : Window(parent) {
     box.addLayout(imageLayout.get());
     box.getAndShow(this);
 
-    int itemsSoFar = 0;
+    auto itemsSoFar = 0;
     for (auto& menu : UtilitySpcMeso::titles) {
         menu.setList(UtilitySpcMeso::labels, itemsSoFar);
         itemsSoFar += menu.count;
     }
     for (auto& objectMenuTitle : UtilitySpcMeso::titles) {
-        popoverMenus.push_back(PopoverMenu(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (QString s) { changeProductByCode(s); }));
+        popoverMenus.emplace_back(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (const auto& s) { changeProductByCode(s); });
         boxH.addWidget(popoverMenus.back().get());
     }
-
-    shortcutAnimate = Shortcut(QKeySequence("Ctrl+A"), this);
-    shortcutAnimate.connect([this] { objectAnimate->animateClicked(); });
-
-    shortcutLeft = Shortcut(Qt::CTRL | Qt::Key_Left, this);
+    shortcutAnimate.connect([this] { objectAnimate.animateClicked(); });
     shortcutLeft.connect([this] { moveLeftClicked(); });
-
-    shortcutRight = Shortcut(Qt::CTRL | Qt::Key_Right, this);
     shortcutRight.connect([this] { moveRightClicked(); });
-
     reload();
 }
 
 void SpcMeso::moveLeftClicked() {
     index -= 1;
     index = std::max(index, 0);
-    objectAnimate->product = UtilitySpcMeso::products[index];
-    reload(); 
+    objectAnimate.product = UtilitySpcMeso::products[index];
+    reload();
 }
 
 void SpcMeso::moveRightClicked() {
     index += 1;
     index = std::min(index, static_cast<int>(UtilitySpcMeso::products.size()) - 1);
-    objectAnimate->product = UtilitySpcMeso::products[index];
-    reload(); 
-}
-
-void SpcMeso::reload() {
-    objectAnimate->stopAnimate();
-    Utility::writePref(prefTokenProduct, objectAnimate->product);
-    Utility::writePref(prefTokenSector, objectAnimate->sector);
-    url = getUrl();
-    index = UtilityList::indexOf(UtilitySpcMeso::products, objectAnimate->product);
-    setTitle(UtilitySpcMeso::labels[index]);
-    new FutureBytes(this, url, [this] (const auto& ba) { photo.setBytes(ba); });
-}
-
-void SpcMeso::changeProductForFav(int indexB) {
-    auto b = UtilitySpcMeso::favList[indexB];
-    auto index = UtilityList::findex(b, UtilitySpcMeso::products);
-    objectAnimate->product = UtilitySpcMeso::products[index];
+    objectAnimate.product = UtilitySpcMeso::products[index];
     reload();
 }
 
-void SpcMeso::changeProductByCode(const QString& label) {
-    index = UtilityList::findex(label, UtilitySpcMeso::labels);
-    objectAnimate->product = UtilitySpcMeso::products[index];
+void SpcMeso::reload() {
+    objectAnimate.stopAnimate();
+    Utility::writePref(prefTokenProduct, objectAnimate.product);
+    Utility::writePref(prefTokenSector, objectAnimate.sector);
+    index = indexOf(UtilitySpcMeso::products, objectAnimate.product);
+    setTitle(UtilitySpcMeso::labels[index]);
+    new FutureBytes{this, getUrl(), [this] (const auto& ba) { photo.setBytes(ba); }};
+}
+
+void SpcMeso::changeProductForFav(int indexB) {
+    const auto& b = UtilitySpcMeso::favList[indexB];
+    index = findex(b, UtilitySpcMeso::products);
+    objectAnimate.product = UtilitySpcMeso::products[index];
+    reload();
+}
+
+void SpcMeso::changeProductByCode(const string& label) {
+    index = findex(label, UtilitySpcMeso::labels);
+    objectAnimate.product = UtilitySpcMeso::products[index];
     reload();
 }
 
 void SpcMeso::changeSector() {
-    objectAnimate->sector = UtilitySpcMeso::sectorCodes[comboboxSector.getIndex()];
+    objectAnimate.sector = UtilitySpcMeso::sectorCodes[comboboxSector.getIndex()];
     reload();
 }
 
-QString SpcMeso::getUrl() {
-    QString gifUrl = ".gif";
-    if (UtilitySpcMeso::imgSf.contains(objectAnimate->product)) {
+string SpcMeso::getUrl() const {
+    string gifUrl = ".gif";
+    // if (UtilitySpcMeso::imgSf.contains(objectAnimate.product)) {
+    if (contains(UtilitySpcMeso::imgSf, objectAnimate.product)) {
         gifUrl = "_sf.gif";
     }
-    url = "https://www.spc.noaa.gov/exper/mesoanalysis/s" + objectAnimate->sector + "/" + objectAnimate->product + "/" + objectAnimate->product + gifUrl;
-    return url;
+    return "https://www.spc.noaa.gov/exper/mesoanalysis/s" + objectAnimate.sector + "/" + objectAnimate.product + "/" + objectAnimate.product + gifUrl;
 }
 
 void SpcMeso::closeEvent(QCloseEvent * event) {
-    objectAnimate->stopAnimate();
+    objectAnimate.stopAnimate();
     event->accept();
 }

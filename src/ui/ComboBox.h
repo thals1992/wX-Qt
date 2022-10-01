@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,35 +8,36 @@
 #define COMBOBOX_H
 
 #include <functional>
+#include <string>
+#include <vector>
 #include <QComboBox>
 
-class ComboBox  {
+using std::function;
+using std::string;
+using std::vector;
 
+class ComboBox  {
 public:
-    ComboBox();
     explicit ComboBox(QWidget *);
-    explicit ComboBox(QWidget *, QStringList);
+    ComboBox(QWidget *, const vector<string>&);
     void setIndex(int);
     int getIndex() const;
-    void setIndexByValue(const QString&);
-    void setArrayListInt(QVector<int>);
-    void setList(QStringList);
-    void addItems(QStringList);
-    void appendText(QString);
+    void setIndexByPref(const string&, int);
+    void setIndexByValue(const string&);
+    void setArrayListInt(const vector<int>&);
+    void setList(const vector<string>&);
+    void addItems(const vector<string>&);
+    void appendText(const string&);
     void clear();
-    void block(int);
-    void unblock(int);
     void block();
     void unblock();
-    void blockSignals(bool);
-    void connect(std::function<void()> f);
+    void connect(const function<void()>&);
     QComboBox * get();
     void setVisible(bool);
-    void removeAll();
-    QString currentText() const;
-    QString getValue() const;
+    string getValue() const;
 
 private:
+    void blockSignals(bool);
     QComboBox * comboBox;
     QWidget * parent;
     QStringList comboItems;

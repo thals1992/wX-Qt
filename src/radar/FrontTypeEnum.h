@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,12 +8,12 @@
 #define FRONTTYPEENUM_H
 
 enum FrontTypeEnum {
-    COLD = 1,
-    WARM = 2,
-    STNRY = 3,
-    STNRY_WARM = 4,
-    TROF = 5,
-    OCFNT = 6,
+    COLD,
+    WARM,
+    STNRY,
+    STNRY_WARM,
+    TROF,
+    OCFNT,
 };
 
 #endif  // FRONTTYPEENUM_H

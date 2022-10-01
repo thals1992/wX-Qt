@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,15 +7,19 @@
 #ifndef UTILITYDOWNLOAD_H
 #define UTILITYDOWNLOAD_H
 
-#include <QString>
+#include <string>
+
+using std::string;
 
 class UtilityDownload {
-
 public:
-    static QString getTextProduct(const QString&);
-    static QString getImageProduct(const QString&);
-    static QString getTextProductWithVersion(const QString&, int);
-    static QString getRadarStatusMessage(const QString&);
+    static string getTextProduct(const string&);
+    static string getImageProduct(const string&);
+    static string getTextProductWithVersion(const string&, int);
+    static string getRadarStatusMessage(const string&);
+
+private:
+    static bool useNwsApi;
 };
 
 #endif  // UTILITYDOWNLOAD_H

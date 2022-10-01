@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,33 +7,40 @@
 #ifndef USALERTS_H
 #define USALERTS_H
 
-#include "misc/CapAlertXml.h"
-#include "ui/ComboBox.h"
-#include "ui/Photo.h"
-#include "ui/ScrolledWindow.h"
-#include "ui/VBox.h"
-#include "ui/Window.h"
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include <QWidget>
+#include "CapAlertXml.h"
+#include "../ui/ComboBox.h"
+#include "../ui/ObjectCardAlertDetail.h"
+#include "../ui/Photo.h"
+#include "../ui/ScrolledWindow.h"
+#include "../ui/Window.h"
+#include "../ui/VBox.h"
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 class UsAlerts : public Window {
 public:
     explicit UsAlerts(QWidget *);
 
 private:
-    void downloadCap();
-    void updateText();
+    void update();
     void filterEvents();
-    static int count(const QString&, const QStringList&);
-    ComboBox comboBox;
     VBox box;
-    VBox boxCombo;
     VBox boxText;
-    QVector<CapAlertXml> capAlerts;
-    QStringList defaultFilter = {"Tornado Warning", "Severe Thunderstorm Warning", "Flash Flood Warning"};
-    QStringList eventList;
-    QHash<QString, int> filterCount;
-    QString html;
     Photo photo;
+    ComboBox comboBox;
     ScrolledWindow sw;
+    vector<CapAlertXml> capAlerts;
+    vector<string> defaultFilter{"Tornado Warning", "Severe Thunderstorm Warning", "Flash Flood Warning"};
+    vector<string> eventList;
+    vector<ObjectCardAlertDetail> alertDetailList;
+    unordered_map<string, int> filterCount;
+    string html;
 };
 
 #endif  // USALERTS_H

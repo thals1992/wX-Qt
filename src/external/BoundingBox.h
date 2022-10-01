@@ -24,10 +24,10 @@
 class BoundingBox {
 public:
     BoundingBox();
-    float xMax;
-    float xMin;
-    float yMax;
-    float yMin;
+    double xMax;
+    double xMin;
+    double yMax;
+    double yMin;
 };
 
 #endif  // BOUNDINGBOX_H

@@ -1,73 +1,61 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "wpc/NationalText.h"
+#include <algorithm>
 #include "objects/FutureText.h"
+#include "objects/WString.h"
 #include "ui/Icon.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 #include "wpc/UtilityWpcText.h"
 
-NationalText::NationalText(QWidget * parent, const QString& productF): Window(parent) {
+NationalText::NationalText(QWidget * parent, const string& prod)
+    : Window{parent}
+    , sw{ ScrolledWindow{this, box} }
+    , text { Text{parent} }
+    , buttonBack{ Button{this, Left, ""} }
+    , buttonForward{ Button{this, Right, ""} }
+{
     setTitle("National Text Products");
-    maximize();
-    if (productF != "") {
-        product = product.toLower();
-        savePref = false;
-    } else {
+    if (prod.empty()) {
+        product = "PMDSPD";
         product = Utility::readPref(prefTokenProduct, product);
+        savePref = true;
+    } else {
+        product = WString::toLower(prod);
+        savePref = false;
     }
-
-    text = Text(this);
-    box = VBox(this);
-    hbox = HBox(this);
-
-    buttonBack = Button(this, Icon::Left, "");
-    buttonBack.connect([this] { moveLeftClicked(); });
-
-    buttonForward = Button(this, Icon::Right, "");
-    buttonForward.connect([this] { moveRightClicked(); });
-
+    buttonBack.connect([this] {
+        index -= 1;
+        index = std::max(index, 0);
+        product = WString::split(UtilityWpcText::labels[index], ":")[0];
+        reload();
+    });
+    buttonForward.connect([this] {
+        index += 1;
+        index = std::min(index, static_cast<int>(UtilityWpcText::labels.size()) - 1);
+        product = WString::split(UtilityWpcText::labels[index], ":")[0];
+        reload();
+    });
     hbox.addWidget(buttonBack.get());
     hbox.addWidget(buttonForward.get());
     box.addLayout(hbox.get());
-    box.addWidgetAndCenterTop(text.get());
+    box.addWidget(text.get());
     box.addStretch();
-    sw = ScrolledWindow(this, box);
 
-    int itemsSoFar = 0;
+    auto itemsSoFar = 0;
     for (auto& menu : UtilityWpcText::titles) {
         menu.setList(UtilityWpcText::labels, itemsSoFar);
         itemsSoFar += menu.count;
     }
     for (auto& objectMenuTitle : UtilityWpcText::titles) {
-        popoverMenus.push_back(PopoverMenu(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (const auto& s) { changeProductByCode(s); }));
+        popoverMenus.emplace_back(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (const auto& s) { changeProductByCode(s); });
         hbox.addWidget(popoverMenus.back().get());
     }
-
-    shortcutLeft = Shortcut(Qt::CTRL | Qt::Key_Left, this);
-    shortcutLeft.connect([this] { moveLeftClicked(); });
-
-    shortcutRight = Shortcut(Qt::CTRL | Qt::Key_Right, this);
-    shortcutRight.connect([this] { moveRightClicked(); });
-
-    reload();
-}
-
-void NationalText::moveLeftClicked() {
-    index -= 1;
-    index = std::max(index, 0);
-    product = UtilityWpcText::labels[index].split(":")[0];
-    reload();
-}
-
-void NationalText::moveRightClicked() {
-    index += 1;
-    index = std::min(index, static_cast<int>(UtilityWpcText::labels.size()) - 1);
-    product = UtilityWpcText::labels[index].split(":")[0];
     reload();
 }
 
@@ -75,12 +63,12 @@ void NationalText::reload() {
     if (savePref) {
         Utility::writePref(prefTokenProduct, product);
     }
-    index = UtilityList::findex(product, UtilityWpcText::labels);
+    index = findex(product, UtilityWpcText::labels);
     setTitle(UtilityWpcText::labels[index]);
-    new FutureText(this, product.toUpper(), [this] (const auto& s) { text.setText(s); });
+    new FutureText{this, product, [this] (const auto& s) { text.setText(s); }};
 }
 
-void NationalText::changeProductByCode(const QString& s) {
-    product = s.split(":")[0];
+void NationalText::changeProductByCode(const string& s) {
+    product = WString::split(s, ":")[0];
     reload();
 }

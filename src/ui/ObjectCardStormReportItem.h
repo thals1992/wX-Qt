@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,18 +7,21 @@
 #ifndef OBJECTCARDSTORMREPORTITEM_H
 #define OBJECTCARDSTORMREPORTITEM_H
 
+#include <string>
 #include <QWidget>
 #include "spc/StormReport.h"
 #include "ui/Button.h"
 #include "ui/Text.h"
 #include "ui/VBox.h"
 
-class ObjectCardStormReportItem : public VBox {
+using std::string;
+
+class ObjectCardStormReportItem : public HBox {
 public:
     ObjectCardStormReportItem(QWidget *, const StormReport&);
 
 private:
-    void launchMap(const QString&, const QString&);
+    static void launchMap(const string&, const string&);
     VBox layoutButtons;
     VBox textLayout;
     Text topLine;

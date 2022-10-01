@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,6 +7,9 @@
 #ifndef SPCMESO_H
 #define SPCMESO_H
 
+#include <memory>
+#include <string>
+#include <vector>
 #include <QCloseEvent>
 #include "objects/ObjectAnimate.h"
 #include "ui/Button.h"
@@ -18,6 +21,9 @@
 #include "ui/VBox.h"
 #include "ui/Window.h"
 
+using std::string;
+using std::vector;
+
 class SpcMeso : public Window {
 public:
     explicit SpcMeso(QWidget *);
@@ -28,28 +34,26 @@ protected:
 private:
     void reload();
     void changeProductForFav(int);
-    void changeProductByCode(const QString& label);
+    void changeProductByCode(const string& label);
     void changeSector();
-    QString getUrl();
+    string getUrl() const;
     void moveLeftClicked();
     void moveRightClicked();
-    ObjectAnimate * objectAnimate;
-    QString url;
-    Photo photo;
-    ButtonToggle animateButton;
-    Button buttonBack;
-    Button buttonForward;
-    const QString prefTokenProduct = "SPCMESO1_PARAM_LAST_USED";
-    const QString prefTokenSector = "SPCMESO1_SECTOR_LAST_USED";
-    QVector<Button> buttons;
-    ComboBox comboboxSector;
     HBox boxH;
     HBox imageLayout;
     VBox boxFav;
     VBox box;
-    int index;
-    int indexSector;
-    QVector<PopoverMenu> popoverMenus;
+    Photo photo;
+    ComboBox comboboxSector;
+    Button buttonBack;
+    Button buttonForward;
+    ButtonToggle animateButton;
+    ObjectAnimate objectAnimate;
+    const string prefTokenProduct{"SPCMESO1_PARAM_LAST_USED"};
+    const string prefTokenSector{"SPCMESO1_SECTOR_LAST_USED"};
+    vector<Button> buttons;
+    int index{};
+    vector<PopoverMenu> popoverMenus;
     Shortcut shortcutAnimate;
     Shortcut shortcutLeft;
     Shortcut shortcutRight;

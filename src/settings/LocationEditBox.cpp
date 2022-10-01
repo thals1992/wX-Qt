@@ -1,35 +1,32 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "settings/LocationEditBox.h"
+#include <vector>
 #include "common/GlobalVariables.h"
 #include "objects/LatLon.h"
+#include "objects/WString.h"
 #include "settings/Location.h"
 #include "settings/UtilityLocation.h"
 #include "util/UtilityIO.h"
 #include "util/UtilityList.h"
 
-LocationEditBox::LocationEditBox(QWidget * parent, ComboBox * locationChooserMainScreen): Widget(parent) {
-    this->parent = parent;
-    combobox = locationChooserMainScreen;
-    cities = UtilityIO::rawFileToStringArray(GlobalVariables::resDir + "cityall.txt");
-    boxResults = VBox(nullptr);
-    box = VBox(nullptr);
-
-    cityEdit = Entry(this);
-    cityEdit.connect([this] { textchanged(); });
-
-    saveButton = Button(this, "Save");
+LocationEditBox::LocationEditBox(QWidget * parent)
+    : Widget{parent}
+    , table{ Table{nullptr} }
+    , saveButton{ Button{this, None, "Save"} }
+    , cityEdit{ Entry{this} }
+    , editName{ Entry{this} }
+    , editLat{ Entry{this} }
+    , editLon{ Entry{this} }
+    , editNexrad{ Entry{this} }
+    , cities{ UtilityIO::rawFileToStringArray(GlobalVariables::resDir + "cityall.txt") }
+{
+    cityEdit.connect([this] { lookupSearchTerm(); });
     saveButton.connect([this] { saveLocation(); });
-
-    table = Table(nullptr);
-    editName = Entry(this);
-    editLat = Entry(this);
-    editLon = Entry(this);
-    editNexrad = Entry(this);
 
     table.addRow("Enter City:", cityEdit.get());
     table.addRow("Name", editName.get());
@@ -39,9 +36,8 @@ LocationEditBox::LocationEditBox(QWidget * parent, ComboBox * locationChooserMai
     table.addRow("", saveButton.get());
     box.addLayout(table.get());
 
-    for (auto index : UtilityList::range(6)) {
-        auto button = Button(this, "");
-        buttons.push_back(button);
+    for (auto index : range(6)) {
+        buttons.emplace_back(this, None, "");
         boxResults.addWidget(buttons[index].get());
         buttons[index].connect([this, index] { populateLabels(index); });
     }
@@ -51,24 +47,20 @@ LocationEditBox::LocationEditBox(QWidget * parent, ComboBox * locationChooserMai
     blankOutButtons();
 }
 
-void LocationEditBox::textchanged() {
-    auto text = cityEdit.getText();
+void LocationEditBox::lookupSearchTerm() {
+    const auto text = cityEdit.getText();
     editLat.setText(text);
-    lookupSearchTerm(text);
-}
-
-void LocationEditBox::lookupSearchTerm(const QString& text) {
     if (text.size() > 2) {
-        QStringList citiesSelected;
-        for (auto city : cities) {
-            if (city.toLower().startsWith(text)) {
-                auto tokens = city.split(",");
-                auto latLon = LatLon(tokens[1], tokens[2]);
-                auto radar = UtilityLocation::getNearestRadarSites(latLon, 1, false)[0].name;
+        vector<string> citiesSelected;
+        for (auto& city : cities) {
+            if (WString::startsWith(WString::toLower(city), text)) {
+                const auto tokens = WString::split(city, ",");
+                const auto latLon = LatLon{tokens[1], tokens[2]};
+                const auto radar = UtilityLocation::getNearestRadarSites(latLon, 1, false)[0].name;
                 citiesSelected.push_back(city + " Radar: " + radar);
             }
         }
-        for (auto index : UtilityList::range(buttons.size())) {
+        for (size_t index : range(buttons.size())) {
             if (index < citiesSelected.size()) {
                 buttons[index].setText(citiesSelected[index]);
                 buttons[index].setVisible(true);
@@ -83,10 +75,10 @@ void LocationEditBox::lookupSearchTerm(const QString& text) {
 }
 
 void LocationEditBox::populateLabels(int index) {
-    auto city = buttons[index].getText();
-    auto tokens = city.split(",");
-    auto latLon = LatLon(tokens[1], tokens[2]);
-    auto radar = UtilityLocation::getNearestRadarSites(latLon, 1, false)[0].name;
+    const auto city = buttons[index].getText();
+    const auto tokens = WString::split(city, ",");
+    const auto latLon = LatLon{tokens[1], tokens[2]};
+    const auto radar = UtilityLocation::getNearestRadarSites(latLon, 1, false)[0].name;
     editName.setText(tokens[0]);
     editLat.setText(tokens[1]);
     editLon.setText(tokens[2]);
@@ -98,17 +90,17 @@ void LocationEditBox::blankOutButtons() {
     editLat.setText("");
     editLon.setText("");
     editNexrad.setText("");
-    for (auto index : UtilityList::range(buttons.size())) {
+    for (auto index : range(buttons.size())) {
         buttons[index].setText("");
         buttons[index].setVisible(false);
     }
 }
 
 void LocationEditBox::saveLocation() {
-    auto latLon = LatLon(editLat.getText(), editLon.getText());
-    auto nameToSave = editName.getText();
+    const auto latLon = LatLon{editLat.getText(), editLon.getText()};
+    const auto nameToSave = editName.getText();
     Location::save(latLon, nameToSave);
-    combobox->appendText(editName.getText());
+    Location::setMainScreenComboBox();
     blankOutButtons();
     cityEdit.setText("");
 }

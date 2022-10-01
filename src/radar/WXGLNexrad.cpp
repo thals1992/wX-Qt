@@ -1,16 +1,21 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "radar/WXGLNexrad.h"
+#include "objects/ObjectDateTime.h"
+#include "objects/WString.h"
+#include "util/UtilityString.h"
 
-float WXGLNexrad::wxoglDspLegendMax = 1.0;
+double WXGLNexrad::wxoglDspLegendMax{1.0};
 
-const QStringList WXGLNexrad::radarProductList = {
+const vector<string> WXGLNexrad::radarProductList{
     "N0Q: Base Reflectivity",
     "N0U: Base Velocity",
+//    "N0B: Base Reflectivity super-res",
+//    "N0G: Base Velocity super-res",
     "EET: Enhanced Echo Tops",
     "DVL: Vertically Integrated Liquid",
     "N0C: Correlation Coefficient",
@@ -25,7 +30,7 @@ const QStringList WXGLNexrad::radarProductList = {
     "NCZ: Composite Reflectivity 248nm"
 };
 
-const QStringList WXGLNexrad::radarProductListTdwr = {
+const vector<string> WXGLNexrad::radarProductListTdwr{
     "TZL: Long Range Digital Base Reflectivity",
     "TZ0: Digital Base Reflectivity",
     "TV0: Digital Base Velocity",
@@ -33,7 +38,7 @@ const QStringList WXGLNexrad::radarProductListTdwr = {
 
 // cat /tmp/a | sed 's/"/"/' | sed 's/,/);/'
 
-double WXGLNexrad::getBinSize(int16_t productCode) {
+double WXGLNexrad::getBinSize(uint16_t productCode) {
     const auto binSize54 = 2.0;
     const auto binSize13 = 0.50;
     const auto binSize08 = 0.295011;
@@ -61,7 +66,9 @@ double WXGLNexrad::getBinSize(int16_t productCode) {
         case 172:
             return binSize13;
         case 180:
+            return binSize08;
         case 181:
+            return binSize08;
         case 182:
             return binSize08;
         case 153:
@@ -73,6 +80,7 @@ double WXGLNexrad::getBinSize(int16_t productCode) {
         case 2161:
             return binSize13;
         case 78:
+            return binSize110;
         case 80:
             return binSize110;
         default:
@@ -80,17 +88,24 @@ double WXGLNexrad::getBinSize(int16_t productCode) {
     }
 }
 
-int WXGLNexrad::getNumberRangeBins(int16_t productCode) {
+int WXGLNexrad::getNumberRangeBins(uint16_t productCode) {
     switch (productCode) {
         case 78:
+            return 592;
         case 80:
             return 592;
         case 134:
             return 460;
+        case 153:
+            return 720;
+        case 154:
+            return 720;
         case 186:
             return 1390;
         case 180:
+            return 720;
         case 181:
+            return 720;
         case 182:
             return 720;
         case 135:
@@ -112,6 +127,22 @@ int WXGLNexrad::getNumberRangeBins(int16_t productCode) {
     }
 }
 
-bool WXGLNexrad::isProductTdwr(const QString& product) {
-    return product.startsWith("TV") || product == "TZL" || product.startsWith("TZ");
+bool WXGLNexrad::isProductTdwr(const string& product) {
+    return WString::startsWith(product, "TV") || product == "TZL" || WString::startsWith(product, "TZ");
+}
+
+bool WXGLNexrad::isRadarTimeOld(int radarMilli) {
+    // 1 min is 60k ms
+    if (radarMilli > 20 * 60000) {
+        return true;
+    }
+    return false;
+}
+
+bool WXGLNexrad::isVtecCurrent(const string& vtec) {
+    // example "190512T1252Z-190512T1545Z"
+    const auto vtecTimeRange = UtilityString::parse(vtec, "-([0-9]{6}T[0-9]{4})Z");
+    const auto vtecTime = ObjectDateTime::decodeVtecTime(vtecTimeRange);
+    const auto currentTime = ObjectDateTime::decodeVtecTime(ObjectDateTime::getGmtTimeForVtec());
+    return currentTime.isBefore(vtecTime);
 }

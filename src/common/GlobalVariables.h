@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,39 +7,35 @@
 #ifndef GLOBALVARIABLES_H
 #define GLOBALVARIABLES_H
 
-#include <QString>
+#include <string>
+
+using std::string;
 
 class GlobalVariables {
 public:
-    static const QString aboutString;
-    static const QString mainScreenShortcuts;
-    static const QString nexradShortcuts;
-    static const QString appCreatorEmail;
-    static const QString appName;
-    static const QString resDir;
-    static const QString imageDir;
-    static const QString newline;
-    static const QString degreeSymbol;
-    static const QString nwsSPCwebsitePrefix;
-    static const QString nwsWPCwebsitePrefix;
-    static const QString nwsAWCwebsitePrefix;
-    static const QString nwsGraphicalWebsitePrefix;
-    static const QString nwsCPCNcepWebsitePrefix;
-    static const QString nwsGoesWebsitePrefix;
-    static const QString nwsOpcWebsitePrefix;
-    static const QString nwsNhcWebsitePrefix;
-    static const QString nwsRadarWebsitePrefix;
-    static const QString nwsMagNcepWebsitePrefix;
-    static const QString nwsSwpcWebSitePrefix;
-    static const QString goes16Url;
-    static const QString nwsApiUrl;
-    static const QString tgftpSitePrefix;
-    static const QString prePattern;
-    static const QString pre2Pattern;
-    static const QString vtecPattern;
-    static const QString warningLatLonPattern;
-    static const QString utilUsPeriodNamePattern;
-    static const QString xmlValuePattern;
+    static const string aboutString;
+    static const string mainScreenShortcuts;
+    static const string nexradShortcuts;
+    static const string appCreatorEmail;
+    static const string appName;
+    static const string resDir;
+    static const string imageDir;
+    static const string newline;
+    static const string degreeSymbol;
+    static const string nwsSPCwebsitePrefix;
+    static const string nwsWPCwebsitePrefix;
+    static const string nwsAWCwebsitePrefix;
+    static const string nwsGraphicalWebsitePrefix;
+    static const string nwsNhcWebsitePrefix;
+    static const string goes16Url;
+    static const string nwsApiUrl;
+    static const string tgftpSitePrefix;
+    static const string prePattern;
+    static const string pre2Pattern;
+    static const string vtecPattern;
+    static const string warningLatLonPattern;
+    static const string utilUsPeriodNamePattern;
+    static const string xmlValuePattern;
 };
 
 #endif  // GLOBALVARIABLES_H

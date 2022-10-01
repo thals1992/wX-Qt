@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -11,14 +11,11 @@
 #include "util/UtilityList.h"
 #include "util/UtilityString.h"
 
-ObjectNhc::ObjectNhc() {
-}
-
 void ObjectNhc::getTextData() {
     statusList.clear();
 
     const auto url = GlobalVariables::nwsNhcWebsitePrefix + "/CurrentStorms.json";
-    // const QString url = "https://www.nhc.noaa.gov/productexamples/NHC_JSON_Sample.json";
+    // const string url = "https://www.nhc.noaa.gov/productexamples/NHC_JSON_Sample.json";
 
     const auto html = UtilityIO::getHtml(url);
     ids = UtilityString::parseColumn(html, "\"id\": \"(.*?)\"");
@@ -45,9 +42,9 @@ void ObjectNhc::getTextData() {
 }
 
 void ObjectNhc::showTextData() {
-    if (ids.size() > 0) {
-        for (auto index : UtilityList::range(ids.size())) {
-            auto objectNhcStormDetails = ObjectNhcStormDetails(
+    if (!ids.empty()) {
+        for (auto index : range(ids.size())) {
+            stormDataList.emplace_back(
                 names[index],
                 movementDirs[index],
                 movementSpeeds[index],
@@ -60,7 +57,6 @@ void ObjectNhc::showTextData() {
                 longitudes[index],
                 intensities[index],
                 statusList[index]);
-            stormDataList.push_back(objectNhcStormDetails);
         }
     }
 }

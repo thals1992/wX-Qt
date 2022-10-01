@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,21 +8,22 @@
 #define BUTTONTOGGLE_H
 
 #include <functional>
+#include <string>
 #include <QPushButton>
-#include <QString>
 #include "ui/Icon.h"
+
+using std::function;
+using std::string;
 
 class ButtonToggle {
 public:
-    ButtonToggle();
-    ButtonToggle(QWidget *, Icon, QString);
-    void connect(QObject, QString);
-    void connect(QString);
-    void connect(std::function<void()>);
-    void setText(QString);
+    ButtonToggle(QWidget *, Icon, const string&);
+    void connect(const function<void()>&);
+    void setText(const string&);
     void setVisible(bool);
     void setCheckable(bool);
     void setChecked(bool);
+    bool isChecked();
     void setActive(bool);
     QPushButton * get();
 

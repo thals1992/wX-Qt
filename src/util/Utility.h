@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,23 +7,27 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include <QVector>
+#include <string>
+#include <vector>
 #include "objects/LatLon.h"
+
+using std::string;
+using std::vector;
 
 class Utility {
 public:
-    static QString getRadarSiteName(const QString&);
-    static LatLon getRadarSiteLatLon(const QString&);
-    static QString getRadarSiteX(const QString&);
-    static QString getRadarSiteY(const QString&);
-    static LatLon getWfoSiteLatLon(const QString&);
-    static LatLon getSoundingSiteLatLon(const QString&);
-    static QString readPref(const QString&, const QString&);
-    static int readPrefInt(const QString&, int);
-    static void writePref(const QString&, const QString&);
-    static void writePrefInt(const QString&, int);
-    static QStringList prefGetAllKeys();
-    static QString safeGet(const QStringList&, int);
+    static string getRadarSiteName(const string&);
+    static LatLon getRadarSiteLatLon(const string&);
+    static string getRadarSiteX(const string&);
+    static string getRadarSiteY(const string&);
+    static LatLon getWfoSiteLatLon(const string&);
+    static LatLon getSoundingSiteLatLon(const string&);
+    static string readPref(const string&, const string&);
+    static int readPrefInt(const string&, int);
+    static void writePref(const string&, const string&);
+    static void writePrefInt(const string&, int);
+    static vector<string> prefGetAllKeys();
+    static string safeGet(const vector<string>&, size_t);
 };
 
 #endif  // UTILITY_H

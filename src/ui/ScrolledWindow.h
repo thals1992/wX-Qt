@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,14 +8,17 @@
 #define SCROLLEDWINDOW_H
 
 #include <QBoxLayout>
+#include <QScrollArea>
 #include "ui/VBox.h"
 #include "ui/Window.h"
 
 class ScrolledWindow {
 public:
-    ScrolledWindow();
-    ScrolledWindow(Window * parent, QBoxLayout * layout);
-    ScrolledWindow(Window * parent, VBox& layout);
+    ScrolledWindow(Window *, QBoxLayout *);
+    ScrolledWindow(Window *, VBox&);
+
+private:
+    QScrollArea * scrollArea;
 };
 
 #endif  // SCROLLEDWINDOW_H

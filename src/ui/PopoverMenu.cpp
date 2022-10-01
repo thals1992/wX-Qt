@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,15 +7,13 @@
 #include "ui/PopoverMenu.h"
 #include <QMenu>
 
-PopoverMenu::PopoverMenu() {
-}
-
-PopoverMenu::PopoverMenu(QWidget * parent, const QString& buttonLabel, const QStringList& buttonList, std::function<void(QString)> fnAction) {
-    button = new QPushButton(buttonLabel, parent);
-    menu = new QMenu(parent);
-    QObject::connect(menu, &QMenu::triggered, parent, [fnAction] (QAction * a) { fnAction(a->text()); });
+PopoverMenu::PopoverMenu(QWidget * parent, const string& buttonLabel, const vector<string>& buttonList, const function<void(string)>& fnAction)
+    : button{ new QPushButton{QString::fromStdString(buttonLabel), parent} }
+    , menu{ new QMenu{parent} }
+{
+    QObject::connect(menu, &QMenu::triggered, parent, [fnAction] (QAction * a) { fnAction(a->text().toStdString()); });
     for (const auto& item : buttonList) {
-        QAction * action = menu->addAction(item);
+        QAction * action = menu->addAction(QString::fromStdString(item));
         action->setIconVisibleInMenu(false);
     }
     button->setMenu(menu);

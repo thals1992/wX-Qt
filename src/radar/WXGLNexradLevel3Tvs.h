@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,9 +7,11 @@
 #ifndef WXGLNEXRADLEVEL3TVS_H
 #define WXGLNEXRADLEVEL3TVS_H
 
-#include <QVector>
+#include <vector>
 #include "objects/FileStorage.h"
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
+
+using std::vector;
 
 class WXGLNexradLevel3Tvs {
 public:

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,13 +7,17 @@
 #ifndef UTILITYUS_H
 #define UTILITYUS_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilityUS {
 public:
-    static QStringList getCurrentConditionsUS(const QString&, const QString&);
-    static QString getLocationHtml(const QString&, const QString&);
-    static QString get7DayExt(const QStringList&);
+    static vector<string> getCurrentConditionsUS(const string&, const string&);
+    static string getLocationHtml(const string&, const string&);
+    static string get7DayExt(const vector<string>&);
 };
 
 #endif  // UTILITYUS_H

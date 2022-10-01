@@ -30,12 +30,12 @@
 #include <ctime>
 
 #define SUNSET_OFFICIAL         90.833
-#define SUNSET_NAUTICAL         102
-#define SUNSET_CIVIL            96
-#define SUNSET_ASTONOMICAL      108
-
-#define SUNSET_INVALID_TZ_D     99.9
-#define SUNSET_INVALID_TZ_I     99
+//#define SUNSET_NAUTICAL         102
+//#define SUNSET_CIVIL            96
+//#define SUNSET_ASTONOMICAL      108
+//
+//#define SUNSET_INVALID_TZ_D     99.9
+//#define SUNSET_INVALID_TZ_I     99
 
 /**
  * \class SunSet
@@ -70,25 +70,25 @@
 class SunSet {
 public:
     SunSet();
-    SunSet(double, double, int);
-    SunSet(double, double, double);
+//    SunSet(double, double, int);
+//    SunSet(double, double, double);
     ~SunSet();
 
     void setPosition(double, double, int);
-    void setPosition(double, double, double);
+//    void setPosition(double, double, double);
     void setTZOffset(int);
-    void setTZOffset(double);
+//    void setTZOffset(double);
     double setCurrentDate(int, int, int);
-    double calcNauticalSunrise();
-    double calcNauticalSunset();
-    double calcCivilSunrise();
-    double calcCivilSunset();
-    double calcAstronomicalSunrise();
-    double calcAstronomicalSunset();
+//    double calcNauticalSunrise();
+//    double calcNauticalSunset();
+//    double calcCivilSunrise();
+//    double calcCivilSunset();
+//    double calcAstronomicalSunrise();
+//    double calcAstronomicalSunset();
     double calcSunrise();
     double calcSunset();
-    int moonPhase(int);
-    int moonPhase();
+//    int moonPhase(int);
+//    int moonPhase();
 
 private:
     double degToRad(double);
@@ -115,9 +115,9 @@ private:
     double m_longitude;
     double m_julianDate;
     double m_tzOffset;
-    int m_year;
-    int m_month;
-    int m_day;
+//    int m_year;
+//    int m_month;
+//    int m_day;
 };
 
 #endif

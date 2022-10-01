@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,38 +7,51 @@
 #ifndef LATLON_H
 #define LATLON_H
 
-#include <QString>
+#include <string>
+#include <vector>
+#include <string>
 #include "external/ExternalPoint.h"
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
+
+using std::string;
+using std::vector;
 
 class LatLon {
 public:
     LatLon();
     LatLon(double, double);
-    LatLon(float, float);
-    LatLon(const QString&, const QString&);
-    explicit LatLon(const QVector<float>&);
-    explicit LatLon(const QString&);
-    float dist(LatLon) const;
-    QString printSpaceSeparated() const;
+    LatLon(const string&, const string&);
+    explicit LatLon(const vector<float>&);
+    explicit LatLon(const string&);
+    double lat() const;
+    double lon() const;
+    string latStr() const;
+    string lonStr() const;
+    void setLonStr(const string&);
+    double dist(const LatLon&) const;
+    string printSpaceSeparated() const;
+    vector<double> getProjection(const ProjectionNumbers&) const;
     ExternalPoint asPoint() const;
-    QVector<float> asList() const;
-    QString latForNws() const;
-    QString lonForNws() const;
-    QString printPretty() const;
-    QString latString;
-    QString lonString;
-    double lat;
-    double lon;
-    int distance;
-    static LatLon fromList(QVector<float>);
-    static LatLon fromRadarSite(const QString&);
-    static QString storeWatchMcdLatLon(const QString&);
-    static LatLon getLatLonFromString(const QString&);
-    static QString getLatLon(const QString&);
-    static QVector<float> latLonListToListOfDoubles(const QVector<LatLon>&, const ProjectionNumbers&);
-    static QVector<LatLon> parseStringToLatLons(const QString&, float = 1.0, bool = true);
-    static QVector<LatLon> parseStringToLatLonsForMcdLongPress(const QString&, float = 1.0, bool = true);
+    vector<double> asList() const;
+    string latForNws() const;
+    string lonForNws() const;
+    string printPretty() const;
+    static LatLon fromList(vector<double>);
+    static LatLon fromRadarSite(const string&);
+    static string storeWatchMcdLatLon(const string&);
+    static LatLon getLatLonFromString(const string&);
+    static string getLatLon(const string&);
+    static vector<double> latLonListToListOfDoubles(const vector<LatLon>&, const ProjectionNumbers&);
+    static vector<LatLon> parseStringToLatLons(const string&, int = 1, bool = true);
+    static vector<LatLon> parseStringToLatLonsForMcdLongPress(const string&, int = 1, bool = true);
+    static string getWatchLatLon(const string&);
+
+private:
+    static string parseNwsPreSecondMatch(const string&);
+    string latString;
+    string lonString;
+    double latNum;
+    double lonNum;
 };
 
 #endif  // LATLON_H

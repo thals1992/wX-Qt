@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,28 +8,31 @@
 #include "misc/AlertsDetail.h"
 #include "radar/Nexrad.h"
 
-ObjectCardAlertDetail::ObjectCardAlertDetail(QWidget * parent, CapAlertXml cap): HBox(parent) {
-    this->parent = parent;
-    this->cap = cap;
-
-    boxText = VBox(parent);
-
-    topLine = Text(parent, cap.title);
+ObjectCardAlertDetail::ObjectCardAlertDetail(QWidget * parent, const CapAlertXml& cap)
+    : HBox{}
+    , parent{ parent }
+    , topLine{ Text{parent, cap.title} }
+    , startTimeLine{ Text{parent} }
+    , endTimeLine{ Text{parent} }
+    , middleLine{ Text{parent, cap.area} }
+    , buttonDetails{ Button{parent, None, "Show Details"} }
+    , buttonRadar{ Button{parent, None, ""} }
+{
     topLine.setBold();
     topLine.setWordWrap(false);
 
-    startTimeLine = Text(parent);
-    QRegularExpression re(":00-0[0-9]:00");
-    auto startTime = cap.effective.replace(re, "");
-    startTime = startTime.replace("T", " ");
-    startTimeLine.setText(startTime);
+    // FIXME TODO
+//    auto re = QRegularExpression(":00-0[0-9]:00");
+//    auto capEffective = cap.effective;
+//    auto startTime = capEffective.replace(re, "");
+//    startTime = startTime.replace("T", " ");
+    startTimeLine.setText(cap.effective);
 
-    endTimeLine = Text(parent);
-    auto endTime = cap.expires.replace(re, "");
-    endTime = endTime.replace("T", " ");
-    endTimeLine.setText(endTime);
+//    auto capExpires = cap.expires;
+//    auto endTime = capExpires.replace(re, "");
+//    endTime = endTime.replace("T", " ");
+    endTimeLine.setText(cap.expires);
 
-    middleLine = Text(parent, cap.area);
     middleLine.setGray();
 
     boxText.addWidget(topLine.get());
@@ -37,17 +40,15 @@ ObjectCardAlertDetail::ObjectCardAlertDetail(QWidget * parent, CapAlertXml cap):
     boxText.addWidget(startTimeLine.get());
     boxText.addWidget(endTimeLine.get());
 
-    buttonDetails = Button(parent, "Show Details");
-    QWidget * parent1 = this->parent;
-    buttonDetails.connect([parent1, cap] { new AlertsDetail(parent1, cap.url); });
-    buttonRadar = Button(parent, "Show Radar - " + radarSite);
+    const auto parent1 = this->parent;
+    buttonDetails.connect([parent1, cap] { new AlertsDetail{parent1, cap.url}; });
+    buttonRadar.setText("Show Radar - " + radarSite);
 
     radarSite = cap.getClosestRadar();
-    if (radarSite != "") {
-        auto radarSite = this->radarSite;
-        QWidget * parent = this->parent;
+    if (!radarSite.empty()) {
+        const auto radarSite = this->radarSite;
         buttonRadar.setText("Show Radar - " + radarSite);
-        buttonRadar.connect([parent, radarSite] { new Nexrad(parent, 1, true, radarSite, false); });
+        buttonRadar.connect([parent1, radarSite] { new Nexrad{parent1, 1, true, radarSite}; });
     } else {
         buttonRadar.setVisible(false);
     }
@@ -56,4 +57,5 @@ ObjectCardAlertDetail::ObjectCardAlertDetail(QWidget * parent, CapAlertXml cap):
     addWidget(buttonDetails.get(), Qt::AlignTop);
     addWidget(buttonRadar.get());
     addLayout(boxText.get());
+    addStretch();
 }

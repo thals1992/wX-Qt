@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,25 +7,27 @@
 #ifndef UICOLORLEGEND_H
 #define UICOLORLEGEND_H
 
+#include <string>
 #include <QFont>
 #include <QPaintEvent>
 #include <QPainter>
-#include <QString>
+
+using std::string;
 
 class UIColorLegend {
 public:
-    UIColorLegend(const QString&);
-    void paintEvent(QPainter &, float, float);
+    explicit UIColorLegend(const string&);
+    void paintEvent(QPainter &, double, double, double);
+    void update(const string&);
 
 private:
-    void drawRect(QPainter *, float, float, float, float);
-    void drawText(QPainter *, const QString&, float, float);
-    int setColor(int, int, int);
+    void drawRect(QPainter *, double, double, double, double) const;
+    void drawText(QPainter *, const string&, double, double);
+    static int setColor(int, int, int);
     void setColorWithBuffers(int, int);
-    QString product;
-    int screenHeight;
-    int color;
-    float scale;
+    string product;
+    int screenHeight{};
+    int color{};
     QFont qfont;
 };
 

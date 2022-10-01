@@ -19,20 +19,19 @@
 
 class ExternalLine {
 public:
-    ExternalLine();
     ExternalLine(ExternalPoint, ExternalPoint);
     bool isVertical() const;
-    float getA() const;
-    float getB() const;
+    double getA() const;
+    double getB() const;
     ExternalPoint getStart() const;
     bool isInside(ExternalPoint) const;
     ExternalPoint start;
     ExternalPoint end;
 
 private:
-    bool vertical;
-    float a;
-    float b;
+    bool vertical{};
+    double a{};
+    double b{};
 };
 
 #endif  // EXTERNALLINE_H

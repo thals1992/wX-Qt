@@ -16,7 +16,7 @@
 
 class ExternalEllipsoid {
 public:
-    ExternalEllipsoid(double, double, double, double);
+    ExternalEllipsoid(double, double, double);
     double getSemiMajorAxis() const;
     double getSemiMinorAxis() const;
     double getFlattening() const;
@@ -27,7 +27,6 @@ private:
     double semiMajor;
     double semiMinor;
     double flattening;
-    double inverseFlattening;
 };
 
 #endif  // EXTERNALELLIPSOID_H

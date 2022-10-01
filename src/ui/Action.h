@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,19 +8,18 @@
 #define ACTION_H
 
 #include <functional>
+#include <string>
 #include <QAction>
+
+using std::string;
 
 class Action {
 public:
-    Action();
-    Action(const QString&, QObject *);
+    Action(const string&, QObject *);
     QAction * get() const;
-    void setCheckable(bool);
-    void setChecked(bool);
 
 private:
     QAction * qaction;
-    QObject * parent;
 };
 
 #endif  // ACTION_H

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -9,75 +9,76 @@
 
 #include <functional>
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include <QAction>
+#include <QGestureEvent>
 #include <QLabel>
 #include <QLineF>
+#include <QPinchGesture>
 #include "objects/FileStorage.h"
 #include "objects/FutureBytes.h"
 #include "objects/MemoryBuffer.h"
 #include "objects/LatLon.h"
-#include "radar/ObjectMetalRadarBuffers.h"
+#include "radar/NexradDraw.h"
 #include "radar/NexradState.h"
 #include "radar/PolygonType.h"
+#include "radar/ProjectionNumbers.h"
 #include "radar/UIColorLegend.h"
 #include "radar/WXMetalNexradLevelData.h"
 #include "radar/WXMetalTextObject.h"
-#include "ui/RadarStatusBox.h"
+#include "ui/ComboBox.h"
 #include "ui/StatusBar.h"
 #include "ui/Text.h"
 #include "ui/TextViewMetal.h"
-#include "util/ProjectionNumbers.h"
+
+using std::function;
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 class NexradWidget : public QWidget {
 public:
-    NexradWidget();
     NexradWidget(
         QWidget *,
         StatusBar&,
-        RadarStatusBox *,
         int,
         int,
         bool,
-        QString,
+        const string&,
         int,
         int,
-        int,
-        int,
-        std::function<void(int, QString)> fnProduct,
-        std::function<void(int, QString)> fnSector,
-        std::function<void(double, int)> fnZoom,
-        std::function<void(int)> fnPosition
+        const function<void(int, string)>&,
+        const function<void(int, string)>&,
+        const function<void(double, int)>&,
+        const function<void(int)>&
     );
-    // std::function<void()> fnMasterDownload,
-    // std::function<void(string, int)> fnSyncRadarSite,
-    ~NexradWidget();
-    void initializeGeom();
-    void initializeGeomBuffers();
+    ~NexradWidget() override;
+//    void updateGps(double, double);
     void downloadDataForAnimation(int);
     void downloadData();
-    void changeSector(const QString&);
+    void changeSector(const string&);
     void changeSector(int);
-    void changeProduct(int);
+    void changeProduct(const string&);
     void processWarnings(PolygonType);
-    void processMcd();
-    void processMpd();
-    void processWatch();
+    void process(PolygonType);
     void constructSwo();
-    void constructSpotters();
     void constructWBLines();
     void constructSti();
     void constructHi();
     void constructTvs();
     void constructWpcFronts();
     void resizePolygons();
-    void initColorLegend();
+    void draw();
     NexradState nexradState;
     FileStorage fileStorage;
-    std::unique_ptr<WXMetalTextObject> textObject;
     Text statusBarLabel;
 
 protected:
     void paintEvent(QPaintEvent *) override;
+    bool event(QEvent *) override;
+    bool gestureEvent(QGestureEvent *);
     void wheelEvent(QWheelEvent *) override;
     void mouseMoveEvent(QMouseEvent *) override;
     void mousePressEvent(QMouseEvent *) override;
@@ -89,56 +90,56 @@ private slots:
     void performSingleClickAction();
 
 private:
+    void drawSwo(QPainter&);
+    void drawWpcFronts(QPainter&);
+    void drawWarnings(QPainter&);
+    void drawWatch(QPainter&);
+//    void drawLocationDot(wxPaintDC&) const;
+//    void drawSti(wxPaintDC&) const;
+//    void drawWindBarbs(wxPaintDC&);
+    void pinchTriggered(QPinchGesture *);
     void processVtec(PolygonType);
     void processDataAfterDownload();
-    void resetZoom();
     void zoomIn();
     void zoomOut();
-    void buildGeometry(QVector<QLineF>&, MemoryBuffer *);
-    void updateStatusText();
-    void process(PolygonType);
-    // FutureBytes * fb;
-    std::unique_ptr<FutureBytes> fb;
-    std::function<void(int, QString)> fnProduct;
-    std::function<void(int, QString)> fnSector;
-    std::function<void(double, int)> fnZoom;
-    std::function<void(int)> fnPosition;
-    int originalWidth;
-    int originalHeight;
-    float mouseStartX;
-    float mouseStartY;
-    bool displayHold = false;
+    void updateStatusBar();
+    // void updateStatusBarForAnimation(int);
+    void toggleRadar();
+    double mouseStartX{};
+    double mouseStartY{};
     StatusBar * statusBar;
-    RadarStatusBox * radarStatusBox;
-    QVector<QLineF> countyQLines;
-    QVector<QLineF> stateQLines;
-    QVector<QLineF> hwQLines;
-    QVector<QLineF> hwExtQLines;
-    QVector<QLineF> lakesQLines;
-    QVector<QLineF> caQLines;
-    QVector<QLineF> mxQLines;
-    QHash<int, QVector<QLineF>> swoLinesMap;
-    ObjectMetalRadarBuffers radarBuffers;
+    function<void(int, string)> fnProduct;
+    function<void(int, string)> fnSector;
+    function<void(double, int)> fnZoom;
+    function<void(int)> fnPosition;
+    unordered_map<int, QVector<QLineF>> swoLinesMap;
     WXMetalNexradLevelData levelData;
-    int totalBins = 0;
-    QHash<PolygonType, QVector<QLineF>> polygonToBufferMap;
-    QHash<PolygonType, QColor> polygonToColorMap;
-    QHash<PolygonType, QVector<QLineF>> polygonGenericToBufferMap;
-    QHash<PolygonType, QColor> polygonGenericToQColorMap;
-    QHash<PolygonType, QLabel *> warningCountLabel;
-    QVector<LatLon> locationDots;
-    QVector<float> locationDotsTransformed;
-    QVector<QVector<float>> windBarbCirclesTransformed;
-    QVector<QColor> windBarbCircleColors;
-    QVector<QVector<float>> spotterCirclesTransformed;
+    int totalBins{};
+    unordered_map<PolygonType, QVector<QLineF>> polygons;
+    unordered_map<PolygonType, QLabel *> warningCountLabel;
+    // vector<LatLon> locationDots;
+    // double gpsX{};
+    // double gpsY{};
+    vector<vector<double>> windBarbCirclesTransformed;
+    vector<QColor> windBarbCircleColors;
     QVector<QLineF> wbLines;
     QVector<QLineF> wbGustLines;
     QVector<QLineF> stormTrackLines;
-    QVector<QPolygonF> hiPolygons;
-    QVector<QPolygonF> tvsPolygons;
-    QString lastMouseType;
-    QString message;
-    std::unique_ptr<UIColorLegend> colorMap;
+    vector<QPolygonF> hiPolygons;
+    vector<QPolygonF> tvsPolygons;
+    string lastMouseType;
+    UIColorLegend colorLegend;
+public:
+    WXMetalTextObject textObject;
+    NexradDraw nexradDraw;
+private:
+    bool hideRadar{false};
+    bool hideRoads{false};
+    int toggleIndex{};
+    // used by pinch zoom
+    int rotationAngle{};
+    int currentStepScaleFactor{};
+    int scaleFactor{};
 };
 
 #endif  // NEXRADWIDGET_H

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -10,21 +10,23 @@
 #include "util/UtilityIO.h"
 #include "util/UtilityList.h"
 
-DownloadParallel::DownloadParallel(QWidget * parent, FileStorage * fileStorage, QStringList urls) {
-    this->fileStorage = fileStorage;
-    this->urls = urls;
+DownloadParallel::DownloadParallel([[maybe_unused]] QWidget * parent, FileStorage * fileStorage, const vector<string>& urls)
+    : fileStorage{ fileStorage }
+    , urls{ urls }
+{
     fileStorage->clearBuffers();
     for ([[maybe_unused]] const auto& u : urls) {
-        fileStorage->animationMemoryBuffer.push_back(MemoryBuffer(0));
-        // fileStorage.animationByteArray.add(array("B"));
+        fileStorage->animationMemoryBuffer.emplace_back(0);
         downloadComplete.push_back(false);
     }
-    for (auto i : UtilityList::range(urls.size())) {
-        new FutureVoid(parent, [this, i] { download(i); }, [this, i] { update(i); });
+    for (auto i : range(urls.size())) {
+        // new FutureVoid{parent, [this, i] { download(i); }, [this, i] { update(i); }};
+        // TODO FIXME this (line above and while loop below) worked fine on MacOS but not on chromebook
+        download(i);
     }
-    while (!std::all_of(downloadComplete.begin(), downloadComplete.end(), [] (bool b) { return b; })) {
-        // time.sleep(0.001);
-    }
+    // while (!std::all_of(downloadComplete.begin(), downloadComplete.end(), [] (bool b) { return b; })) {
+    //     // time.sleep(0.001);
+    // }
 }
 
 void DownloadParallel::download(int i) {

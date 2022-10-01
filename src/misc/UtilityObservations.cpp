@@ -1,12 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "misc/UtilityObservations.h"
 
-const QStringList UtilityObservations::urls = {
+const vector<string> UtilityObservations::urls{
     "https://www.wpc.ncep.noaa.gov/sfc/sfcobs/large_latestsfc.gif",
     "https://www.wpc.ncep.noaa.gov/sfc/namswsfcwbg.gif",
     "https://www.wpc.ncep.noaa.gov/sfc/namscsfcwbg.gif",
@@ -21,7 +21,7 @@ const QStringList UtilityObservations::urls = {
     "https://www.wpc.ncep.noaa.gov/sfc/namak2sfcwbg.gif"
 };
 
-const QStringList UtilityObservations::labels = {
+const vector<string> UtilityObservations::labels{
     "CONUS Surface Obs",
     "SW Surface Analysis",
     "SC Surface Analysis",

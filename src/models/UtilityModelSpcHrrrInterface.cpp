@@ -1,12 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelSpcHrrrInterface.h"
+#include "UtilityModelSpcHrrrInterface.h"
 
-const QStringList UtilityModelSpcHrrrInterface::sectors = {
+const vector<string> UtilityModelSpcHrrrInterface::sectors{
     "National",
     "Northwest US",
     "Southwest US",
@@ -19,7 +19,7 @@ const QStringList UtilityModelSpcHrrrInterface::sectors = {
     "Midwest"
 };
 
-const QStringList UtilityModelSpcHrrrInterface::sectorCodes = {
+const vector<string> UtilityModelSpcHrrrInterface::sectorCodes{
     "S19",
     "S11",
     "S12",
@@ -32,7 +32,7 @@ const QStringList UtilityModelSpcHrrrInterface::sectorCodes = {
     "S20"
 };
 
-const QStringList UtilityModelSpcHrrrInterface::params = {
+const vector<string> UtilityModelSpcHrrrInterface::params{
     "refc",
     "pmsl",
     "srh3",
@@ -45,7 +45,7 @@ const QStringList UtilityModelSpcHrrrInterface::params = {
     "ttd"
 };
 
-const QStringList UtilityModelSpcHrrrInterface::labels = {
+const vector<string> UtilityModelSpcHrrrInterface::labels{
     "Composite Reflectivity",
     "MSL Pressure & Wind",
     "Shear Parameters",

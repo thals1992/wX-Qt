@@ -1,12 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "radar/UtilityRadar.h"
 
-const QHash<QString, QString> UtilityRadar::radarIdToName = {
+const unordered_map<string, string> UtilityRadar::radarIdToName{
     {"JUA", "PR, San Juan"},
     {"CBW", "ME, Loring AFB"},
     {"GYX", "ME, Portland"},
@@ -216,7 +216,7 @@ const QHash<QString, QString> UtilityRadar::radarIdToName = {
     {"TICH", "KS, Wichita"}
 };
 
-const QHash<QString, QString> UtilityRadar::wfoSiteToLat = {
+const unordered_map<string, string> UtilityRadar::wfoSiteToLat{
     {"ABC", "60.79278"},
     {"ABQ", "35.1027"},
     {"ABR", "45.45583"},
@@ -434,7 +434,7 @@ const QHash<QString, QString> UtilityRadar::wfoSiteToLat = {
     {"YUX", "32.49528"}
 };
 
-const QHash<QString, QString> UtilityRadar::wfoSiteToLon = {
+const unordered_map<string, string> UtilityRadar::wfoSiteToLon{
     {"ABC", "-161.87417"},
     {"ABQ", "-106.6276"},
     {"ABR", "-98.41306"},
@@ -652,7 +652,7 @@ const QHash<QString, QString> UtilityRadar::wfoSiteToLon = {
     {"YUX", "-114.65583"}
 };
 
-const QHash<QString, QString> UtilityRadar::radarSiteToLat = {
+const unordered_map<string, string> UtilityRadar::radarSiteToLat{
     {"TYX", "43.756"},
     {"ABR", "45.456"},
     {"ENX", "42.586"},
@@ -809,7 +809,6 @@ const QHash<QString, QString> UtilityRadar::radarSiteToLat = {
     {"DGX", "32.28"},
     {"VWX", "38.26"},
     {"HKM", "20.125"},
-
     {"TDTW", "42.11111"},
     {"TADW", "5"},
     {"TATL", "33.646193"},
@@ -857,7 +856,7 @@ const QHash<QString, QString> UtilityRadar::radarSiteToLat = {
     {"TTUL", "36.070184"}
 };
 
-const QHash<QString, QString> UtilityRadar::radarSiteToLon = {
+const unordered_map<string, string> UtilityRadar::radarSiteToLon{
     {"TYX", "75.68"},
     {"ABR", "98.413"},
     {"ENX", "74.064"},
@@ -1015,7 +1014,6 @@ const QHash<QString, QString> UtilityRadar::radarSiteToLon = {
     {"DGX", "89.984"},
     {"VWX", "87.724"},
     {"HKM", "155.778"},
-
     {"TDTW", "83.515"},
     {"TADW", "5"},
     {"TATL", "84.262233"},
@@ -1063,7 +1061,7 @@ const QHash<QString, QString> UtilityRadar::radarSiteToLon = {
     {"TTUL", "95.826313"}
 };
 
-const QHash<QString, QString> UtilityRadar::soundingSiteToLat = {
+const unordered_map<string, string> UtilityRadar::soundingSiteToLat{
     {"76225", "28.70"},
     {"76405", "24.07"},
     {"76458", "23.18"},
@@ -1161,7 +1159,7 @@ const QHash<QString, QString> UtilityRadar::soundingSiteToLat = {
     {"YMO", "51.27"}
 };
 
-const QHash<QString, QString> UtilityRadar::soundingSiteToLon = {
+const unordered_map<string, string> UtilityRadar::soundingSiteToLon{
     {"1Y7", "114.40"},
     {"76225", "106.07"},
     {"76405", "110.33"},

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,6 +7,8 @@
 #ifndef SPCSTORMREPORTS_H
 #define SPCSTORMREPORTS_H
 
+#include <string>
+#include <vector>
 #include "spc/StormReport.h"
 #include "ui/Calendar.h"
 #include "ui/ComboBox.h"
@@ -16,29 +18,32 @@
 #include "ui/VBox.h"
 #include "ui/Window.h"
 
+using std::string;
+using std::vector;
+
 class SpcStormReports : public Window {
 public:
-    SpcStormReports(QWidget *, const QString&);
+    SpcStormReports(QWidget *, const string&);
 
 private:
     void onDateChanged();
-    void updateReports(const QString&);
+    void updateReports(const string&);
     void filterReports();
     void reload();
-    QString spcStormReportsDay;
-    QString url;
-    QString stormReportsUrl;
-    QStringList states;
-    QVector<StormReport> stormReports;
-    ScrolledWindow sw;
     VBox box;
     HBox boxImage;
-    QVector<VBox> cardWidgets;
+    VBox boxText;
+    ScrolledWindow sw;
     Calendar calendar;
     Photo photo;
-    VBox boxText;
-    ComboBox stateMenu;
+    ComboBox comboBox;
     Button lsrWfoButton;
+    vector<VBox> cardWidgets;
+    string spcStormReportsDay;
+    string url;
+    string stormReportsUrl;
+    vector<string> states;
+    vector<StormReport> stormReports;
 };
 
 #endif  // SPCSTORMREPORTS_H

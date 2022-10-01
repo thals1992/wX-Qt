@@ -1,22 +1,23 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef UTILITYMODELSNSSLWRFINPUTOUTPUT_H
-#define UTILITYMODELSNSSLWRFINPUTOUTPUT_H
+#ifndef UTILITYMODELNSSLWRFINPUTOUTPUT_H
+#define UTILITYMODELNSSLWRFINPUTOUTPUT_H
 
-#include "models/ObjectModel.h"
-#include "models/RunTimeData.h"
+#include <string>
+#include "ObjectModel.h"
+#include "RunTimeData.h"
 
 class UtilityModelNsslWrfInputOutput {
 public:
-    static RunTimeData getRunTime(ObjectModel *);
-    static QStringList getImage(ObjectModel *);
+    static RunTimeData getRunTime();
+    static string getImageUrl(ObjectModel *);
 
 private:
-    static const QString baseUrl;
+    static const string baseUrl;
 };
 
-#endif  // UTILITYMODELSNSSLWRFINPUTOUTPUT_H
+#endif  // UTILITYMODELNSSLWRFINPUTOUTPUT_H

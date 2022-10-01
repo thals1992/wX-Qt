@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,31 +7,33 @@
 #ifndef OBJECTNHCSTORMDETAILS_H
 #define OBJECTNHCSTORMDETAILS_H
 
+#include <string>
 #include <QByteArray>
-#include <QString>
+
+using std::string;
 
 class ObjectNhcStormDetails {
 public:
-    ObjectNhcStormDetails();
-    ObjectNhcStormDetails(const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&);
-    QString getUpdateTime() const;
-    QString forTopHeader() const;
-    QString name;
-    QString movementDir;
-    QString movementSpeed;
-    QString pressure;
-    QString binNumber;
-    QString id;
-    QString lastUpdate;
-    QString classification;
-    QString lat;
-    QString lon;
-    QString center;
-    QString intensity;
-    QString status;
-    QString movement;
-    QString baseUrl;
-    QString goesUrl;
+    ObjectNhcStormDetails(const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&, const string&);
+    string getUpdateTime() const;
+    string forTopHeader() const;
+    string name;
+    string movementDir;
+    string movementSpeed;
+    string pressure;
+    string binNumber;
+    string stormId;
+    string lastUpdate;
+    string classification;
+    string lat;
+    string lon;
+    string intensity;
+    string status;
+    string center;
+    string goesUrl;
+    string movement;
+    string modBinNumber;
+    string baseUrl;
     QByteArray coneBytes;
 };
 

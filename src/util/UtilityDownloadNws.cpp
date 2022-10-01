@@ -1,53 +1,41 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "util/UtilityDownloadNws.h"
-#include <QByteArray>
-#include <QEventLoop>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
+#include <string>
 #include "common/GlobalVariables.h"
+#include "objects/URL.h"
+#include "objects/WString.h"
 #include "util/UtilityIO.h"
 #include "util/UtilityString.h"
 
-QString UtilityDownloadNws::getHourlyData(const LatLon& latLon) {
+string UtilityDownloadNws::getHourlyData(const LatLon& latLon) {
     const auto pointsData = getLocationPointData(latLon);
     const auto hourlyUrl = UtilityString::parse(pointsData, "\"forecastHourly\": \"(.*?)\"");
     return UtilityIO::getHtml(hourlyUrl);
 }
 
-QString UtilityDownloadNws::get7DayData(const LatLon& latLon) {
+string UtilityDownloadNws::get7DayData(const LatLon& latLon) {
     const auto pointsData = getLocationPointData(latLon);
     const auto forecastUrl = UtilityString::parse(pointsData, "\"forecast\": \"(.*?)\"");
     return UtilityIO::getHtml(forecastUrl);
 }
 
-QString UtilityDownloadNws::getLocationPointData(const LatLon& latLon) {
-    return UtilityIO::getHtml((GlobalVariables::nwsApiUrl + "/points/" + latLon.latString + "," + latLon.lonString));
+string UtilityDownloadNws::getLocationPointData(const LatLon& latLon) {
+    return UtilityIO::getHtml(GlobalVariables::nwsApiUrl + "/points/" + latLon.latStr() + "," + latLon.lonStr());
 }
 
-QString UtilityDownloadNws::getCap(const QString& sector) {
+string UtilityDownloadNws::getCap(const string& sector) {
     if (sector == "us") {
         return getHtmlWithXml("https://api.weather.gov/alerts/active?region_type=land");
     } else {
-        return getHtmlWithXml("https://api.weather.gov/alerts/active?state=" + sector.toUpper());
+        return getHtmlWithXml("https://api.weather.gov/alerts/active?state=" + WString::toUpper(sector));
     }
 }
 
-QString UtilityDownloadNws::getHtmlWithXml(const QString& url) {
-    QNetworkAccessManager manager;
-    auto request = QNetworkRequest(QUrl(url));
-    request.setHeader(QNetworkRequest::UserAgentHeader, GlobalVariables::appName + " " + GlobalVariables::appCreatorEmail);
-    request.setRawHeader(QByteArray("Accept"), QByteArray("application/atom+xml"));
-    QNetworkReply * response = manager.get(request);
-    QEventLoop event;
-    connect(response, &QNetworkReply::finished, &event, &QEventLoop::quit);
-    event.exec();
-    const QString html = response->readAll();
-    delete response;
-    return html;
+string UtilityDownloadNws::getHtmlWithXml(const string& url) {
+    return URL{url}.getTextXmlAcceptHeader();
 }

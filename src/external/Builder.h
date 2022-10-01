@@ -21,24 +21,26 @@
 #ifndef BUILDER_H
 #define BUILDER_H
 
-#include <QVector>
+#include <vector>
 #include "external/BoundingBox.h"
 #include "external/ExternalLine.h"
 #include "external/ExternalPoint.h"
 #include "external/ExternalPolygon.h"
+
+using std::vector;
 
 class Builder {
 public:
     Builder();
     Builder addVertex(ExternalPoint);
     void updateBoundingBox(ExternalPoint);
-    Builder * close();
+//    Builder * close();
     ExternalPolygon build();
 
 private:
     void validate();
-    QVector<ExternalPoint> vertexes;
-    QVector<ExternalLine> sides;
+    vector<ExternalPoint> vertexes;
+    vector<ExternalLine> sides;
     BoundingBox boundingBox;
     bool firstPoint;
     bool isClosed;

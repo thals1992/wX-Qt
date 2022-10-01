@@ -1,17 +1,17 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelEsrlInterface.h"
+#include "UtilityModelEsrlInterface.h"
 
-const QStringList UtilityModelEsrlInterface::models = {
+const vector<string> UtilityModelEsrlInterface::models{
     "HRRR_NCEP",
     "RAP_NCEP"
 };
 
-const QStringList UtilityModelEsrlInterface::sectorsHrrr = {
+const vector<string> UtilityModelEsrlInterface::sectorsHrrr{
     "Full",
     "NW",
     "NC",
@@ -20,15 +20,15 @@ const QStringList UtilityModelEsrlInterface::sectorsHrrr = {
     "SC",
     "SE",
     "Great Lakes",
-    "East CO",
+    "East CO"
 };
 
-const QStringList UtilityModelEsrlInterface::sectorsHrrrAk = {
+const vector<string> UtilityModelEsrlInterface::sectorsHrrrAk{
     "Full"
 };
 
-const QStringList UtilityModelEsrlInterface::modelHrrrParams = {
-    "1ref_full_1000m",
+const vector<string> UtilityModelEsrlInterface::modelHrrrParams{
+        "1ref_full_1000m",
     "cref_full_sfc",
     "mref_full_sfc",
     "ref_full_m10",
@@ -78,12 +78,17 @@ const QStringList UtilityModelEsrlInterface::modelHrrrParams = {
     "pwtr_full_sfc",
     "weasd_full_sfc",
     "1hsnw_full_sfc",
+    // "acsnw_full_sfc",
+    // "snod_full_sfc",
+    // "acsnod_full_sfc",
     "totp_full_sfc",
+    // "acpcp_full_sfc",
     "hail_full_maxsfc",
     "hail_full_max",
     "cpofp_full_sfc",
     "acfrzr_full_sfc",
     "acfrozr_full_sfc",
+    // "ssrun_full_sfc",
     "temp_full_925mb",
     "temp_full_850mb",
     "wspeed_full_850mb",
@@ -139,9 +144,10 @@ const QStringList UtilityModelEsrlInterface::modelHrrrParams = {
     "soilw_full_3m"
 };
 
-const QStringList UtilityModelEsrlInterface::modelHrrrLabels = {
-    "1 km agl reflectivity",
+const vector<string> UtilityModelEsrlInterface::modelHrrrLabels{
+        "1 km agl reflectivity",
     "composite reflectivity",
+    // "ensemble comp reflectivity",
     "max 1 km agl reflectivity",
     "-10C isothermal reflectivity",
     "max 1h -10C isothermal reflectivity",
@@ -166,6 +172,7 @@ const QStringList UtilityModelEsrlInterface::modelHrrrLabels = {
     "0-2 km min updraft helicity",
     "0-3 km max updraft helicity",
     "0-3 km min updraft helicity",
+    // "ensemble updraft helicity",
     "run total 2-5 km max updraft helicity",
     "run total 2-5 km min updraft helicity",
     "run total 0-2 km max updraft helicity",
@@ -180,22 +187,43 @@ const QStringList UtilityModelEsrlInterface::modelHrrrLabels = {
     "10m wind",
     "10m wind gust potential",
     "80m wind",
+    // "1h 80m wind speed change",
+    // "ensemble 1h 80m wind speed change",
     "skin temp",
     "2m temp",
     "2m potential temp",
     "2m temp - skin temp",
     "2m dew point",
     "2m RH",
+    // "fire weather index",
     "surface pressure",
+    // "3h pressure change",
     "precipitable water",
     "snow water equiv",
     "1h snowfall (10-1)",
+    // "ensemble 1h heavy snowfall (10-1)",
+    // "total acc snowfall (10-1)",
+    // "snow depth",
+    // "acc snow depth (var dens)",
+    // "ensemble acc snowfall",
+    // "mean ensemble acc snowfall",
     "1h precip",
+    // "ensemble 1h precip",
+    // "mean ensemble 1h precip",
+    // "ensemble 1h heavy precip",
+    // "total acc precip",
+    // "ensemble total acc precip",
+    // "mean ensemble total acc precip",
+    // "precip type",
     "max 1h hail/graupel diameter (at sfc)",
+    // "max 1h hail/graupel (at sfc) from HAILCAST",
     "max 1h hail/graupel diameter (entire atmosphere)",
     "frozen precip percentage",
     "total acc freezing rain",
+    // "total acc graupel (sleet)",
+    // "supercooled liquid water",
     "1h storm surface runoff",
+    // "3h storm surface runoff",
     "925mb temp",
     "850mb temp",
     "850mb wind",
@@ -217,6 +245,8 @@ const QStringList UtilityModelEsrlInterface::modelHrrrLabels = {
     "high-level cloud cover",
     "cloud top height",
     "ceiling",
+    // "ceiling (experimental)",
+    // "ceiling (experimental-2)",
     "echotop height",
     "VIL",
     "RADAR VIL",
@@ -249,9 +279,57 @@ const QStringList UtilityModelEsrlInterface::modelHrrrLabels = {
     "soil moisture at 1m",
     "soil moisture at 1.6m",
     "soil moisture at 3m",
+    // "cross section BOU cloud water mixing ratio",
+    // "cross section BOU rain mixing ratio",
+    // "cross section BOU graupel mixing ratio",
+    // "cross section BOU snow mixing ratio",
+    // "cross section BOU total condensate",
+    // "cross section BOU wind",
+    // "cross section LWX cloud water mixing ratio",
+    // "cross section LWX rain mixing ratio",
+    // "cross section LWX graupel mixing ratio",
+    // "cross section LWX snow mixing ratio",
+    // "cross section LWX total condensate",
+    // "cross section LWX wind",
+    // "cross section MKX cloud water mixing ratio",
+    // "cross section MKX rain mixing ratio",
+    // "cross section MKX graupel mixing ratio",
+    // "cross section MKX snow mixing ratio",
+    // "cross section MKX total condensate",
+    // "cross section MKX wind",
+    // "cross section SEA cloud water mixing ratio",
+    // "cross section SEA rain mixing ratio",
+    // "cross section SEA graupel mixing ratio",
+    // "cross section SEA snow mixing ratio",
+    // "cross section SEA total condensate",
+    // "cross section SEA wind",
+    // "cross section MIA cloud water mixing ratio",
+    // "cross section MIA rain mixing ratio",
+    // "cross section MIA graupel mixing ratio",
+    // "cross section MIA snow mixing ratio",
+    // "cross section MIA total condensate",
+    // "cross section MIA wind",
+    // "cross section ATL cloud water mixing ratio",
+    // "cross section ATL rain mixing ratio",
+    // "cross section ATL graupel mixing ratio",
+    // "cross section ATL snow mixing ratio",
+    // "cross section ATL total condensate",
+    // "cross section ATL wind",
+    // "cross section BOS cloud water mixing ratio",
+    // "cross section BOS rain mixing ratio",
+    // "cross section BOS graupel mixing ratio",
+    // "cross section BOS snow mixing ratio",
+    // "cross section BOS total condensate",
+    // "cross section BOS wind",
+    // "cross section NYC cloud water mixing ratio",
+    // "cross section NYC rain mixing ratio",
+    // "cross section NYC graupel mixing ratio",
+    // "cross section NYC snow mixing ratio",
+    // "cross section NYC total condensate",
+    // "cross section NYC wind"
 };
 
-const QStringList UtilityModelEsrlInterface::sectorsRap = {
+const vector<string> UtilityModelEsrlInterface::sectorsRap{
     "Full",
     "CONUS",
     "NW",
@@ -263,8 +341,8 @@ const QStringList UtilityModelEsrlInterface::sectorsRap = {
     "Great Lakes",
 };
 
-const QStringList UtilityModelEsrlInterface::modelRapParams = {
-    "cref_full_sfc",
+const vector<string> UtilityModelEsrlInterface::modelRapParams{
+        "cref_full_sfc",
     "cape_full_sfc",
     "cin_full_sfc",
     "cape_full_mx90mb",
@@ -315,15 +393,17 @@ const QStringList UtilityModelEsrlInterface::modelRapParams = {
     "soilw_full_10cm"
 };
 
-const QStringList UtilityModelEsrlInterface::modelRapLabels = {
+const vector<string> UtilityModelEsrlInterface::modelRapLabels{
     "reflectivity",
     "surface CAPE",
     "surface CIN",
     "mixed CAPE",
     "most unstable CAPE",
     "most unstable layer CAPE",
+    // "lightning potential",
     "10m wind",
     "80m wind",
+    // "1h 80m wind speed change",
     "10m wind gust potential",
     "skin temp",
     "2m temp",
@@ -331,18 +411,23 @@ const QStringList UtilityModelEsrlInterface::modelRapLabels = {
     "2m temp - skin temp",
     "2m dew point",
     "2m RH",
+    // "3h pressure change",
     "precipitable water",
     "snow water equiv",
     "1h snowfall",
     "total acc snowfall",
+    // "snow depth",
     "1h precip",
     "total acc precip",
     "precip type",
+    // "total acc freezing rain",
+    // "total acc graupel (sleet)",
     "925mb temp",
     "850mb temp",
     "850mb wind",
     "850 RH",
     "850-500mb mean RH",
+    // "RH with respect to PW",
     "700mb temp",
     "700mb vvel",
     "500mb temp",
@@ -352,17 +437,37 @@ const QStringList UtilityModelEsrlInterface::modelRapLabels = {
     "cloud top height",
     "convective cloud top height",
     "ceiling",
+    // "ceiling (experimental)",
+    // "ceiling (experimental-2)",
+    // "echotop height",
     "VIL",
+    // "RADAR VIL",
     "total cloud cover",
     "low-level cloud cover",
     "mid-level cloud cover",
     "high-level cloud cover",
+    // "boundary layer cloud cover",
+    // "aviation flight rules",
+    // "outgoing longwave radiation (top of atmosphere)",
+    // "outgoing shortwave radiation (top of atmosphere)",
+    // "upward longwave radiation (surface)",
+    // "upward shortwave radiation (surface)",
     "incoming shortwave radiation (surface)",
+    // "fog",
+    // "sfc ozone concentration",
+    // "sfc pm10 aerosol dry mass",
+    // "sfc pm2.5 aerosol dry mass",
+    // "downward long-wave radiation",
+    // "downward short-wave radiation",
+    // "ground heat flux",
+    // "latent heat flux",
+    // "sensible heat flux",
     "PBL height",
     "soil temp at 1cm",
     "soil temp at 4cm",
     "soil temp at 10cm",
+    // "soil moisture at sfc",
     "soil moisture at 1cm",
     "soil moisture at 4cm",
-    "soil moisture at 10cm",
+    "soil moisture at 10cm"
 };

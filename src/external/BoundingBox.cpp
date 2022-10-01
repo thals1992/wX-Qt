@@ -21,9 +21,9 @@
 #include "external/BoundingBox.h"
 #include <limits>
 
-BoundingBox::BoundingBox() {
-    xMax = -1.0 * std::numeric_limits<float>::max();
-    xMin = -1.0 * std::numeric_limits<float>::max();
-    yMax = -1.0 * std::numeric_limits<float>::max();
-    yMin = -1.0 * std::numeric_limits<float>::max();
-}
+BoundingBox::BoundingBox()
+    : xMax{ -1.0 * std::numeric_limits<double>::max() }
+    , xMin{ -1.0 * std::numeric_limits<double>::max() }
+    , yMax{ -1.0 * std::numeric_limits<double>::max() }
+    , yMin{ -1.0 * std::numeric_limits<double>::max() }
+{}

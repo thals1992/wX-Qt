@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,29 +7,31 @@
 #ifndef OBJECTCARDALERTDETAILS_H
 #define OBJECTCARDALERTDETAILS_H
 
-#include <QString>
+#include <string>
 #include <QWidget>
 #include "misc/CapAlertXml.h"
 #include "ui/Button.h"
+#include "ui/ComboBox.h"
 #include "ui/HBox.h"
 #include "ui/Text.h"
 #include "ui/VBox.h"
 
+using std::string;
+
 class ObjectCardAlertDetail : public HBox {
 public:
-    ObjectCardAlertDetail(QWidget *, CapAlertXml);
+    ObjectCardAlertDetail(QWidget *, const CapAlertXml&);
 
 private:
-    QWidget * parent;
-    CapAlertXml cap;
-    QString radarSite;
+    string radarSite;
     VBox boxText;
-    Button buttonDetails;
-    Button buttonRadar;
+    QWidget * parent;
     Text topLine;
-    Text middleLine;
     Text startTimeLine;
     Text endTimeLine;
+    Text middleLine;
+    Button buttonDetails;
+    Button buttonRadar;
 };
 
 #endif  // OBJECTCARDALERTDETAILS_H

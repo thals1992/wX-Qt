@@ -1,36 +1,37 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "spc/UtilitySpcStormReports.h"
 #include "common/GlobalVariables.h"
+#include "objects/WString.h"
 
-QVector<StormReport> UtilitySpcStormReports::process(const QStringList& lines) {
-    QVector<StormReport> stormReports;
+vector<StormReport> UtilitySpcStormReports::process(const vector<string>& lines) {
+    vector<StormReport> stormReports;
     for (const auto& line : lines) {
-        if (line == "") {
+        if (line.empty()) {
             continue;
         }
-        QString lat = "";
-        QString lon = "";
-        QString state = "";
-        QString time = "";
-        QString address = "";
-        QString damageReport = "";
-        QString magnitude = "";
-        QString city = "";
-        QString output = "";
-        QString damageHeader = "";
-        if (line.contains(",F_Scale,")) {
+        string lat;
+        string lon;
+        string state;
+        string time;
+        string address;
+        string damageReport;
+        string magnitude;
+        string city;
+        string output;
+        string damageHeader;
+        if (WString::contains(line, ",F_Scale,")) {
             damageHeader = "Tornado Reports";
-        } else if (line.contains(",Speed,")) {
+        } else if (WString::contains(line, ",Speed,")) {
             damageHeader = "Wind Reports";
-        } else if (line.contains(",Size,")) {
+        } else if (WString::contains(line, ",Size,")) {
             damageHeader = "Hail Reports";
         } else {
-            auto lineChunks = line.split(",");
+            const auto lineChunks = WString::split(line, ",");
             if (lineChunks.size() > 7) {
                 output += lineChunks[0];
                 output += " ";
@@ -57,7 +58,7 @@ QVector<StormReport> UtilitySpcStormReports::process(const QStringList& lines) {
                 damageReport = lineChunks[7];
             }
         }
-        stormReports.push_back(StormReport(output, lat, lon, time, magnitude, address, city, state, damageReport, damageHeader));
+        stormReports.emplace_back(output, lat, lon, time, magnitude, address, city, state, damageReport, damageHeader);
     }
     return stormReports;
 }

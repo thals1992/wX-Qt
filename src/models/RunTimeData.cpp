@@ -1,19 +1,16 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/RunTimeData.h"
+#include "RunTimeData.h"
+#include "../util/UtilityList.h"
 
-RunTimeData::RunTimeData() {
-    imageCompleteInt = 0;
-}
-
-void RunTimeData::appendListRun(const QString& value) {
+void RunTimeData::appendListRun(const string& value) {
     listRun.push_back(value);
 }
 
-void RunTimeData::appendListRun(const QStringList& values) {
-    listRun += values;
+void RunTimeData::appendListRunWithList(const vector<string>& values) {
+    addAll(listRun, values);
 }

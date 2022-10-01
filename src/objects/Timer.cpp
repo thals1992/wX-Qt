@@ -1,13 +1,14 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "objects/Timer.h"
 
-Timer::Timer(QObject * parent, std::function<void()> updateFn) {
-    timer = new QTimer(parent);
+Timer::Timer(QObject * parent, const function<void()>& updateFn)
+    : timer{ new QTimer{parent} }
+{
     QObject::connect(timer, &QTimer::timeout, parent, [updateFn] { updateFn(); });
 }
 
@@ -27,6 +28,7 @@ void Timer::setInterval(int msec) {
     timer->setInterval(msec);
 }
 
-int Timer::remainingTime() {
-    return timer->remainingTime();
-}
+// KEEP
+// int Timer::remainingTime() {
+//    return timer->remainingTime();
+// }

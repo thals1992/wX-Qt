@@ -6,14 +6,18 @@ import shutil
 import os
 import subprocess
 from datetime import datetime
+from typing import Optional
+
 
 def runMe(cmd: str):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
     p.wait()
-    return output.decode("utf-8"),err.decode("utf-8"), p.returncode
+    return output.decode("utf-8"), err.decode("utf-8"), p.returncode
 
-baseDir: str = os.environ.get("HOME")
+
+baseDir: Optional[str] = os.environ.get("HOME")
+assert baseDir is not None
 dropBoxDir: str = baseDir + os.sep + "Dropbox"
 tmpPath: str = baseDir + os.sep + "tmp"
 #
@@ -27,10 +31,10 @@ dateStringForBox: str = currentTime.strftime("%Y_%m_%d_%a").lower()
 
 try:
     os.mkdir(dropBoxDir + os.sep + dateStringForBox)
-except:
+except Exception:
     pass
 
-baseFile: str = appName + "_" + dateStringForFile +  ".zip"
+baseFile: str = appName + "_" + dateStringForFile + ".zip"
 fileName: str = tmpPath + os.sep + baseFile
 command: str = "git archive -o " + fileName + " HEAD"
 

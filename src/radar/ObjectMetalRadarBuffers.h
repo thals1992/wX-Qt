@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,30 +8,31 @@
 #define OBJECTMETALRADARBUFFERS_H
 
 #include <cstdint>
-#include <QColor>
-#include <QPolygonF>
-#include <QPen>
+#include <vector>
 #include <QBrush>
-#include "objects/FileStorage.h"
+#include <QColor>
+#include <QPen>
+#include <QPolygonF>
+#include "objects/MemoryBuffer.h"
+
+using std::vector;
 
 class ObjectMetalRadarBuffers {
 public:
     ObjectMetalRadarBuffers();
-    explicit ObjectMetalRadarBuffers(FileStorage *);
     void initialize();
-    void setToPositionZero();
-    int animationIndex;
-    FileStorage * fileStorage;
-    int numberOfRadials;
-    int numberOfRangeBins;
-    double binSize;
-    int16_t productCode;
-    QVector<QColor> color;
-    MemoryBuffer floatBuffer;
-    MemoryBuffer colorBuffer;
-    QVector<QPolygonF> rectPoints;
-    QVector<QPen> colorPens;
-    QVector<QBrush> colorBrushes;
+    void setBackgroundColor();
+    int animationIndex{-1};
+    int numberOfRadials{};
+    int numberOfRangeBins{};
+    double binSize{};
+    uint16_t productCode{};
+    vector<QColor> color;
+    vector<QPolygonF> rectPoints;
+    vector<QPen> colorPens;
+    vector<QBrush> colorBrushes;
+    MemoryBuffer radialStartAngle;
+    MemoryBuffer binWord;
 };
 
 #endif  // OBJECTMETALRADARBUFFERS_H

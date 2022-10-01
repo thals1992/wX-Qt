@@ -1,31 +1,31 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include <QDebug>
+#include <memory>
 #include "objects/ObjectAnimate.h"
-#include "objects/DownloadParallelBytes.h"
 #include "util/To.h"
-
-ObjectAnimate::ObjectAnimate() {}
 
 ObjectAnimate::ObjectAnimate(
     QWidget * parent,
     Photo * image,
-    std::function<QStringList(QString, QString, int)> getFunction,
-    std::function<void()> downloadImage,
+    const function<vector<string>(string, string, int)>& getFunction,
+    const function<void()>& downloadImage,
     ButtonToggle * animateButton
-) : QObject(parent) {
-    this->parent = parent;
-    this->image = image;
-    this->getFunction = getFunction;
-    this->downloadImage = downloadImage;
-    this->animateButton = animateButton;
-    animationSpeed = 500;
-    this->timeLine = TimeLine(this, animationSpeed * 20, 12, [this] (int i) {loadAnimationFrame(i); });
-}
+)
+    : QObject(parent)
+    , getFunction{ getFunction }
+    , frameCount{ 12 }
+    , parent{ parent }
+    , image{ image }
+    , downloadImage{ downloadImage }
+    , animateButton{ animateButton }
+    , animationSpeed{ 500 }
+    , timeLine{ TimeLine{this, animationSpeed * 20, frameCount, [this] (int i) { loadAnimationFrame(i); }} }
+{}
 
 void ObjectAnimate::stopAnimate() {
     timeLine.stop();
@@ -41,21 +41,20 @@ void ObjectAnimate::animateClicked() {
     } else {
         animateButton->setActive(true);
         animateButton->setText("Downloading...");
-        const auto urls = getFunction(product, sector, 12);
+        const auto urls = getFunction(product, sector, frameCount);
         downloadFrames(urls);
-        timeLine.setCount(urls.size());
+        timeLine.setCount(static_cast<int>(urls.size()));
         timeLine.start();
         animateButton->setText("Stop Animation");
     }
 }
 
 void ObjectAnimate::loadAnimationFrame(int index) {
-    animateButton->setText(To::String(index + 1) + " / " + To::String(timeLine.getCount()));
+    animateButton->setText(To::string(index + 1) + " / " + To::string(timeLine.getCount()));
     image->setFullScreen(animationFrames[index]);
 }
 
-void ObjectAnimate::downloadFrames(QStringList urls) {
-    // FIXME TODO don't use new
-    auto dpb = new DownloadParallelBytes(parent, urls);
+void ObjectAnimate::downloadFrames(const vector<string>& urls) {
+    dpb = std::make_unique<DownloadParallelBytes>(parent, urls);
     animationFrames = dpb->byteList;
 }

@@ -1,57 +1,48 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "common/GlobalVariables.h"
 #include "objects/ObjectPolygonWatch.h"
+#include "objects/WString.h"
 #include "misc/SevereNotice.h"
 #include "util/To.h"
 
-SevereNotice::SevereNotice() {
-}
-
-SevereNotice::SevereNotice(PolygonType type) {
-    this->type = type;
-}
+SevereNotice::SevereNotice(PolygonType type)
+    : type{ type }
+{}
 
 void SevereNotice::getBitmaps() {
-    QString noAlertsVerbiage;
-    QString html;
+    string noAlertsVerbiage;
+    string html;
     urls.clear();
-    if (type == PolygonType::mcd) {
+    if (type == Mcd) {
         noAlertsVerbiage = "No Mesoscale Discussions are currently in effect.";
-        html = ObjectPolygonWatch::polygonDataByType[PolygonType::mcd]->numberList.getValue();
-    } else if (type == PolygonType::watch) {
+        html = ObjectPolygonWatch::polygonDataByType[Mcd]->numberList.getValue();
+    } else if (type == Watch) {
         noAlertsVerbiage = "No watches are currently valid";
-        html = ObjectPolygonWatch::polygonDataByType[PolygonType::watch]->numberList.getValue();
-    } else if (type == PolygonType::mpd) {
+        html = ObjectPolygonWatch::polygonDataByType[Watch]->numberList.getValue();
+    } else if (type == Mpd) {
         noAlertsVerbiage = "No MPDs are currently in effect.";
-        html = ObjectPolygonWatch::polygonDataByType[PolygonType::mpd]->numberList.getValue();
-    } else {
-        noAlertsVerbiage = "";
-        html = "";
+        html = ObjectPolygonWatch::polygonDataByType[Mpd]->numberList.getValue();
     }
-    QString text = "";
-    if (!html.contains(noAlertsVerbiage)) {
+    string text;
+    if (!WString::contains(html, noAlertsVerbiage)) {
         text = html;
-    } else {
-        text = "";
     }
-    auto numberList = text.split(":");
-    if (text != "") {
+    auto numberList = WString::split(text, ":");
+    if (!text.empty()) {
         for (const auto& number : numberList) {
-            if (number != "") {
-                QString url;
-                if (type == PolygonType::mcd) {
+            if (!number.empty()) {
+                string url;
+                if (type == Mcd) {
                     url = GlobalVariables::nwsSPCwebsitePrefix + "/products/md/mcd" + number + ".gif";
-                } else if (type == PolygonType::watch) {
+                } else if (type == Watch) {
                     url = GlobalVariables::nwsSPCwebsitePrefix + "/products/watch/ww" + number + "_radar.gif";
-                } else if (type == PolygonType::mpd) {
+                } else if (type == Mpd) {
                     url = GlobalVariables::nwsWPCwebsitePrefix + "/metwatch/images/mcd" + number + ".gif";
-                } else {
-                    url = "";
                 }
                 urls.push_back(url);
             }
@@ -59,19 +50,19 @@ void SevereNotice::getBitmaps() {
     }
 }
 
-QString SevereNotice::getShortName() const {
+string SevereNotice::getShortName() const {
     switch (type) {
-        case PolygonType::mcd:
+        case Mcd:
             return "MCD";
-        case PolygonType::mpd:
+        case Mpd:
             return "MPD";
-        case PolygonType::watch:
+        case Watch:
             return "WATCH";
         default:
             return "";
     }
 }
 
-QString SevereNotice::getCount() const {
-    return To::String(static_cast<int>(urls.size()));
+string SevereNotice::getCount() const {
+    return To::string(static_cast<int>(urls.size()));
 }

@@ -1,21 +1,21 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef UTILITYMODELSNCEPINPUTOUTPUT_H
-#define UTILITYMODELSNCEPINPUTOUTPUT_H
+#ifndef UTILITYMODELNCEPINPUTOUTPUT_H
+#define UTILITYMODELNCEPINPUTOUTPUT_H
 
-#include "models/ObjectModel.h"
+#include <string>
+#include "ObjectModel.h"
+#include "RunTimeData.h"
 
 class UtilityModelNcepInputOutput {
 public:
     static RunTimeData getRunTime(ObjectModel *);
-    static QString getImage(ObjectModel *);
-
-private:
-    static const QString pattern;
+    static string getImageUrl(ObjectModel *);
+    static const string pattern;
 };
 
-#endif  // UTILITYMODELSNCEPINPUTOUTPUT_H
+#endif  // UTILITYMODELNCEPINPUTOUTPUT_H

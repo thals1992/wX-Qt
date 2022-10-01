@@ -1,49 +1,91 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelSpcHrefInputOutput.h"
-#include "common/GlobalVariables.h"
-#include "models/UtilityModelSpcHrefInterface.h"
-#include "util/UtilityIO.h"
-#include "util/UtilityString.h"
-#include "util/UtilityTime.h"
+#include "UtilityModelSpcHrefInputOutput.h"
+#include <vector>
+#include "../common/GlobalVariables.h"
+#include "../objects/ObjectDateTime.h"
+#include "../objects/WString.h"
+#include "../util/UtilityIO.h"
+#include "../util/UtilityList.h"
+#include "../util/UtilityString.h"
+#include "UtilityModelSpcHrefInterface.h"
 
 RunTimeData UtilityModelSpcHrefInputOutput::getRunTime() {
     RunTimeData runData;
-    auto htmlRunStatus = UtilityIO::getHtml(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/");
-    auto html = UtilityString::parse(htmlRunStatus, "\\{model: \"href\",product: \"500mb_mean\",sector: \"conus\",(rd: .[0-9]{8}\",rt: .[0-9]{4}\",\\})");
-    auto day = UtilityString::parse(html, "rd:.(.*?),.*?").replace("\"", "");
-    auto time = UtilityString::parse(html, "rt:.(.*?)00.,.*?").replace("\"", "");
-    auto mostRecentRun = day + time;
+    const auto htmlRunstatus = UtilityIO::getHtml(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/");
+    const auto html = UtilityString::parse(htmlRunstatus, "\\{model: \"href\",product: \"500mbmean\",sector: \"conus\",(rd: .[0-9]{8}\",rt: .[0-9]{4}\",\\})");
+    auto day = UtilityString::parse(html, "rd:.(.*?),.*?");
+    day = WString::replace(day, "\"", "");
+    auto time = UtilityString::parse(html, "rt:.(.*?)00.,.*?");
+    time = WString::replace(time, "\"", "");
+    const auto mostRecentRun = day + time;
     runData.appendListRun(mostRecentRun);
-    runData.appendListRun(UtilityTime::genModelRuns(mostRecentRun, 12, "yyyyMMddHH"));
+    runData.appendListRunWithList(ObjectDateTime::generateModelRuns(mostRecentRun, 12));
     runData.mostRecentRun = mostRecentRun;
     return runData;
 }
 
-QStringList UtilityModelSpcHrefInputOutput::getImage(ObjectModel * om) {
-    auto year = UtilityString::substring(om->run, 0, 4);
-    auto month = UtilityString::substring(om->run, 4, 6);
-    auto day = UtilityString::substring(om->run, 6, 8);
-    auto hour = UtilityString::substring(om->run, 8, 10);
-    auto products = om->param.split(",");
-    QStringList urls = {GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/spc_white_1050px.png"};
-    urls.push_back(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/noaa_overlay_1050px.png");
-    auto sectorIndex = UtilityModelSpcHrefInterface::sectorsLong.indexOf(om->sector);
-    auto sector = UtilityModelSpcHrefInterface::sectors[sectorIndex];
-    for (const auto& product : products) {
-        QString url = "";
-        if (product.contains("cref_members")) {
-            auto paramArr = product.split(" ");
-            url = GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/models/href/" + year + "/" + month + "/" + day + "/" + hour + "00/f0" + om->timeStr + "00/" + paramArr[0] + "." + sector + ".f0" + om->timeStr + "00." + paramArr[1] + ".tl00.png";
+string UtilityModelSpcHrefInputOutput::getImageUrl(ObjectModel * om) {
+    const auto year = UtilityString::substring(om->run, 0, 4);
+    const auto month = UtilityString::substring(om->run, 4, 6);
+    const auto day = UtilityString::substring(om->run, 6, 8);
+    const auto hour = UtilityString::substring(om->run, 8, 10);
+    const auto products = WString::split(om->param, ",");
+    vector<string> urlArr;
+    urlArr.push_back(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/spcwhite1050px.png");
+    urlArr.push_back(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/noaaoverlay1050px.png");
+    const auto sectorIndex = indexOf(UtilityModelSpcHrefInterface::sectorsLong, om->sector);
+    const auto& sector = UtilityModelSpcHrefInterface::sectors[sectorIndex];
+    for (const auto& data : products) {
+        string url;
+        if (WString::contains(data, "crefmembers")) {
+            auto paramArr = WString::split(data, " ");
+            url = GlobalVariables::nwsSPCwebsitePrefix +
+                    "/exper/href/graphics/models/href/" +
+                    year +
+                    "/" +
+                    month +
+                    "/" +
+                    day +
+                    "/" +
+                    hour +
+                    "00/f0" +
+                    om->getTime() +
+                    "00/" +
+                    paramArr[0] +
+                    "." +
+                    sector +
+                    ".f0" +
+                    om->getTime() +
+                    "00." +
+                    paramArr[1] +
+                    ".tl00.png";
         } else {
-            url = GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/models/href/" + year + "/" + month + "/" + day + "/" + hour + "00/f0" + om->timeStr + "00/" + product + "." + sector + ".f0" + om->timeStr + "00.png";
+            url = GlobalVariables::nwsSPCwebsitePrefix +
+                    "/exper/href/graphics/models/href/" +
+                    year +
+                    "/" +
+                    month +
+                    "/" +
+                    day +
+                    "/" +
+                    hour +
+                    "00/f0" +
+                    om->getTime() +
+                    "00/" +
+                    data +
+                    "." +
+                    sector +
+                    ".f0" +
+                    om->getTime() +
+                    "00.png";
         }
-        urls.push_back(url);
+        urlArr.push_back(url);
     }
-    urls.push_back(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/blank_maps/" + sector + ".png");
-    return urls;
+    urlArr.push_back(GlobalVariables::nwsSPCwebsitePrefix + "/exper/href/graphics/blankmaps/" + sector + ".png");
+    return WString::join(urlArr, ",");
 }

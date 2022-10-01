@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -9,7 +9,7 @@
 
 // TODO FIXME alphabetize
 
-QString IconMapping::toString(Icon icon) {
+string IconMapping::toString(Icon icon) {
     switch (icon) {
         case Settings:
             return "baseline_settings_black_48dp.png";
@@ -37,4 +37,3 @@ QString IconMapping::toString(Icon icon) {
             return "";
     }
 }
-

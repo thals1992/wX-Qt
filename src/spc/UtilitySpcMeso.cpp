@@ -1,51 +1,49 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "spc/UtilitySpcMeso.h"
+#include "UtilitySpcMeso.h"
 
-QVector<ObjectMenuTitle> UtilitySpcMeso::titles = {
-    ObjectMenuTitle("Observations", 3),
-    ObjectMenuTitle("Surface", 15),
-    ObjectMenuTitle("Upper Air", 25),
-    ObjectMenuTitle("Thermodynamics", 19),
-    ObjectMenuTitle("Wind Shear", 19),
-    ObjectMenuTitle("Composite Indices", 23),
-    ObjectMenuTitle("Multi-Parameter Fields", 11),
-    ObjectMenuTitle("Heavy Rain", 8),
-    ObjectMenuTitle("Winter Weather", 14),
-    ObjectMenuTitle("Fire Weather", 6),
-    ObjectMenuTitle("Classic", 3),
-    ObjectMenuTitle("Beta", 10),
+vector<ObjectMenuTitle> UtilitySpcMeso::titles{
+    ObjectMenuTitle{"Observations", 3},
+    ObjectMenuTitle{"Surface", 15},
+    ObjectMenuTitle{"Upper Air", 25},
+    ObjectMenuTitle{"Thermodynamics", 19},
+    ObjectMenuTitle{"Wind Shear", 19},
+    ObjectMenuTitle{"Composite Indices", 23},
+    ObjectMenuTitle{"Multi-Parameter Fields", 11},
+    ObjectMenuTitle{"Heavy Rain", 8},
+    ObjectMenuTitle{"Winter Weather", 14},
+    ObjectMenuTitle{"Fire Weather", 6},
+    ObjectMenuTitle{"Classic", 3},
+    ObjectMenuTitle{"Beta", 10},
 };
 
-const QString UtilitySpcMeso::defaultSector = "19";
-
-const QStringList UtilitySpcMeso::favList = {
-        "pmsl",
-        "ttd",
-        "500mb",
-        "sbcp",
-        "laps",
-        "eshr",
-        "srh3",
-        "scp",
-        "stpc",
-        "pwtr"
+const vector<string> UtilitySpcMeso::favList{
+    "pmsl",
+    "ttd",
+    "500mb",
+    "sbcp",
+    "laps",
+    "eshr",
+    "srh3",
+    "scp",
+    "stpc",
+    "pwtr"
 };
 
-const QStringList UtilitySpcMeso::imgSf = {
+const vector<string> UtilitySpcMeso::imgSf{
     "mixr",
     "ttd",
     "mcon",
     "thea",
     "mxth",
-    // "temp_chg",
-    // "dwpt_chg",
-    // "mixr_chg",
-    // "thte_chg",
+    "tempchg",
+    "dwptchg",
+    "mixrchg",
+    "thtechg",
     "925mb",
     "850mb",
     "850mb2",
@@ -73,18 +71,16 @@ const QStringList UtilitySpcMeso::imgSf = {
     "qlcs2",
     "pwtr",
     "tran",
-    "tran_925",
-    "tran_925-850",
+    "tran925",
+    "tran925-850",
     "prop",
     "peff",
     "fzlv",
     "les1",
-    "tadv_925",
-    // "7tad",
-    // "tadv"
+    "tadv925",
 };
 
-const QStringList UtilitySpcMeso::products = {
+const vector<string> UtilitySpcMeso::products{
     "bigsfc",
     "1kmv",
     "rgnlrad",
@@ -252,7 +248,7 @@ const QStringList UtilitySpcMeso::products = {
     "pw3k"
 };
 
-const QStringList UtilitySpcMeso::labels = {
+const vector<string> UtilitySpcMeso::labels{
     "Surface Observations",
     "Visible Satellite",
     "Radar Base Reflectivity",
@@ -422,104 +418,7 @@ const QStringList UtilitySpcMeso::labels = {
     "PW * 3kmRH"
 };
 
-const QStringList UtilitySpcMeso::paramSurface = {
-    "bigsfc: Surface Observations",
-    "1kmv: Visible Satellite",
-    "rgnlrad: Radar Base Reflectivity",
-    "thea: Theta-E Advection",
-    "ttd: Temp/Wind/Dwpt",
-    "pmsl: MSL Pressure/Wind"
-};
-
-const QStringList UtilitySpcMeso::paramUpperAir = {
-    "925mb: 925mb Analysis",
-    "850mb: 850mb Analysis",
-    "850mb2: 850mb Analysis (version 2)",
-    "700mb: 700mb Analysis",
-    "500mb: 500mb Analysis",
-    "300mb: 300mb Analysis",
-    "pwtr: Precipitable water",
-    "muli: Surface-based Lifted Index"
-};
-
-const QStringList UtilitySpcMeso::paramCape = {
-    "laps: Mid-Level Lapse Rates",
-    "lllr: Low-Level Lapse Rates",
-    "lclh: LCL Height",
-    "sbcp: CAPE - Surface Based",
-    "mlcp: CAPE - 100mb Mixed Layer",
-    "mucp: CAPE - Most Unstable / LPL Height"
-};
-
-const QStringList UtilitySpcMeso::paramComp = {
-    "sigh: Sgfnt Hail",
-    "stpc: Sgfnt Tornado (effective layer)",
-    "scp: Supercell Composite"
-};
-
-const QStringList UtilitySpcMeso::paramShear = {
-    "srh1: SR Helicity - Sfc-1km",
-    "srh3: SR Helicity - Sfc-3km",
-    "shr6: Bulk Shear - Sfc-6km",
-    "eshr: Bulk Shear - Effective"
-};
-
-const QStringList UtilitySpcMeso::productShortList = {
-    "bigsfc",
-    "1kmv",
-    "rgnlrad",
-    "thea",
-    "ttd",
-    "pmsl",
-    "925mb",
-    "850mb",
-    "700mb",
-    "500mb",
-    "300mb",
-    "pwtr",
-    "muli",
-    "laps",
-    "lllr",
-    "lclh",
-    "sbcp",
-    "mlcp",
-    "mucp",
-    "sigh",
-    "stpc",
-    "scp",
-    "srh1",
-    "srh3",
-    "shr6",
-    "eshr"
-};
-
-const QHash<QString, QString> UtilitySpcMeso::sectorMap = {
-    {"19", "CONUS"},
-    {"20", "Midwest"},
-    {"13", "North Central"},
-    {"14", "Central"},
-    {"15", "South Central"},
-    {"16", "Northeast"},
-    {"17", "Central East"},
-    {"18", "Southeast"},
-    {"12", "Southwest"},
-    {"11", "Northwest"}
-};
-
-const QHash<QString, QString> UtilitySpcMeso::sectorMapForTitle = {
-    {"19", "US"},
-    {"20", "MW"},
-    {"13", "NC"},
-    {"14", "C"},
-    {"15", "SC"},
-    {"16", "NE"},
-    {"17", "CE"},
-    {"18", "SE"},
-    {"12", "SW"},
-    {"11", "NW"}
-};
-
-const QStringList UtilitySpcMeso::sectorCodes = {
+const vector<string> UtilitySpcMeso::sectorCodes{
     "19",
     "20",
     "13",
@@ -532,7 +431,7 @@ const QStringList UtilitySpcMeso::sectorCodes = {
     "11"
 };
 
-const QStringList UtilitySpcMeso::sectors = {
+const vector<string> UtilitySpcMeso::sectors{
     "CONUS",
     "Midwest",
     "North Central",
@@ -544,3 +443,5 @@ const QStringList UtilitySpcMeso::sectors = {
     "Southwest",
     "Northwest"
 };
+
+

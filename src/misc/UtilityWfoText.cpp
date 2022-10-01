@@ -1,12 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "misc/UtilityWfoText.h"
 
-const QStringList UtilityWfoText::wfoProdList = {
+const vector<string> UtilityWfoText::wfoProdList{
     "AFD: Area Forecast Discussion",
     "ESF: Hydrologic Outlook",
     "FWF: Fire weather Forecast",

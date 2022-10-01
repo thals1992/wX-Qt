@@ -1,31 +1,36 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "radar/UtilityWXMetalPerf.h"
+#include <QDebug>
 #include <QPointF>
 #include <QPolygonF>
 #include <QVector>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
-#include "external/bzlib.h"
+#include <numbers>
+#include <vector>
 #include "objects/Color.h"
 #include "objects/MemoryBuffer.h"
 #include "radarcolorpalette/ObjectColorPalette.h"
 #include "util/UtilityIO.h"
+#include "util/UtilityList.h"
 
-int UtilityWXMetalPerf::decode8BitAndGenRadials(ObjectMetalRadarBuffers * radarBuffers, [[maybe_unused]] WXMetalNexradLevelData * rd) {
-    const auto k180DivPi = 180.0 / M_PI;
+using std::vector;
+
+int UtilityWXMetalPerf::decode8BitAndGenRadials(ObjectMetalRadarBuffers * radarBuffers, FileStorage * fileStorage) {
+    const auto k180DivPi = 180.0 / std::numbers::pi;
     auto totalBins = 0;
     MemoryBuffer * disFirst;
     if (radarBuffers->animationIndex == -1) {
-        disFirst = &(radarBuffers->fileStorage->memoryBuffer);
+        disFirst = &(fileStorage->memoryBuffer);
         disFirst->setPosition(0);
     } else {
-        disFirst = &(radarBuffers->fileStorage->animationMemoryBuffer[radarBuffers->animationIndex]);
+        disFirst = &(fileStorage->animationMemoryBuffer[radarBuffers->animationIndex]);
         disFirst->setPosition(0);
     }
     if (disFirst->getCapacity() == 0) {
@@ -33,80 +38,82 @@ int UtilityWXMetalPerf::decode8BitAndGenRadials(ObjectMetalRadarBuffers * radarB
     }
     while (disFirst->getShort() != -1) {}
     disFirst->skipBytes(100);
-    int64_t compressedFileSize = disFirst->getCapacity() - disFirst->getPosition();
-    MemoryBuffer * dis2 = UtilityIO::uncompress(disFirst->qbyteArray.data() + disFirst->getPosition(), compressedFileSize);
-    dis2->skipBytes(30);
-    radarBuffers->setToPositionZero();
-    double angleV;
+    const int64_t compressedFileSize = disFirst->getCapacity() - disFirst->getPosition();
+    auto dis2 = UtilityIO::uncompress(disFirst->getConstData() + disFirst->getPosition(), compressedFileSize);
+    dis2.skipBytes(30);
+// TODO FIXME
+//    radarBuffers->setBackgroundColor();
     auto angleNext = 0.0;
     auto angle0 = 0.0;
-    auto numberOfRadials = 360;
+    auto numberOfRadials = radarBuffers->numberOfRadials;
     // specific for ports using Qt
-    auto xShift = 1.0;
-    auto yShift = -1.0;
-    for (auto radial = 0; radial < numberOfRadials; radial++) {
-        uint16_t numberOfRleHalfWords = dis2->getUnsignedShort();
-        double angle = (450.0 - (dis2->getUnsignedShort() / 10.0));
-        dis2->skipBytes(2);
+    const auto xShift = 1.0;
+    const auto yShift = -1.0;
+    for (auto radial : range(numberOfRadials)) {
+        const auto numberOfRleHalfWords = dis2.getUnsignedShort();
+        const auto angle = (450.0 - (dis2.getUnsignedShort() / 10.0));
+        dis2.skipBytes(2);
         if (radial < numberOfRadials - 1) {
-            dis2->mark(dis2->getPosition());
-            dis2->skipBytes(static_cast<int>(numberOfRleHalfWords) + 2);
-            angleNext = (450.0 - (dis2->getUnsignedShort() / 10.0));
-            dis2->reset();
+            dis2.mark(dis2.getPosition());
+            dis2.skipBytes(static_cast<int>(numberOfRleHalfWords) + 2);
+            angleNext = 450.0 - (dis2.getUnsignedShort() / 10.0);
+            dis2.reset();
         }
-        int level = 0;
-        int levelCount = 0;
-        double binStart = radarBuffers->binSize;
+        auto level = 0;
+        auto levelCount = 0;
+        auto binStart = radarBuffers->binSize;
         if (radial == 0) {
             angle0 = angle;
         }
-        if (radial < numberOfRadials - 1) {
-            angleV = angleNext;
-        } else {
+//        double angleV = angle0;
+//        if (radial < numberOfRadials - 1) {
+//            angleV = angleNext;
+//        }
+        auto angleV = angleNext;
+        if (radial >= numberOfRadials - 1) {
             angleV = angle0;
         }
+        const auto angleVCos = cos(angleV / k180DivPi);
+        const auto angleVSin = sin(angleV / k180DivPi);
+
+        const auto angleCos = cos(angle / k180DivPi);
+        const auto angleSin = sin(angle / k180DivPi);
         for (auto bin = 0; bin < numberOfRleHalfWords; bin++) {
-            int curLevel = dis2->get();
+            int curLevel = dis2.get();
             if (bin == 0) {
                 level = curLevel;
             }
             if (curLevel == level) {
                 levelCount += 1;
             } else {
-                // Since we will attempt to use the higher level QT painter we don't need a color per vertex
+                // Since we will attempt to use the higher level QT painter we don't need a color per vertex,
                 // and we can draw a polygon instead of two triangles
-                // thus we will comment out redundant point and color data
-                float angleVCos = cos((angleV) / k180DivPi);
-                float angleVSin = sin((angleV) / k180DivPi);
                 // 1
-                float p1x = (xShift * (binStart * angleVCos));
-                float p1y = (yShift * (binStart * angleVSin));
+                // const auto p1x = xShift * binStart * angleVCos;
+                // const auto p1y = yShift * binStart * angleVSin;
                 // 2
-                float p2x = (xShift * ((binStart + (radarBuffers->binSize * levelCount)) * angleVCos));
-                float p2y = (yShift * ((binStart + (radarBuffers->binSize * levelCount)) * angleVSin));
-                float angleCos = cos(angle / k180DivPi);
-                float angleSin = sin(angle / k180DivPi);
-                // 3
-                float p3x = (xShift * ((binStart + (radarBuffers->binSize * levelCount)) * angleCos));
-                float p3y = (yShift * ((binStart + (radarBuffers->binSize * levelCount)) * angleSin));
-                // 4
-                float p4x = (xShift * (binStart * angleCos));
-                float p4y = (yShift * (binStart * angleSin));
+                // const auto p2x = xShift * (binStart + (radarBuffers->binSize * levelCount)) * angleVCos;
+                // const auto p2y = yShift * (binStart + (radarBuffers->binSize * levelCount)) * angleVSin;
 
-                QPolygonF polygon;
-                polygon.push_back(QPointF(p1x, p1y));
-                polygon.push_back(QPointF(p2x, p2y));
-                polygon.push_back(QPointF(p3x, p3y));
-                polygon.push_back(QPointF(p4x, p4y));
+                // // 3
+                // const auto p3x = xShift * (binStart + (radarBuffers->binSize * levelCount)) * angleCos;
+                // const auto p3y = yShift * (binStart + (radarBuffers->binSize * levelCount)) * angleSin;
+                // // 4
+                // const auto p4x = xShift * binStart * angleCos;
+                // const auto p4y = yShift * binStart * angleSin;
 
-                radarBuffers->rectPoints.push_back(polygon);
-                radarBuffers->color.push_back(QColor(
+                radarBuffers->rectPoints.emplace_back(
+                    QVector<QPointF>{
+                        QPointF{xShift * binStart * angleVCos, yShift * binStart * angleVSin},
+                        QPointF{xShift * (binStart + (radarBuffers->binSize * levelCount)) * angleVCos, yShift * (binStart + (radarBuffers->binSize * levelCount)) * angleVSin},
+                        QPointF{xShift * (binStart + (radarBuffers->binSize * levelCount)) * angleCos, yShift * (binStart + (radarBuffers->binSize * levelCount)) * angleSin},
+                        QPointF{xShift * binStart * angleCos, yShift * binStart * angleSin}});
+                radarBuffers->color.emplace_back(
                     ObjectColorPalette::colorMap[radarBuffers->productCode]->redValues->get(level),
                     ObjectColorPalette::colorMap[radarBuffers->productCode]->greenValues->get(level),
-                    ObjectColorPalette::colorMap[radarBuffers->productCode]->blueValues->get(level)));
-
-                radarBuffers->colorPens.push_back(QPen(radarBuffers->color.back(), 0.5, Qt::SolidLine));
-                radarBuffers->colorBrushes.push_back(QBrush(radarBuffers->color.back(), Qt::SolidPattern));
+                    ObjectColorPalette::colorMap[radarBuffers->productCode]->blueValues->get(level));
+                radarBuffers->colorPens.emplace_back(radarBuffers->color.back(), 0.0, Qt::SolidLine);
+                radarBuffers->colorBrushes.emplace_back(radarBuffers->color.back(), Qt::SolidPattern);
 
                 totalBins += 1;
                 level = curLevel;
@@ -115,78 +122,77 @@ int UtilityWXMetalPerf::decode8BitAndGenRadials(ObjectMetalRadarBuffers * radarB
             }
         }
     }
-    delete dis2;
+    // std::cout << radarBuffers->rectPoints.size() << std::endl;
     return totalBins;
 }
 
-int UtilityWXMetalPerf::genRadials(ObjectMetalRadarBuffers * radarBuffers, WXMetalNexradLevelData * rd) {
-    const auto k180DivPi = 180.0 / M_PI;
+int UtilityWXMetalPerf::genRadials(ObjectMetalRadarBuffers * radarBuffers) {
+    const auto k180DivPi = 180.0 / std::numbers::pi;
     auto totalBins = 0;
     auto bI = 0;
-    auto radarBlackHole = 0.0;
-    auto radarBlackHoleAdd = 0.0;
-    radarBuffers->setToPositionZero();
-    double angleV;
+    auto radarBlackHole = 4.0;
+    auto radarBlackHoleAdd = 4.0;
+    radarBuffers->setBackgroundColor();
+    radarBuffers->radialStartAngle.setPosition(0);
+    radarBuffers->binWord.setPosition(0);
     // specific for ports using Qt
-    auto xShift = 1.0;
-    auto yShift = -1.0;
-    QVector<int> fourBitCodes = {56, 19, 181, 78, 80};
-    if (fourBitCodes.contains(radarBuffers->productCode)) {
+    const auto xShift = 1.0;
+    const auto yShift = -1.0;
+    vector<uint16_t> fourBitCodes{56, 19, 181, 78, 80};
+    if (contains(fourBitCodes, radarBuffers->productCode)) {
         radarBlackHole = 1.0;
         radarBlackHoleAdd = 0.0;
-    } else {
-        radarBlackHole = 4.0;
-        radarBlackHoleAdd = 4.0;
     }
-    for (auto g = 0; g < radarBuffers->numberOfRadials; g++) {
+    for (auto g : range(radarBuffers->numberOfRadials - 1)) {
         // since radial_start is constructed natively as opposed to read in
-        // from bigendian file we have to use getFloatNatve
-        double angle = rd->radialStartAngle.getFloatNative(g * 4);
-        int level = rd->binWord.get(bI);
+        // from bigendian file we have to use getFloatNative
+        const auto angle = radarBuffers->radialStartAngle.getFloatNative(g * 4);
+        int level = radarBuffers->binWord.get(bI);
         auto levelCount = 0;
-        double binStart = radarBlackHole;
-        if (g < radarBuffers->numberOfRadials - 1) {
-            angleV = rd->radialStartAngle.getFloatNative(g * 4 + 4);
-        } else {
-            angleV = rd->radialStartAngle.getFloatNative(0);
+        auto binStart = radarBlackHole;
+        auto angleV = radarBuffers->radialStartAngle.getFloatNative(g * 4 + 4);
+        if (g >= radarBuffers->numberOfRadials - 1) {
+            angleV = radarBuffers->radialStartAngle.getFloatNative(0);
         }
+        const auto angleVCos = cos(angleV / k180DivPi);
+        const auto angleVSin = sin(angleV / k180DivPi);
+
+        const auto angleCos = cos(angle / k180DivPi);
+        const auto angleSin = sin(angle / k180DivPi);
         for (int bin = 0; bin < radarBuffers->numberOfRangeBins; bin++) {
-            int curLevel = rd->binWord.get(bI);
+            const int curLevel = radarBuffers->binWord.get(bI);
             bI += 1;
             if (curLevel == level) {
                 levelCount += 1;
             } else {
-                float angleVCos = cos((angleV) / k180DivPi);
-                float angleVSin = sin((angleV) / k180DivPi);
-                // 1
-                float p1x = (xShift * (binStart * angleVCos));
-                float p1y = (yShift * (binStart * angleVSin));
-                // 2
-                float p2x = (xShift * ((binStart + radarBuffers->binSize * levelCount) * angleVCos));
-                float p2y = (yShift * ((binStart + radarBuffers->binSize * levelCount) * angleVSin));
-                float angleCos = cos(angle / k180DivPi);
-                float angleSin = sin(angle / k180DivPi);
-                // 3
-                float p3x = (xShift * ((binStart + radarBuffers->binSize * levelCount) * angleCos));
-                float p3y = (yShift * ((binStart + radarBuffers->binSize * levelCount) * angleSin));
-                // 4
-                float p4x = (xShift * (binStart * angleCos));
-                float p4y = (yShift * (binStart * angleSin));
+                // // 1
+                // const auto p1x = xShift * binStart * angleVCos;
+                // const auto p1y = yShift * binStart * angleVSin;
+                // // 2
+                // const auto p2x = xShift * (binStart + radarBuffers->binSize * levelCount) * angleVCos;
+                // const auto p2y = yShift * (binStart + radarBuffers->binSize * levelCount) * angleVSin;
 
-                QPolygonF polygon;
-                polygon.push_back(QPointF(p1x, p1y));
-                polygon.push_back(QPointF(p2x, p2y));
-                polygon.push_back(QPointF(p3x, p3y));
-                polygon.push_back(QPointF(p4x, p4y));
-                radarBuffers->rectPoints.push_back(polygon);
+                // // 3
+                // const auto p3x = xShift * (binStart + radarBuffers->binSize * levelCount) * angleCos;
+                // const auto p3y = yShift * (binStart + radarBuffers->binSize * levelCount) * angleSin;
+                // // 4
+                // const auto p4x = xShift * binStart * angleCos;
+                // const auto p4y = yShift * binStart * angleSin;
+                // radarBuffers->rectPoints.emplace_back(QVector<QPointF>{QPointF{p1x, p1y}, QPointF{p2x, p2y}, QPointF{p3x, p3y}, QPointF{p4x, p4y}});
+                
+                radarBuffers->rectPoints.emplace_back(
+                    QVector<QPointF>{
+                        QPointF{xShift * binStart * angleVCos, yShift * binStart * angleVSin},
+                        QPointF{xShift * (binStart + (radarBuffers->binSize * levelCount)) * angleVCos, yShift * (binStart + (radarBuffers->binSize * levelCount)) * angleVSin},
+                        QPointF{xShift * (binStart + (radarBuffers->binSize * levelCount)) * angleCos, yShift * (binStart + (radarBuffers->binSize * levelCount)) * angleSin},
+                        QPointF{xShift * binStart * angleCos, yShift * binStart * angleSin}});
 
-                radarBuffers->color.push_back(QColor(
+                radarBuffers->color.emplace_back(
                     ObjectColorPalette::colorMap[radarBuffers->productCode]->redValues->get(level),
                     ObjectColorPalette::colorMap[radarBuffers->productCode]->greenValues->get(level),
-                    ObjectColorPalette::colorMap[radarBuffers->productCode]->blueValues->get(level)));
-
-                radarBuffers->colorPens.push_back(QPen(radarBuffers->color.back(), 0.5, Qt::SolidLine));
-                radarBuffers->colorBrushes.push_back(QBrush(radarBuffers->color.back(), Qt::SolidPattern));
+                    ObjectColorPalette::colorMap[radarBuffers->productCode]->blueValues->get(level));
+                radarBuffers->colorPens.emplace_back(radarBuffers->color.back(), 0.0, Qt::SolidLine);
+                radarBuffers->colorBrushes.emplace_back(radarBuffers->color.back(), Qt::SolidPattern);
 
                 totalBins += 1;
                 level = curLevel;

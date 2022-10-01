@@ -1,26 +1,28 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "ui/ButtonFlat.h"
 #include "common/GlobalVariables.h"
+#include "settings/UIPreferences.h"
 
-ButtonFlat::ButtonFlat() {
-}
+int ButtonFlat::iconSize{};
 
-ButtonFlat::ButtonFlat(QString imageName, QString label, QWidget * parent) {
-    this->parent = parent;
-    const auto iconSize = 40;
-    button = new QPushButton(parent);
+ButtonFlat::ButtonFlat(const string& imageName, const string& label, QWidget * parent)
+    : parent{ parent }
+    , button{ new QPushButton{parent} }
+{
+    iconSize = UIPreferences::toolbarIconSize;
     button->setFlat(true);
-    button->setToolTip(label);
-    if (imageName != "") {
-        auto pixmap = QPixmap(GlobalVariables::imageDir + imageName);
-        auto buttonIcon = QIcon(pixmap);
+    button->setToolTip(QString::fromStdString(label));
+    button->setContentsMargins(0, 0, 0, 0);
+    if (!imageName.empty()) {
+        const auto pixmap = QPixmap{QString::fromStdString(GlobalVariables::imageDir + imageName)};
+        const auto buttonIcon = QIcon{pixmap};
         button->setIcon(buttonIcon);
-        button->setIconSize(QSize(iconSize, iconSize));
+        button->setIconSize(QSize{iconSize, iconSize});
     }
 }
 
@@ -28,26 +30,19 @@ QPushButton * ButtonFlat::get() {
     return button;
 }
 
-void ButtonFlat::connect(std::function<void()> f) {
-    QObject::connect(get(), &QPushButton::released, parent, f);
+void ButtonFlat::connect(const function<void()>& fn) {
+    QObject::connect(get(), &QPushButton::released, parent, fn);
 }
 
-void ButtonFlat::setText(const QString& s) {
-    button->setText(s);
-}
-
-QString ButtonFlat::getText() const {
-    return button->text();
+void ButtonFlat::setText(const string& s) {
+    button->setText(QString::fromStdString(s));
 }
 
 void ButtonFlat::setVisible(bool b) {
     button->setVisible(b);
 }
 
-void ButtonFlat::setCheckable(bool b) {
-    button->setCheckable(b);
-}
-
-void ButtonFlat::setChecked(bool b) {
-    button->setChecked(b);
+void ButtonFlat::refresh() {
+    iconSize = UIPreferences::toolbarIconSize;
+    button->setIconSize(QSize{iconSize, iconSize});
 }

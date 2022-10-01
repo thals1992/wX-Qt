@@ -1,22 +1,23 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "radarcolorpalette/UtilityColorPalette.h"
 #include "common/GlobalVariables.h"
+#include "objects/WString.h"
 #include "util/UtilityIO.h"
 
-QStringList UtilityColorPalette::getColorMapStringFromDisk(int product, const QString& code) {
-    QString cmFileInt = "";
-    QString text = "";
+vector<string> UtilityColorPalette::getColorMapStringFromDisk(int product, const string& code) {
+    string cmFileInt;
+    string text;
     switch (product) {
         case 94:
-            cmFileInt = "colormapref" + code.toLower() + ".txt";
+            cmFileInt = "colormapref" + WString::toLower(code) + ".txt";
             break;
         case 99:
-            cmFileInt = "colormapbv" + code.toLower() + ".txt";
+            cmFileInt = "colormapbv" + WString::toLower(code) + ".txt";
             if (code == "CODENH") {
                 cmFileInt = "colormapbvcod.txt";
             }
@@ -60,7 +61,7 @@ QStringList UtilityColorPalette::getColorMapStringFromDisk(int product, const QS
         default:
             break;
     }
-    if (text != "") {
+    if (!text.empty()) {
         // return text;
     } else {}
     return UtilityIO::rawFileToStringArray(GlobalVariables::resDir + cmFileInt);

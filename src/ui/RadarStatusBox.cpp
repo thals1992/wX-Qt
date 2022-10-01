@@ -1,30 +1,28 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "ui/RadarStatusBox.h"
 
-RadarStatusBox::RadarStatusBox() {
-}
+RadarStatusBox::RadarStatusBox(QWidget * parent)
+    : parent{ parent }
+    , label{ new ClickableLabel{parent} }
+{}
 
-RadarStatusBox::RadarStatusBox(QWidget * parent) {
-    label = new QLabel(parent);
-}
-
-void RadarStatusBox::setCurrent(const QString& s) {
+void RadarStatusBox::setCurrent(const string& s) {
     setText(s);
     setBackGroundGreen();
 }
 
-void RadarStatusBox::setOld(const QString& s) {
+void RadarStatusBox::setOld(const string& s) {
     setText(s);
     setBackGroundRed();
 }
 
-void RadarStatusBox::setText(const QString& s) {
-    label->setText(s);
+void RadarStatusBox::setText(const string& s) {
+    label->setText(QString::fromStdString(s));
 }
 
 void RadarStatusBox::setBackGroundRed() {
@@ -35,6 +33,10 @@ void RadarStatusBox::setBackGroundGreen() {
     label->setStyleSheet("QLabel { background-color : green ; color : white; }");
 }
 
-QLabel * RadarStatusBox::get() {
+void RadarStatusBox::connect(const function<void()>& fn) {
+    QObject::connect(label, &ClickableLabel::clicked, parent, fn);
+}
+
+ClickableLabel * RadarStatusBox::get() {
     return label;
 }

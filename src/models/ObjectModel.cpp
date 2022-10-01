@@ -1,35 +1,46 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/ObjectModel.h"
-#include "models/UtilityModelEsrlInterface.h"
-#include "models/UtilityModelGlcfsInterface.h"
-#include "models/UtilityModelNcepInterface.h"
-#include "models/UtilityModelNsslWrfInterface.h"
-#include "models/UtilityModelSpcHrefInterface.h"
-#include "models/UtilityModelSpcHrrrInterface.h"
-#include "models/UtilityModelSpcSrefInterface.h"
-#include "models/UtilityModelWpcGefsInterface.h"
-#include "util/To.h"
-#include "util/Utility.h"
-#include "util/UtilityList.h"
+#include "ObjectModel.h"
+#include "../objects/WString.h"
+#include "../util/To.h"
+#include "../util/Utility.h"
+#include "../util/UtilityList.h"
+#include "UtilityModelEsrlInterface.h"
+#include "UtilityModelGlcfsInterface.h"
+#include "UtilityModelNcepInterface.h"
+#include "UtilityModelNsslWrfInterface.h"
+#include "UtilityModelSpcHrefInterface.h"
+#include "UtilityModelSpcHrrrInterface.h"
+#include "UtilityModelSpcSrefInterface.h"
+#include "UtilityModelWpcGefsInterface.h"
 
-ObjectModel::ObjectModel() {
+string ObjectModel::getTime() const {
+    if (WString::contains(timeStr, " ")) {
+        return WString::split(timeStr, " ")[0];
+    } else {
+        return timeStr;
+    }
 }
 
-ObjectModel::ObjectModel(const QString& prefModel) {
+ObjectModel::ObjectModel(const string& prefModel) {
     this->prefModel = prefModel;
-    timeIdx = 0;
-    sectorInt = 0;
-    prodIdx = 0;
-    prefSector = "MODEL_" + prefModel + "_SECTOR_LAST_USED";
-    prefParam = "MODEL_" + prefModel + "_PARAM_LAST_USED";
-    prefRunPosn = prefModel + "_RUN_POSN";
-    prefRunPosnIdx = prefModel + "_RUN_POSN" + "IDX";
-    if (prefModel == "NSSLWRF") {
+    prefSector = "MODEL" + prefModel + "SECTORLASTUSED";
+    prefParam = "MODEL" + prefModel + "PARAMLASTUSED";
+    prefRunPosn = prefModel + "RUNPOSN";
+    prefRunPosnIdx = prefModel + "RUNPOSN" + "IDX";
+    if (prefModel == "NCARENSEMBLE") {
+        run = "00Z";
+        timeStr = "01";
+        timeIdx = 1;
+        param = "t2mean";
+        sector = "CONUS";
+        model = "NCARENSEMBLE";
+        models = {"NCARENSEMBLE"};
+    } else if (prefModel == "NSSLWRF") {
         run = "00Z";
         timeStr = "01";
         timeIdx = 1;
@@ -44,7 +55,6 @@ ObjectModel::ObjectModel(const QString& prefModel) {
         param = "1ref_sfc";
         model = "HRRR_NCEP";
         sector = "US";
-        sectorInt = 0;
         models = UtilityModelEsrlInterface::models;
     } else if (prefModel == "GLCFS") {
         run = "00Z";
@@ -52,8 +62,7 @@ ObjectModel::ObjectModel(const QString& prefModel) {
         timeIdx = 0;
         param = "wv";
         model = "GLCFS";
-        models.clear();
-        models << model;
+        models = {"GLCFS"};
         sector = "All Lakes";
     } else if (prefModel == "NCEP") {
         run = "00Z";
@@ -69,89 +78,74 @@ ObjectModel::ObjectModel(const QString& prefModel) {
         timeIdx = 1;
         param = "capegt500";
         sector = "US";
-        sectorInt = 0;
         model = "WPCGEFS";
-        models.clear();
-        models << model;
+        models = {"WPCGEFS"};
     } else if (prefModel == "SPCHRRR") {
-        prodIdx = 0;
         run = "00Z";
         timeStr = "01";
         timeIdx = 1;
-        param = "sfc_prec";
+        param = "sfcprec";
         model = "HRRR";
-        models.clear();
-        models << model;
-        sector = "National";
+        models = {"HRRR"};
+        sector = "US";
     } else if (prefModel == "SPCHREF") {
-        prodIdx = 0;
         run = "00Z";
         timeStr = "01";
         timeIdx = 1;
-        param = "500w_mean,500h_mean";
+        param = "500wmean,500hmean";
         model = "HREF";
-        models.clear();
-        models << model;
+        models = {"HREF"};
         sector = "CONUS";
     } else if (prefModel == "SPCSREF") {
         run = "00Z";
         timeStr = "03";
         timeIdx = 1;
-        param = "SREF_H5__";
+        param = "SREFH5";
         model = "SREF";
-    models.clear();
-        models << model;
+        models = {"SREF"};
         sector = "US";
-        sectors.clear();
-        sectors << "US";
     }
-    getPreferences();
+    getPrefs();
+    setModelVars(model);
 }
 
-void ObjectModel::getPreferences() {
+void ObjectModel::getPrefs() {
     model = Utility::readPref(prefModel, model);
     param = Utility::readPref(prefParam, param);
     sector = Utility::readPref(prefSector, sector);
     timeStr = Utility::readPref(prefRunPosn, timeStr);
-    timeIdx = Utility::readPrefInt(prefRunPosnIdx, timeIdx);
+    timeIdx = Utility::readPrefInt(prefRunPosnIdx, static_cast<int>(timeIdx));
 }
 
-void ObjectModel::writePrefs() {
+void ObjectModel::writePrefs() const {
     Utility::writePref(prefModel, model);
     Utility::writePref(prefParam, param);
     Utility::writePref(prefSector, sector);
     Utility::writePref(prefRunPosn, timeStr);
-    Utility::writePrefInt(prefRunPosnIdx, timeIdx);
+    Utility::writePrefInt(prefRunPosnIdx, static_cast<int>(timeIdx));
 }
 
 void ObjectModel::loadTimeList(int from, int to, int by) {
-    for (auto value : UtilityList::range3(from, to, by)) {
-        times.push_back(To::StringPadLeftZeros(value, 2));
+    for (auto value : range3(from, to, by)) {
+        times.push_back(WString::fixedLengthStringPad0(To::string(value), 2));
     }
 }
 
 void ObjectModel::loadTimeList3(int from, int to, int by) {
-    for (auto value : UtilityList::range3(from, to, by)) {
-        times.push_back(To::StringPadLeftZeros(value, 3));
+    for (auto value : range3(from, to, by)) {
+        times.push_back(WString::fixedLengthStringPad0(To::string(value), 3));
     }
 }
 
 void ObjectModel::loadRunList(int from, int to, int by) {
-    for (auto value : UtilityList::range3(from, to, by)) {
-        runs.push_back(To::StringPadLeftZeros(value, 2) + "Z");
+    for (auto value : range3(from, to, by)) {
+        runs.push_back(WString::fixedLengthStringPad0(To::string(value), 2) + "Z");
     }
 }
 
-void ObjectModel::setModelVars(const QString& modelName) {
-    this->modelName = modelName;
+void ObjectModel::setModelVars(const string& modelName) {
     modelToken = prefModel + ":" + modelName;
-    if (modelToken == "NSSLWRF:WRF") {
-        params = UtilityModelNsslWrfInterface::paramsNsslWrf;
-        paramLabels = UtilityModelNsslWrfInterface::labelsNsslWrf;
-        sectors = UtilityModelNsslWrfInterface::sectorsLong;
-        times.clear();
-        loadTimeList(1, 36, 1);
-    } else if (modelToken == "NSSLWRF:WRF_3KM") {
+    if (modelToken == "NSSLWRF:WRF" || modelToken == "NSSLWRF:WRF_3KM") {
         params = UtilityModelNsslWrfInterface::paramsNsslWrf;
         paramLabels = UtilityModelNsslWrfInterface::labelsNsslWrf;
         sectors = UtilityModelNsslWrfInterface::sectorsLong;
@@ -169,7 +163,7 @@ void ObjectModel::setModelVars(const QString& modelName) {
         sectors = UtilityModelNsslWrfInterface::sectorsLong;
         times.clear();
         loadTimeList(1, 36, 1);
-    } else if (modelToken == "ESRL:HRRR") {
+    } else if (modelToken == "ESRL:HRRR" || modelToken == "ESRL:HRRR_NCEP") {
         params = UtilityModelEsrlInterface::modelHrrrParams;
         paramLabels = UtilityModelEsrlInterface::modelHrrrLabels;
         sectors = UtilityModelEsrlInterface::sectorsHrrr;
@@ -181,19 +175,7 @@ void ObjectModel::setModelVars(const QString& modelName) {
         sectors = UtilityModelEsrlInterface::sectorsHrrrAk;
         times.clear();
         loadTimeList(0, 36, 1);
-    } else if (modelToken == "ESRL:HRRR_NCEP") {
-        params = UtilityModelEsrlInterface::modelHrrrParams;
-        paramLabels = UtilityModelEsrlInterface::modelHrrrLabels;
-        sectors = UtilityModelEsrlInterface::sectorsHrrr;
-        times.clear();
-        loadTimeList(0, 36, 1);
-    } else if (modelToken == "ESRL:RAP") {
-        params = UtilityModelEsrlInterface::modelRapParams;
-        paramLabels = UtilityModelEsrlInterface::modelRapLabels;
-        sectors = UtilityModelEsrlInterface::sectorsRap;
-        times.clear();
-        loadTimeList(0, 21, 1);
-    } else if (modelToken == "ESRL:RAP_NCEP") {
+    } else if (modelToken == "ESRL:RAP" || modelToken == "ESRL:RAP_NCEP") {
         params = UtilityModelEsrlInterface::modelRapParams;
         paramLabels = UtilityModelEsrlInterface::modelRapLabels;
         sectors = UtilityModelEsrlInterface::sectorsRap;
@@ -207,16 +189,16 @@ void ObjectModel::setModelVars(const QString& modelName) {
         loadTimeList(1, 13, 1);
         loadTimeList(15, 120, 3);
     } else if (modelToken == "NCEP:GFS") {
-        params = UtilityModelNcepInterface::modelGfsParams;
-        paramLabels = UtilityModelNcepInterface::modelGfsLabels;
+        params = UtilityModelNcepInterface::paramsGfs;
+        paramLabels = UtilityModelNcepInterface::labelsGfs;
         sectors = UtilityModelNcepInterface::sectorsGfs;
         times.clear();
         loadTimeList3(0, 243, 3);
         loadTimeList3(252, 396, 12);
         setupListRunZ();
     } else if (modelToken == "NCEP:HRRR") {
-        params = UtilityModelNcepInterface::modelHrrrParams;
-        paramLabels = UtilityModelNcepInterface::modelHrrrLabels;
+        params = UtilityModelNcepInterface::paramsHrrr;
+        paramLabels = UtilityModelNcepInterface::labelsHrrr;
         sectors = UtilityModelNcepInterface::sectorsHrrr;
         times.clear();
         loadTimeList3(0, 18, 1);
@@ -224,8 +206,8 @@ void ObjectModel::setModelVars(const QString& modelName) {
         loadRunList(0, 22, 1);
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:RAP") {
-        params = UtilityModelNcepInterface::modelRapParams;
-        paramLabels = UtilityModelNcepInterface::modelRapLabels;
+        params = UtilityModelNcepInterface::paramsRap;
+        paramLabels = UtilityModelNcepInterface::labelsRap;
         sectors = UtilityModelNcepInterface::sectorsRap;
         times.clear();
         loadTimeList3(0, 21, 1);
@@ -233,15 +215,15 @@ void ObjectModel::setModelVars(const QString& modelName) {
         loadRunList(0, 22, 1);
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:NAM-HIRES") {
-        params = UtilityModelNcepInterface::modelNam4kmParams;
-        paramLabels = UtilityModelNcepInterface::modelNam4kmLabels;
-        sectors = UtilityModelNcepInterface::sectorsNam4km;
+        params = UtilityModelNcepInterface::paramsNamHires;
+        paramLabels = UtilityModelNcepInterface::labelsNamHires;
+        sectors = UtilityModelNcepInterface::sectorsNamHires;
         times.clear();
         loadTimeList3(1, 61, 1);
         setupListRunZ();
     } else if (modelToken == "NCEP:NAM") {
-        params = UtilityModelNcepInterface::modelNamParams;
-        paramLabels = UtilityModelNcepInterface::modelNamLabels;
+        params = UtilityModelNcepInterface::paramsNam;
+        paramLabels = UtilityModelNcepInterface::labelsNam;
         sectors = UtilityModelNcepInterface::sectorsNam;
         times.clear();
         loadTimeList3(0, 85, 3);
@@ -254,40 +236,28 @@ void ObjectModel::setModelVars(const QString& modelName) {
         loadTimeList3(1, 49, 1);
         loadTimeList3(51, 61, 3);
         runs.clear();
-        runs.push_back("00Z");
-        runs.push_back("12Z");
+        runs.emplace_back("00Z");
+        runs.emplace_back("12Z");
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:HRW-ARW") {
-        params = UtilityModelNcepInterface::modelHrwNmmParams;
-        paramLabels = UtilityModelNcepInterface::modelHrwNmmLabels;
+        params = UtilityModelNcepInterface::paramsHrwNmm;
+        paramLabels = UtilityModelNcepInterface::labelsHrwNmm;
         sectors = UtilityModelNcepInterface::sectorsHrwNmm;
         times.clear();
-        loadTimeList3(1, 48, 1);
+        loadTimeList3(1, 49, 1);
         runs.clear();
-        runs.push_back("00Z");
-        runs.push_back("12Z");
+        runs.emplace_back("00Z");
+        runs.emplace_back("12Z");
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:HRW-ARW2") {
         params = UtilityModelNcepInterface::paramsHrwArw2;
         paramLabels = UtilityModelNcepInterface::labelsHrwArw2;
         sectors = UtilityModelNcepInterface::sectorsHrwArw2;
         times.clear();
-        loadTimeList3(1, 48, 1);
+        loadTimeList3(1, 49, 1);
         runs.clear();
-        runs.push_back("00Z");
-        runs.push_back("12Z");
-        runTimeData.listRun = runs;
-    } else if (modelToken == "NCEP:HREF") {
-        params = UtilityModelNcepInterface::paramsHref;
-        paramLabels = UtilityModelNcepInterface::labelsHref;
-        sectors = UtilityModelNcepInterface::sectorsHref;
-        times.clear();
-        loadTimeList3(1, 36, 1);
-        runs.clear();
-        runs.push_back("00Z");
-        runs.push_back("06Z");
-        runs.push_back("12Z");
-        runs.push_back("18Z");
+        runs.emplace_back("00Z");
+        runs.emplace_back("12Z");
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:NBM") {
         params = UtilityModelNcepInterface::paramsNbm;
@@ -296,67 +266,67 @@ void ObjectModel::setModelVars(const QString& modelName) {
         times.clear();
         loadTimeList3(0, 264, 3);
         runs.clear();
-        runs.push_back("00Z");
-        runs.push_back("06Z");
-        runs.push_back("12Z");
-        runs.push_back("18Z");
+        runs.emplace_back("00Z");
+        runs.emplace_back("06Z");
+        runs.emplace_back("12Z");
+        runs.emplace_back("18Z");
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:GEFS-SPAG") {
-        params = UtilityModelNcepInterface::modelGefsSpagParams;
-        paramLabels = UtilityModelNcepInterface::modelGefsSpagLabels;
+        params = UtilityModelNcepInterface::paramsGefsSpag;
+        paramLabels = UtilityModelNcepInterface::labelsGefsSpag;
         sectors = UtilityModelNcepInterface::sectorsGefsSpag;
         times.clear();
         loadTimeList3(0, 180, 6);
         loadTimeList3(192, 384, 12);
         setupListRunZ();
     } else if (modelToken == "NCEP:GEFS-MEAN-SPRD") {
-        params = UtilityModelNcepInterface::modelGefsMnsprdParams;
-        paramLabels = UtilityModelNcepInterface::modelGefsMnsprdLabels;
+        params = UtilityModelNcepInterface::paramsGefsMnsprd;
+        paramLabels = UtilityModelNcepInterface::labelsGefsMnsprd;
         sectors = UtilityModelNcepInterface::sectorsGefsMnsprd;
         times.clear();
         loadTimeList3(0, 180, 6);
         loadTimeList3(192, 384, 12);
         setupListRunZ();
     } else if (modelToken == "NCEP:SREF") {
-        params = UtilityModelNcepInterface::modelSrefParams;
-        paramLabels = UtilityModelNcepInterface::modelSrefLabels;
+        params = UtilityModelNcepInterface::paramsSref;
+        paramLabels = UtilityModelNcepInterface::labelsSref;
         sectors = UtilityModelNcepInterface::sectorsSref;
         times.clear();
         loadTimeList3(0, 87, 3);
-        setupListRunZ03();
+        setupListRunZWithStart("03Z");
     } else if (modelToken == "NCEP:NAEFS") {
-        params = UtilityModelNcepInterface::modelNaefsParams;
-        paramLabels = UtilityModelNcepInterface::modelNaefsLabels;
+        params = UtilityModelNcepInterface::paramsNaefs;
+        paramLabels = UtilityModelNcepInterface::labelsNaefs;
         sectors = UtilityModelNcepInterface::sectorsNaefs;
         times.clear();
         loadTimeList3(0, 384, 6);
         setupListRunZ();
     } else if (modelToken == "NCEP:POLAR") {
-        params = UtilityModelNcepInterface::modelPolarParams;
-        paramLabels = UtilityModelNcepInterface::modelPolarLabels;
+        params = UtilityModelNcepInterface::paramsPolar;
+        paramLabels = UtilityModelNcepInterface::labelsPolar;
         sectors = UtilityModelNcepInterface::sectorsPolar;
         times.clear();
         loadTimeList3(0, 384, 24);
         runs.clear();
-        runs.push_back("00Z");
+        runs.emplace_back("00Z");
         runTimeData.listRun = runs;
     } else if (modelToken == "NCEP:WW3") {
-        params = UtilityModelNcepInterface::modelWw3Params;
-        paramLabels = UtilityModelNcepInterface::modelWw3Labels;
+        params = UtilityModelNcepInterface::paramsWw3;
+        paramLabels = UtilityModelNcepInterface::labelsWw3;
         sectors = UtilityModelNcepInterface::sectorsWw3;
         times.clear();
         loadTimeList3(0, 126, 6);
         setupListRunZ();
     } else if (modelToken == "NCEP:ESTOFS") {
-        params = UtilityModelNcepInterface::modelEstofsParams;
-        paramLabels = UtilityModelNcepInterface::modelEstofsLabels;
+        params = UtilityModelNcepInterface::paramsEstofs;
+        paramLabels = UtilityModelNcepInterface::labelsEstofs;
         sectors = UtilityModelNcepInterface::sectorsEstofs;
         times.clear();
         loadTimeList3(0, 180, 1);
         setupListRunZ();
     } else if (modelToken == "NCEP:FIREWX") {
-        params = UtilityModelNcepInterface::modelFirewxParams;
-        paramLabels = UtilityModelNcepInterface::modelFirewxLabels;
+        params = UtilityModelNcepInterface::paramsFirefx;
+        paramLabels = UtilityModelNcepInterface::labelsFirefx;
         sectors = UtilityModelNcepInterface::sectorsFirewx;
         times.clear();
         loadTimeList3(0, 37, 1);
@@ -386,50 +356,45 @@ void ObjectModel::setModelVars(const QString& modelName) {
         params = UtilityModelSpcSrefInterface::params;
         paramLabels = UtilityModelSpcSrefInterface::labels;
         sectors.clear();
-        sectors.push_back("US");
         times.clear();
         loadTimeList3(0, 90, 3);
         runs = runTimeData.listRun;
     }
-    if (sectors.size() > 0) {
-        if (!sectors.contains(sector)) {
+    if (!sectors.empty()) {
+        if (!contains(sectors, sector)) {
             sector = sectors[0];
         }
     }
-    if (!params.contains(param)) {
-        if (params.size() > 0) {
+    if (!contains(params, param)) {
+        if (!params.empty()) {
             param = params[0];
         }
     }
-}
-
-QString ObjectModel::getTime() {
-    if (timeStr.contains(" ")) {
-        return timeStr.split(" ")[0];
+    if (timeIdx > times.size()) {
+        setTimeIdx(2);
     }
-    return timeStr;
 }
 
 void ObjectModel::setupListRunZ() {
     runs.clear();
-    runs.push_back("00Z");
-    runs.push_back("06Z");
-    runs.push_back("12Z");
-    runs.push_back("18Z");
+    runs.emplace_back("00Z");
+    runs.emplace_back("06Z");
+    runs.emplace_back("12Z");
+    runs.emplace_back("18Z");
     runTimeData.listRun = runs;
 }
 
-void ObjectModel::setupListRunZ03() {
+void ObjectModel::setupListRunZWithStart([[maybe_unused]] const string& start) {
     runs.clear();
-    runs.push_back("03Z");
-    runs.push_back("09Z");
-    runs.push_back("15Z");
-    runs.push_back("21Z");
+    runs.emplace_back("03Z");
+    runs.emplace_back("09Z");
+    runs.emplace_back("15Z");
+    runs.emplace_back("21Z");
     runTimeData.listRun = runs;
 }
 
-void ObjectModel::assignTimeIdxF(int timeIdxF) {
-    if (timeIdxF > -2 && timeIdxF < times.size()) {
+void ObjectModel::setTimeIdx(int timeIdxF) {
+    if (timeIdxF > -2 && timeIdxF < static_cast<int>(times.size())) {
         timeIdx = timeIdxF;
         timeStr = times[timeIdx];
     }
@@ -447,7 +412,7 @@ void ObjectModel::timeIdxDecr() {
 
 void ObjectModel::leftClick() {
     if (timeIdx == 0) {
-        assignTimeIdxF(times.size() - 1);
+        setTimeIdx(static_cast<int>(times.size()) - 1);
     } else {
         timeIdxDecr();
     }
@@ -455,12 +420,12 @@ void ObjectModel::leftClick() {
 
 void ObjectModel::rightClick() {
     if (timeIdx == times.size() - 1) {
-        assignTimeIdxF(0);
+        setTimeIdx(0);
     } else {
         timeIdxIncr();
     }
 }
 
-void ObjectModel::setTimeArr(int idx, const QString& time) {
+void ObjectModel::setTimeArr(int idx, const string& time) {
     times[idx] = time;
 }

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,19 +7,22 @@
 #ifndef OBJECTFORECAST_H
 #define OBJECTFORECAST_H
 
-#include <QString>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class ObjectForecast {
 public:
-    ObjectForecast();
-    ObjectForecast(const QString&, const QString&, const QString&, const QString&, const QString&, const QString&, const QString&);
-    QString name;
-    QString temperature;
-    QString windSpeed;
-    QString windDirection;
-    QString icon;
-    QString shortForecast;
-    QString detailedForecast;
+    ObjectForecast(const string&, const string&, const string&, const string&, const string&, const string&, const string&);
+    string name;
+    string temperature;
+    string windSpeed;
+    string windDirection;
+    string icon;
+    string shortForecast;
+    string detailedForecast;
 };
 
 #endif  // OBJECTFORECAST_H

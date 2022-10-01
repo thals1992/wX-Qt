@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,11 +7,15 @@
 #ifndef UTILITYCOLORPALETTE_H
 #define UTILITYCOLORPALETTE_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilityColorPalette {
 public:
-    static QStringList getColorMapStringFromDisk(int, const QString&);
+    static vector<string> getColorMapStringFromDisk(int, const string&);
 };
 
 #endif  // UTILITYCOLORPALETTE_H

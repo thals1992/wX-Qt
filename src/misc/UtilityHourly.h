@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,20 +7,24 @@
 #ifndef UTILITYHOURLY_H
 #define UTILITYHOURLY_H
 
-#include <QHash>
-#include <QStringList>
+#include <string>
+#include <unordered_map>
+
+using std::string;
+using std::unordered_map;
 
 class UtilityHourly {
 public:
-    static QString get(int);
+    static string get(int);
 
 private:
-    static QHash<QString, QString> hourlyAbbreviations;
-    static QString getFooter();
-    static QString getHourlyString(int);
-    static QString parse(const QString&);
-    static QString shortenConditions(const QString&);
-    static QString translateTime(const QString&);
+    static const unordered_map<string, string> hourlyAbbreviations;
+    static string getFooter();
+    static string getHourlyString(int);
+    static string parse(const string&);
+    static string shortenConditions(const string&);
+    static string translateTime(const string&);
+    static string getDayOfWeek(const string&);
 };
 
 #endif  // UTILITYHOURLY_H

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -13,11 +13,11 @@
 
 class ImageViewer: public Window {
 public:
-    ImageViewer(QWidget *, QByteArray);
+    ImageViewer(QWidget *, const QByteArray&);
 
 private:
-    Photo photo;
     VBox box;
+    Photo photo;
 };
 
 #endif  // IMAGEVIEWER_H

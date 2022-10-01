@@ -7,20 +7,22 @@
 #include <QLabel>
 #include <Qt>
 
+using std::function;
+
 class ClickableLabel : public QLabel {
 
     Q_OBJECT 
 
 public:
-    explicit ClickableLabel(QWidget * parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
-    void connect(std::function<void()>);
+    explicit ClickableLabel(QWidget * parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    void connect(const function<void()>&);
     void setToWidth(const QByteArray&, int);
 
 signals:
     void clicked();
 
 protected:
-    void mousePressEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event) override;
 
 private:
     QWidget * parent;

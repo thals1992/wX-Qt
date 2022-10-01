@@ -1,34 +1,28 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef SPCUTILITYSPCMESO_H
-#define SPCUTILITYSPCMESO_H
+#ifndef UTILITYSPCMESO_H
+#define UTILITYSPCMESO_H
 
-#include <QHash>
-#include <QVector>
-#include "ui/ObjectMenuTitle.h"
+#include <string>
+#include <vector>
+#include "../ui/ObjectMenuTitle.h"
+
+using std::string;
+using std::vector;
 
 class UtilitySpcMeso {
 public:
-    static QVector<ObjectMenuTitle> titles;
-    static const QString defaultSector;
-    static const QStringList favList;
-    static const QStringList imgSf;
-    static const QStringList products;
-    static const QStringList labels;
-    static const QStringList paramSurface;
-    static const QStringList paramUpperAir;
-    static const QStringList paramCape;
-    static const QStringList paramComp;
-    static const QStringList paramShear;
-    static const QStringList productShortList;
-    static const QHash<QString, QString> sectorMap;
-    static const QHash<QString, QString> sectorMapForTitle;
-    static const QStringList sectorCodes;
-    static const QStringList sectors;
+    static vector<ObjectMenuTitle> titles;
+    static const vector<string> favList;
+    static const vector<string> imgSf;
+    static const vector<string> products;
+    static const vector<string> labels;
+    static const vector<string> sectorCodes;
+    static const vector<string> sectors;
 };
 
-#endif  // SPCUTILITYSPCMESO_H
+#endif  // UTILITYSPCMESO_H

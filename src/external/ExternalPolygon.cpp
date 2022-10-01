@@ -20,16 +20,11 @@
 
 #include "external/Builder.h"
 #include "external/ExternalPolygon.h"
-#include <limits>
 
-ExternalPolygon::ExternalPolygon(QVector<ExternalLine> sides1, BoundingBox boundingBox1) {
-    sides = sides1;
-    boundingBox = boundingBox1;
-}
-
-// QVector<ExternalLine> ExternalPolygon::getSides() const  {
-//     return sides;
-// }
+ExternalPolygon::ExternalPolygon(const vector<ExternalLine>& sides, BoundingBox boundingBox)
+    : sides{ sides }
+    , boundingBox{ boundingBox }
+{}
 
 bool ExternalPolygon::inBoundingBox(ExternalPoint point) const {
     if (point.x < boundingBox.xMin || point.x > boundingBox.xMax || point.y < boundingBox.yMin || point.y > boundingBox.yMax)
@@ -40,9 +35,9 @@ bool ExternalPolygon::inBoundingBox(ExternalPoint point) const {
 
 bool ExternalPolygon::contains(ExternalPoint point) const {
     if (inBoundingBox(point)) {
-        const ExternalLine ray = createRay(point);
-        int intersection = 0;
-        for (const ExternalLine& side : sides) {
+        const auto ray = createRay(point);
+        auto intersection = 0;
+        for (const auto& side : sides) {
             if (intersect(ray, side)) {
                 intersection += 1;
             }
@@ -57,13 +52,13 @@ bool ExternalPolygon::contains(ExternalPoint point) const {
 
 ExternalLine ExternalPolygon::createRay(ExternalPoint point) const {
     // create outside point
-    const float epsilon = (boundingBox.xMax - boundingBox.xMin) / 100.0;
-    const auto outsidePoint = ExternalPoint(boundingBox.xMin - epsilon, boundingBox.yMin);
-    const auto vector = ExternalLine(outsidePoint, point);
+    const auto epsilon = (boundingBox.xMax - boundingBox.xMin) / 100.0f;
+    const auto outsidePoint = ExternalPoint{boundingBox.xMin - epsilon, boundingBox.yMin};
+    const auto vector = ExternalLine{outsidePoint, point};
     return vector;
 }
 
-bool ExternalPolygon::intersect(const ExternalLine& ray, const ExternalLine& side) const {
+bool ExternalPolygon::intersect(const ExternalLine& ray, const ExternalLine& side) {
     ExternalPoint intersectPoint;
     // if both vectors aren't from the kind of x=1 lines then go into
     if (!ray.isVertical() && !side.isVertical()) {
@@ -71,17 +66,17 @@ bool ExternalPolygon::intersect(const ExternalLine& ray, const ExternalLine& sid
         if ((ray.getA() - side.getA()) == 0) {
             return false;
         }
-        const float x = ((side.getB() - ray.getB()) / (ray.getA() - side.getA()));  // x = (b2-b1)/(a1-a2)
-        const float y = side.getA() * x + side.getB();  // y = a2*x+b2
-        intersectPoint = ExternalPoint(x, y);
+        const auto x = ((side.getB() - ray.getB()) / (ray.getA() - side.getA()));  // x = (b2-b1)/(a1-a2)
+        const auto y = side.getA() * x + side.getB();  // y = a2*x+b2
+        intersectPoint = ExternalPoint{x, y};
     } else if (ray.isVertical() && !side.isVertical()) {
-        const float x = ray.getStart().x;
-        const float y = side.getA() * x + side.getB();
-        intersectPoint = ExternalPoint(x, y);
+        const auto x = ray.getStart().x;
+        const auto y = side.getA() * x + side.getB();
+        intersectPoint = ExternalPoint{x, y};
     } else if (!ray.isVertical() && side.isVertical()) {
-        const float x = side.getStart().x;
-        const float y = ray.getA() * x + ray.getB();
-        intersectPoint = ExternalPoint(x, y);
+        const auto x = side.getStart().x;
+        const auto y = ray.getA() * x + ray.getB();
+        intersectPoint = ExternalPoint{x, y};
     } else {
         return false;
     }
@@ -92,12 +87,11 @@ bool ExternalPolygon::intersect(const ExternalLine& ray, const ExternalLine& sid
     }
 }
 
-bool ExternalPolygon::polygonContainsPoint(const LatLon& latLonTarget, QVector<LatLon> latLons) {
+bool ExternalPolygon::polygonContainsPoint(const LatLon& latLonTarget, const vector<LatLon>& latLons) {
     Builder polygonFrame;
     for (const auto& latLon : latLons) {
-        polygonFrame.addVertex(ExternalPoint(latLon.lat, latLon.lon));
+        polygonFrame.addVertex(ExternalPoint{latLon.lat(), latLon.lon()});
     }
-    const ExternalPolygon polygonShape = polygonFrame.build();
-    const auto contains = polygonShape.contains(latLonTarget.asPoint());
-    return contains;
+    const auto polygonShape = polygonFrame.build();
+    return polygonShape.contains(latLonTarget.asPoint());
 }

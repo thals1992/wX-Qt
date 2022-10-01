@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,13 +7,15 @@
 #ifndef WXGLNEXRADLEVEL3WINDBARBS_H
 #define WXGLNEXRADLEVEL3WINDBARBS_H
 
-#include <QVector>
+#include <vector>
 #include "objects/FileStorage.h"
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
+
+using std::vector;
 
 class WXGLNexradLevel3WindBarbs {
 public:
-    static QVector<float> decodeAndPlot(const ProjectionNumbers&, bool, FileStorage&);
+    static vector<double> decodeAndPlot(const ProjectionNumbers&, bool, FileStorage&);
 };
 
 #endif  // WXGLNEXRADLEVEL3WINDBARBS_H

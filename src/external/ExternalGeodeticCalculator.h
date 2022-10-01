@@ -11,15 +11,16 @@
 #ifndef EXTERNALGEODETICCALCULATOR_H
 #define EXTERNALGEODETICCALCULATOR_H
 
-#include <QVector>
+#include <vector>
 #include "external/ExternalEllipsoid.h"
 #include "external/ExternalGlobalCoordinates.h"
 
+using std::vector;
+
 class ExternalGeodeticCalculator {
 public:
-    static const double twoPi;
     static ExternalGlobalCoordinates calculateEndingGlobalCoordinates(ExternalGlobalCoordinates, double, double);
-    static ExternalGlobalCoordinates calculateEndingGlobalCoordinatesOriginal(ExternalEllipsoid, ExternalGlobalCoordinates, double, double, QVector<double> *);
+    static ExternalGlobalCoordinates calculateEndingGlobalCoordinatesOriginal(ExternalEllipsoid, ExternalGlobalCoordinates, double, double, vector<double> *);
 };
 
 #endif  // EXTERNALGEODETICCALCULATOR_H

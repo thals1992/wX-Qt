@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,16 +8,22 @@
 #define WXGLNEXRAD_H
 
 #include <cstdint>
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class WXGLNexrad {
 public:
-    static float wxoglDspLegendMax;
-    static double getBinSize(int16_t);
-    static int getNumberRangeBins(int16_t);
-    static bool isProductTdwr(const QString&);
-    static const QStringList radarProductList;
-    static const QStringList radarProductListTdwr;
+    static double getBinSize(uint16_t);
+    static int getNumberRangeBins(uint16_t);
+    static bool isProductTdwr(const string&);
+    static bool isRadarTimeOld(int);
+    static bool isVtecCurrent(const string&);
+    static double wxoglDspLegendMax;
+    static const vector<string> radarProductList;
+    static const vector<string> radarProductListTdwr;
 };
 
 #endif  // WXGLNEXRAD_H

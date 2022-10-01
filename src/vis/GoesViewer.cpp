@@ -1,98 +1,105 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "vis/GoesViewer.h"
 #include <QCloseEvent>
+#include <vector>
 #include "objects/FutureBytes.h"
+#include "objects/WString.h"
 #include "settings/Location.h"
+#include "settings/UIPreferences.h"
 #include "ui/Icon.h"
+#include "util/To.h"
+#include "util/Utility.h"
 #include "vis/UtilityGoes.h"
 
-GoesViewer::GoesViewer(QWidget * parent, QString url, QString product, QString sector) : Window(parent) {
+GoesViewer::GoesViewer(QWidget * parent, const string& url, const string& product, const string& sector)
+    : Window{parent}
+    , photo{ Photo{this, Full} }
+    , comboboxSector{ ComboBox{this, UtilityGoes::sectors} }
+    , comboboxProduct{ ComboBox{this, UtilityGoes::labels} }
+    , comboboxCount{ ComboBox{this, {"6", "12", "18", "24"}} }
+    , animateButton{ ButtonToggle{this, Play, "Animate ctrl-A"} }
+    , objectAnimate{ ObjectAnimate{this, &photo, &UtilityGoes::getAnimation, [this] { reload(); }, &animateButton} }
+    , goesFloater{ false }
+    , shortcutAnimate{ Shortcut{QKeySequence{"A"}, this} }
+{
     setTitle("GOES Viewer");
-    maximize();
-
-    goesFloater = false;
-    goesFloaterUrl = "";
-    if (url != "") {
+    if (!url.empty()) {
         goesFloater = true;
         goesFloaterUrl = url;
     }
-
-    box = VBox(this);
-    boxH = HBox(this);
-    photo = Photo(this, PhotoSizeEnum::full);
-
-    animateButton = ButtonToggle(this, Icon::Play, "Animate ctrl-A");
-    objectAnimate = new ObjectAnimate(this, &photo, &UtilityGoes::getAnimation, [this] { reload(); }, &animateButton);
-
-    // objectAnimate->sector = UtilityGoes::getNearestGoesLocation(Location::getLatLonCurrent());
-    // objectAnimate->product = "GEOCOLOR";
-
-    if (sector == "") {
-        objectAnimate->sector = UtilityGoes::getNearestGoesLocation(Location::getLatLonCurrent());
+    if (sector.empty()) {
+        if (!UIPreferences::rememberGOES) {
+            objectAnimate.sector = UtilityGoes::getNearest(Location::getLatLonCurrent());
+        } else {
+            objectAnimate.sector = Utility::readPref("REMEMBER_GOES_SECTOR", UtilityGoes::getNearest(Location::getLatLonCurrent()));
+        }
     } else {
-        objectAnimate->sector = sector;
+        objectAnimate.sector = sector;
     }
-    if (product == "") {
-        objectAnimate->product = "GEOCOLOR";
+    if (product.empty()) {
+        objectAnimate.product = "GEOCOLOR";
     } else {
-        objectAnimate->product = product;
+        objectAnimate.product = product;
     }
-
-    animateButton.connect([this] { objectAnimate->animateClicked(); });
-
+    animateButton.connect([this] { objectAnimate.animateClicked(); });
     if (goesFloater) {
-        objectAnimate->getFunction = &UtilityGoes::getAnimationGoesFloater;
-        objectAnimate->sector = goesFloaterUrl;
+        objectAnimate.getFunction = &UtilityGoes::getAnimationGoesFloater;
+        objectAnimate.sector = goesFloaterUrl;
     }
-
-    comboboxSector = ComboBox(this, UtilityGoes::sectors);
-    comboboxSector.setIndexByValue(objectAnimate->sector);
+    comboboxSector.setIndexByValue(objectAnimate.sector);
     comboboxSector.connect([this] { changeSector(); });
-
-    comboboxProduct = ComboBox(this, UtilityGoes::labels);
     comboboxProduct.connect([this] { changeProduct(); });
+
+    comboboxCount.setIndex(1);
+    comboboxCount.connect([this] { changeCount(); });
 
     if (!goesFloater) {
         boxH.addWidget(comboboxSector.get());
+    } else {
+        comboboxSector.setVisible(false);
     }
     boxH.addWidget(comboboxProduct.get());
+    boxH.addWidget(comboboxCount.get());
     boxH.addWidget(animateButton.get());
     box.addLayout(boxH.get());
     box.addWidgetAndCenter(photo.get());
     box.getAndShow(this);
 
-    shortcutAnimate = Shortcut(QKeySequence("Ctrl+A"), this);
-    shortcutAnimate.connect([this] { objectAnimate->animateClicked(); });
-
+    shortcutAnimate.connect([this] { objectAnimate.animateClicked(); });
     reload();
 }
 
 void GoesViewer::reload() {
-    objectAnimate->stopAnimate();
+    objectAnimate.stopAnimate();
     if (!goesFloater) {
-        new FutureBytes(this, UtilityGoes::getImage(objectAnimate->product, objectAnimate->sector), [this] (const auto& ba) { photo.setBytes(ba); });
+        Utility::writePref("REMEMBER_GOES_SECTOR", objectAnimate.sector);
+        new FutureBytes{this, UtilityGoes::getImage(objectAnimate.product, objectAnimate.sector), [this] (const auto& ba) { photo.setBytes(ba); }};
     } else {
-        new FutureBytes(this, UtilityGoes::getImageGoesFloater(goesFloaterUrl, objectAnimate->product), [this] (const auto& ba) { photo.setBytes(ba); });
+        new FutureBytes{this, UtilityGoes::getImageGoesFloater(goesFloaterUrl, objectAnimate.product), [this] (const auto& ba) { photo.setBytes(ba); }};
     }
 }
 
 void GoesViewer::changeSector() {
-    objectAnimate->sector = UtilityGoes::sectors[comboboxSector.getIndex()];
-    objectAnimate->sector = objectAnimate->sector.split(":")[0];
+    const auto tmp = comboboxSector.getValue();
+    objectAnimate.sector = WString::split(tmp, ":")[0];
     reload();
 }
 
 void GoesViewer::changeProduct() {
-    objectAnimate->product = UtilityGoes::codes[comboboxProduct.getIndex()];
+    objectAnimate.product = UtilityGoes::codes[comboboxProduct.getIndex()];
     reload();
 }
 
+void GoesViewer::changeCount() {
+    objectAnimate.frameCount = To::Int(comboboxCount.getValue());
+}
+
 void GoesViewer::closeEvent(QCloseEvent * event) {
-    objectAnimate->stopAnimate();
+    objectAnimate.stopAnimate();
     event->accept();
 }

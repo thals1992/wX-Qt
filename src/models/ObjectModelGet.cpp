@@ -1,23 +1,24 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/ObjectModelGet.h"
-#include "models/UtilityModelEsrlInputOutput.h"
-#include "models/UtilityModelGlcfsInputOutput.h"
-#include "models/UtilityModelNcepInputOutput.h"
-#include "models/UtilityModelNsslWrfInputOutput.h"
-#include "models/UtilityModelSpcHrefInputOutput.h"
-#include "models/UtilityModelSpcHrrrInputOutput.h"
-#include "models/UtilityModelSpcSrefInputOutput.h"
-#include "models/UtilityModelWpcGefsInputOutput.h"
-#include "util/UtilityString.h"
+#include "ObjectModelGet.h"
+#include "../objects/WString.h"
+#include "../util/UtilityString.h"
+#include "UtilityModelEsrlInputOutput.h"
+#include "UtilityModelGlcfsInputOutput.h"
+#include "UtilityModelNcepInputOutput.h"
+#include "UtilityModelNsslWrfInputOutput.h"
+#include "UtilityModelSpcHrefInputOutput.h"
+#include "UtilityModelSpcHrrrInputOutput.h"
+#include "UtilityModelSpcSrefInputOutput.h"
+#include "UtilityModelWpcGefsInputOutput.h"
 
 void ObjectModelGet::getRunStatus(ObjectModel& om) {
     if (om.prefModel == "NSSLWRF") {
-        om.runTimeData = UtilityModelNsslWrfInputOutput::getRunTime(&om);
+        om.runTimeData = UtilityModelNsslWrfInputOutput::getRunTime();
     } else if (om.prefModel == "ESRL") {
         om.runTimeData = UtilityModelEsrlInputOutput::getRunTime(&om);
         om.run = om.runTimeData.mostRecentRun;
@@ -38,38 +39,35 @@ void ObjectModelGet::getRunStatus(ObjectModel& om) {
     }
 }
 
-QString ObjectModelGet::getImageUrl(ObjectModel& om) {
+string ObjectModelGet::getImageUrl(ObjectModel& om) {
     if (om.prefModel == "NSSLWRF") {
-        return UtilityModelNsslWrfInputOutput::getImage(&om)[1];
+        return UtilityModelNsslWrfInputOutput::getImageUrl(&om);
     } else if (om.prefModel == "ESRL") {
-        return UtilityModelEsrlInputOutput::getImage(&om);
+        return UtilityModelEsrlInputOutput::getImageUrl(&om);
     } else if (om.prefModel == "GLCFS") {
-        return UtilityModelGlcfsInputOutput::getImage(&om);
+        return UtilityModelGlcfsInputOutput::getImageUrl(&om);
     } else if (om.prefModel == "NCEP") {
         if (om.model == "NAM4KM") {
             om.model = "NAM-HIRES";
         }
-        if (om.model.contains("HRW") && om.model.contains("-AK")) {
-            om.model = om.model.replace("-AK", "");
+        if (WString::contains(om.model, "HRW") && WString::contains(om.model, "-AK")) {
+            om.model = WString::replace(om.model, "-AK", "");
         }
-        if (om.model.contains("HRW") && om.model.contains("-PR")) {
-            om.model = om.model.replace("-PR", "");
+        if (WString::contains(om.model, "HRW") && WString::contains(om.model, "-PR")) {
+            om.model = WString::replace(om.model, "-PR", "");
         }
         if (om.model != "HRRR") {
             om.timeStr = UtilityString::truncate(om.timeStr, 3);
         } else {
             om.timeStr = UtilityString::truncate(om.timeStr, 3);
         }
-        return UtilityModelNcepInputOutput::getImage(&om);
+        return UtilityModelNcepInputOutput::getImageUrl(&om);
     } else if (om.prefModel == "WPCGEFS") {
-        return UtilityModelWpcGefsInputOutput::getImage(&om);
+        return UtilityModelWpcGefsInputOutput::getImageUrl(&om);
     } else if (om.prefModel == "SPCHRRR") {
-        return UtilityModelSpcHrrrInputOutput::getImage(&om);
-    } else if (om.prefModel == "SPCHREF") {
-        // return UtilityModelSpcHrefInputOutput::getImage(this);
-        return "";
+        return UtilityModelSpcHrrrInputOutput::getImageUrl(&om);
     } else if (om.prefModel == "SPCSREF") {
-        return UtilityModelSpcSrefInputOutput::getImage(&om);
+        return UtilityModelSpcSrefInputOutput::getImageUrl(&om);
     } else {
         return "";
     }

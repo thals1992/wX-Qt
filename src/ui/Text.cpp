@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,18 +7,17 @@
 #include "ui/Text.h"
 #include "settings/UIPreferences.h"
 
-Text::Text() {
-}
+Text::Text() = default;
 
-Text::Text(QWidget * parent, QString text) {
-    this->parent = parent;
-    textView = new QLabel(parent);
-    textView->setText(text);
+Text::Text(QWidget * parent, const string& text)
+        : textView{ new QLabel{parent} }
+        , text{ QString::fromStdString(text) }
+{
+    textView->setText(this->text);
     textView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     textView->setWordWrap(true);
     textView->setTextFormat(Qt::PlainText);
     textView->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    this->text = text;
 }
 
 QLabel * Text::get() {
@@ -29,18 +28,20 @@ void Text::setWordWrap(bool c) {
     textView->setWordWrap(c);
 }
 
-void Text::setWrap(bool c) {
-    textView->setWordWrap(c);
-}
-
 void Text::setText(const QString& text) {
     textView->setText(text);
     textView->adjustSize();
     this->text = text;
 }
 
+void Text::setText(const string& text) {
+    this->text = QString::fromStdString(text);
+    textView->setText(this->text);
+    textView->adjustSize();
+}
+
 void Text::setFixedWidth() {
-    auto font = QFont("Monospace");
+    auto font = QFont{"Monospace"};
     font.setStyleHint(QFont::TypeWriter);
     textView->setFont(font);
 }
@@ -54,7 +55,7 @@ void Text::setGray() {
 }
 
 void Text::setBold() {
-    QFont font = textView->font();
+    auto font = textView->font();
     font.setBold(true);
     textView->setFont(font);
 }
@@ -65,13 +66,4 @@ void Text::setBlueOnWhite() {
 
 void Text::setVisible(bool b) {
     textView->setVisible(b);
-}
-
-void Text::setMainText() {
-    textView->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    textView->setContentsMargins(UIPreferences::textPadding);
-}
-
-void Text::setStyleSheet(const QString& s) {
-    textView->setStyleSheet(s);
 }

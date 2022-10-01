@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,22 +7,31 @@
 #ifndef SETTINGSRADARBOX_H
 #define SETTINGSRADARBOX_H
 
+#include <memory>
+#include <string>
+#include <vector>
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
-#include "ui/VBox.h"
 #include "ui/HBox.h"
 #include "ui/ObjectNumberPicker.h"
+#include "ui/ObjectSwitch.h"
 #include "ui/Text.h"
+#include "ui/VBox.h"
 #include "ui/Widget.h"
+
+using std::string;
+using std::vector;
 
 class SettingsRadarBox : public Widget {
 public:
-    SettingsRadarBox(QWidget * parent);
+    explicit SettingsRadarBox(QWidget *);
 
 private:
     void changeRefPal();
     void changeVelPal();
     void launchShortcuts();
+    const vector<string> refPalChoices{"CODENH", "DKenh", "NSSL", "NWSD", "GREEN", "AF", "EAK", "NWS"};
+    const vector<string> velPalChoices{"CODENH", "EAK", "AF"};
     VBox box;
     VBox vbox0;
     VBox vbox1;
@@ -35,11 +44,10 @@ private:
     Button button;
     Text text1;
     Text text2;
-    QVector<ObjectNumberPicker *> numberPickers;
+    vector<std::unique_ptr<ObjectSwitch>> alertConfigs;
+    vector<std::unique_ptr<ObjectNumberPicker>> numberPickers;
     ComboBox comboBoxRefPal;
     ComboBox comboBoxVelPal;
-    const QStringList refPalChoices = {"CODENH", "DKenh", "NSSL", "NWSD", "GREEN", "AF", "EAK", "NWS"};
-    const QStringList velPalChoices = {"CODENH", "EAK", "AF"};
 };
 
 #endif  // SETTINGSRADARBOX_H

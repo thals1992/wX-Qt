@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,41 +7,35 @@
 #ifndef WXMETALTEXTOBJECT_H
 #define WXMETALTEXTOBJECT_H
 
-#include <QVector>
+#include <string>
+#include <vector>
 #include "objects/FileStorage.h"
 #include "radar/NexradState.h"
 
+using std::string;
+using std::vector;
+
 class WXMetalTextObject {
 public:
-    WXMetalTextObject(int, float, float, NexradState&, float, FileStorage *);
+    WXMetalTextObject(int, NexradState&, FileStorage *);
     void add();
     void addWpcPressureCenters();
     void addTextLabelsObservations();
-    void addTextLabelsSpottersLabels();
     void initialize();
 
 private:
-    void initializeTextLabelsCitiesExtended();
-    void initializeTextLabelsCountyLabels();
+    void initializeTextLabelsCitiesExtended() const;
+    static void initializeTextLabelsCountyLabels();
     void addTextLabelsCountyLabels();
     void addTextLabelsCitiesExtended();
-    void checkAndDrawText(QVector<TextViewMetal> *, float, float, const QString&, bool = true);
+    void checkAndDrawText(vector<TextViewMetal> *, double, double, const string&, bool = true);
     static const float cityMinZoom;
     static const float obsMinZoom;
     static const float countyMinZoom;
-    static const int textSize;
     NexradState * nexradState;
-    FileStorage * fileStorage;
     int numPanes;
-    float glViewWidth;
-    float glViewHeight;
-    float screenScale;
-    float scale;
-    float fudgeFactor;
-    float xFudge;
-    float yFudge;
-    float fudgeScaleFactor;
-    int maxCitiesPerGlview;
+    FileStorage * fileStorage;
+    size_t maxCitiesPerGlview;
 };
 
 #endif  // WXMETALTEXTOBJECT_H

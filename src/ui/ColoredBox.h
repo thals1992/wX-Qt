@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -9,21 +9,21 @@
 
 #include <functional>
 #include <QLabel>
-#include <QString>
 #include "objects/WXColor.h"
 #include "ui/ClickableLabel.h"
 
+using std::function;
+
 class ColoredBox {
 public:
-    ColoredBox();
-    ColoredBox(QWidget * parent, WXColor wxcolor);
-    void regenerate(WXColor wxcolor);
-    void connect(std::function<void()>);
+    ColoredBox(QWidget *, const WXColor&);
+    void regenerate(const WXColor&);
+    void connect(const function<void()>&);
     ClickableLabel * get();
 
 private:
     ClickableLabel * colorPatchCurrent;
-    int sizeColorBlock = 30;
+    int sizeColorBlock{30};
 };
 
 #endif  // COLOREDBOX_H

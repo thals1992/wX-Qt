@@ -23,6 +23,7 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "external/SunSet.h"
+#include <numbers>
 
 /**
  * \fn SunSet::SunSet()
@@ -46,8 +47,8 @@ SunSet::SunSet() : m_latitude(0.0), m_longitude(0.0), m_julianDate(0.0), m_tzOff
  * It is not deprecated, as this is a valid construction, but the double is
  * preferred for correctness.
  */
-SunSet::SunSet(double lat, double lon, int tz) : m_latitude(lat), m_longitude(lon), m_julianDate(0.0), m_tzOffset(tz) {
-}
+// SunSet::SunSet(double lat, double lon, int tz) : m_latitude(lat), m_longitude(lon), m_julianDate(0.0), m_tzOffset(tz) {
+// }
 
 /**
  * \fn SunSet::SunSet(double lat, double lon, double tz)
@@ -58,16 +59,15 @@ SunSet::SunSet(double lat, double lon, int tz) : m_latitude(lat), m_longitude(lo
  * This will create an object for a location with a double based
  * timezone value.
  */
-SunSet::SunSet(double lat, double lon, double tz) : m_latitude(lat), m_longitude(lon), m_julianDate(0.0), m_tzOffset(tz) {
-}
+// SunSet::SunSet(double lat, double lon, double tz) : m_latitude(lat), m_longitude(lon), m_julianDate(0.0), m_tzOffset(tz) {
+// }
 
 /**
  * \fn SunSet::~SunSet()
  *
  * The constructor has no value and does nothing.
  */
-SunSet::~SunSet() {
-}
+SunSet::~SunSet() = default;
 
 /**
  * \fn void SunSet::setPosition(double lat, double lon, int tz)
@@ -108,21 +108,21 @@ void SunSet::setPosition(double lat, double lon, int tz) {
  * and not use the setTZOffset() function ever, if you never
  * change timezone values.
  */
-void SunSet::setPosition(double lat, double lon, double tz) {
-    m_latitude = lat;
-    m_longitude = lon;
-    if (tz >= -12 && tz <= 14)
-        m_tzOffset = tz;
-    else
-        m_tzOffset = 0.0;
-}
+// void SunSet::setPosition(double lat, double lon, double tz) {
+//    m_latitude = lat;
+//    m_longitude = lon;
+//    if (tz >= -12 && tz <= 14)
+//        m_tzOffset = tz;
+//    else
+//        m_tzOffset = 0.0;
+// }
 
 double SunSet::degToRad(double angleDeg) {
-    return (M_PI * angleDeg / 180.0);
+    return std::numbers::pi * angleDeg / 180.0;
 }
 
 double SunSet::radToDeg(double angleRad) {
-    return (180.0 * angleRad / M_PI);
+    return 180.0 * angleRad / std::numbers::pi;
 }
 
 double SunSet::calcMeanObliquityOfEcliptic(double t) {
@@ -441,9 +441,9 @@ double SunSet::calcSunset() {
  * free if you want it.
  */
 double SunSet::setCurrentDate(int y, int m, int d) {
-    m_year = y;
-    m_month = m;
-    m_day = d;
+//    m_year = y;
+//    m_month = m;
+//    m_day = d;
     m_julianDate = calcJD(y, m, d);
     return m_julianDate;
 }
@@ -478,12 +478,12 @@ void SunSet::setTZOffset(int tz) {
  * your location. Forgetting this will result in return values that may actually
  * be negative in some cases.
  */
-void SunSet::setTZOffset(double tz) {
-    if (tz >= -12 && tz <= 14)
-        m_tzOffset = tz;
-    else
-        m_tzOffset = 0.0;
-}
+// void SunSet::setTZOffset(double tz) {
+//    if (tz >= -12 && tz <= 14)
+//        m_tzOffset = tz;
+//    else
+//        m_tzOffset = 0.0;
+// }
 
 /**
  * \fn int SunSet::moonPhase(int fromepoch)
@@ -494,22 +494,22 @@ void SunSet::setTZOffset(double tz) {
  *
  * The return value is 0 to 29, with 0 and 29 being hidden and 14 being full.
  */
-int SunSet::moonPhase(int fromepoch) {
-    int moonepoch = 614100;
-    int phase = (fromepoch - moonepoch) % 2551443;
-    int res = floor(phase / (24 * 3600)) + 1;
-    if (res == 30)
-        res = 0;
+// int SunSet::moonPhase(int fromepoch) {
+//    int moonepoch = 614100;
+//    int phase = (fromepoch - moonepoch) % 2551443;
+//    int res = floor(phase / (24 * 3600)) + 1;
+//    if (res == 30)
+//        res = 0;
 
-    return res;
-}
+//    return res;
+// }
 
 /**
  * \fn int SunSet::moonPhase()
  *
  * Overload to set the moonphase for right now
  */
-int SunSet::moonPhase() {
-    time_t t = std::time(0);
-    return moonPhase(static_cast<int>(t));
-}
+// int SunSet::moonPhase() {
+//    time_t t = std::time(0);
+//    return moonPhase(static_cast<int>(t));
+// }

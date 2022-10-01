@@ -1,39 +1,58 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "spc/SpcCompMap.h"
+#include <algorithm>
 #include "objects/FutureBytes.h"
 #include "spc/UtilitySpcCompmap.h"
 #include "util/Utility.h"
+#include "util/UtilityList.h"
 
-SpcCompMap::SpcCompMap(QWidget * parent) : Window(parent) {
+SpcCompMap::SpcCompMap(QWidget * parent)
+    : Window{parent}
+    , photo{ Photo{this, Full} }
+    , comboboxProduct{ ComboBox{this, UtilitySpcCompmap::labels} }
+    , buttonBack{ Button{this, Left, ""} }
+    , buttonForward{ Button{this, Right, ""} }
+    , product{ Utility::readPref(prefToken, "0") }
+    , index{ indexOf(UtilitySpcCompmap::urlIndices, product) }
+{
     setTitle("SPC Compmap");
-    maximize();
-    product = Utility::readPref(prefToken, "0");
-    photo = Photo(this, PhotoSizeEnum::full);
-
-    comboboxProduct = ComboBox(this, UtilitySpcCompmap::labels);
-    comboboxProduct.setIndex(UtilitySpcCompmap::urlIndices.indexOf(product));
+    buttonBack.connect([this] {
+        index -= 1;
+        index = std::max(index, 0);
+        comboboxProduct.setIndex(index);
+        reload();
+    });
+    buttonForward.connect([this] {
+        index += 1;
+        index = std::min(index, static_cast<int>(UtilitySpcCompmap::urlIndices.size()) - 1);
+        comboboxProduct.setIndex(index);
+        reload();
+    });
+    comboboxProduct.setIndex(index);
     comboboxProduct.connect([this] { changeProduct(); });
-
-    box = VBox(this);
-    box.addWidget(comboboxProduct.get());
+    buttonBox.addWidget(buttonBack.get());
+    buttonBox.addWidget(buttonForward.get());
+    buttonBox.addWidget(comboboxProduct.get());
+    box.addLayout(buttonBox.get());
     box.addWidgetAndCenter(photo.get());
     box.getAndShow(this);
-
     reload();
 }
 
 void SpcCompMap::reload() {
     Utility::writePref(prefToken, product);
     auto url = UtilitySpcCompmap::getImage(product);
-    new FutureBytes(this, url, [this] (const auto& ba) { photo.setBytes(ba); });
+    setTitle("SPC Compmap - " + comboboxProduct.getValue());
+    new FutureBytes{this, url, [this] (const auto& ba) { photo.setBytes(ba); }};
 }
 
 void SpcCompMap::changeProduct() {
-    product = UtilitySpcCompmap::urlIndices[comboboxProduct.getIndex()];
+    index = comboboxProduct.getIndex();
+    product = UtilitySpcCompmap::urlIndices[index];
     reload();
 }

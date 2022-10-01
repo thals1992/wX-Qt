@@ -1,20 +1,24 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef WPCUTILITYWPCIMAGES_H
-#define WPCUTILITYWPCIMAGES_H
+#ifndef UTILITYWPCIMAGES_H
+#define UTILITYWPCIMAGES_H
 
-#include "ui/ObjectMenuTitle.h"
-#include <QVector>
+#include <string>
+#include <vector>
+#include "../ui/ObjectMenuTitle.h"
+
+using std::string;
+using std::vector;
 
 class UtilityWpcImages {
 public:
-    static QVector<ObjectMenuTitle> titles;
-    static const QStringList urls;
-    static const QStringList labels;
+    static vector<ObjectMenuTitle> titles;
+    static const vector<string> urls;
+    static const vector<string> labels;
 };
 
-#endif  // WPCUTILITYWPCIMAGES_H
+#endif  // UTILITYWPCIMAGES_H

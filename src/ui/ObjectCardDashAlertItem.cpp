@@ -1,39 +1,39 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "ui/ObjectCardDashAlertItem.h"
+#include "objects/WString.h"
 #include "misc/AlertsDetail.h"
 #include "radar/Nexrad.h"
 
-ObjectCardDashAlertItem::ObjectCardDashAlertItem(QWidget * parent, const ObjectWarning& warning) : HBox(parent) {
-    this->parent = parent;
-
-    layoutVertical = VBox(parent);
-    textLayout = VBox(parent);
-
-    topLine = Text(parent, warning.event + " (" + warning.sender + ")");
+ObjectCardDashAlertItem::ObjectCardDashAlertItem(QWidget * parent, const ObjectWarning& warning)
+    : HBox{}
+    , topLine{ Text{parent, warning.event + " (" + warning.sender + ")"} }
+    , titleLine{ Text{parent} }
+    , startTimeLine{ Text{parent} }
+    , endTimeLine{ Text{parent} }
+    , middleLine{ Text{parent, warning.area} }
+    , buttonDetails{ Button{parent, None, "Show Details"} }
+    , buttonRadar{ Button{parent, None, "Show Radar - &"} }
+{
     topLine.setBlue();
 
-    auto data = warning.title;
-    auto titleInfo = warning.sender + " " + data.replace("\\n", " ");
-    titleLine = Text(parent, titleInfo);
+    const auto data = warning.title;
+    const auto titleInfo = warning.sender + " " + WString::replace(data, "\\n", " ");
+    titleLine.setText(titleInfo);
 
-    startTimeLine = Text(parent);
     auto startTime = warning.effective;
-    startTime = startTime.replace("T", " ");
+    startTime = WString::replace(startTime, "T", " ");
     startTimeLine.setText(startTime);
 
-    endTimeLine = Text(parent);
     auto endTime = warning.expires;
-    endTime = endTime.replace("T", " ");
+    endTime = WString::replace(endTime, "T", " ");
     endTimeLine.setText(endTime);
 
-    middleLine = Text(parent, warning.area);
     middleLine.setGray();
-
     textLayout.addWidget(topLine.get(), 0, Qt::AlignTop);
     textLayout.addWidget(titleLine.get(), 0, Qt::AlignTop);
     textLayout.addWidget(middleLine.get(), 0, Qt::AlignTop);
@@ -41,14 +41,13 @@ ObjectCardDashAlertItem::ObjectCardDashAlertItem(QWidget * parent, const ObjectW
     textLayout.addWidget(endTimeLine.get(), 0, Qt::AlignTop);
     textLayout.addStretch();
 
-    buttonDetails = Button(parent, "Show Details");
-    auto url = warning.getUrl();
-    auto parent1 = parent;
-    buttonDetails.connect([url, parent1] { new AlertsDetail(parent1, url); });
+    const auto url = warning.getUrl();
+    const auto parent1 = parent;
+    buttonDetails.connect([url, parent1] { new AlertsDetail{parent1, url}; });
 
-    auto radar = warning.getClosestRadar();
-    buttonRadar = Button(parent, "Show Radar - &" + radar);
-    buttonRadar.connect([radar, parent1] { new Nexrad(parent1, 1, true, radar, false); });
+    const auto radar = warning.getClosestRadar();
+    buttonRadar.setText("Show Radar - &" + radar);
+    buttonRadar.connect([radar, parent1] { new Nexrad{parent1, 1, true, radar}; });
 
     addLayout(layoutVertical.get(), Qt::AlignTop);
     addLayout(textLayout.get(), Qt::AlignTop);

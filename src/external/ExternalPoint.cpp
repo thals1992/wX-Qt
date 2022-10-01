@@ -24,12 +24,9 @@
 
 #include "external/ExternalPoint.h"
 
-ExternalPoint::ExternalPoint() {
-    x = 0.0;
-    y = 0.0;
-}
+ExternalPoint::ExternalPoint() = default;
 
-ExternalPoint::ExternalPoint(float x, float y) {
-    this->x = x;
-    this->y = y;
-}
+ExternalPoint::ExternalPoint(double x, double y)
+    : x{ x }
+    , y{ y }
+{}

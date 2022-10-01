@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,19 +7,20 @@
 #ifndef RUNTIMEDATA_H
 #define RUNTIMEDATA_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class RunTimeData {
 public:
-    RunTimeData();
-    void appendListRun(const QString&);
-    void appendListRun(const QStringList&);
-    QStringList listRun;
-    QString mostRecentRun;
-    int imageCompleteInt;
-    QString imageCompleteStr;
-    QString timeStringConversion;
-    QString validTime;
+    void appendListRun(const string&);
+    void appendListRunWithList(const vector<string>&);
+    vector<string> listRun;
+    string mostRecentRun;
+    string timeStringConversion;
+    string validTime;
 };
 
 #endif  // RUNTIMEDATA_H

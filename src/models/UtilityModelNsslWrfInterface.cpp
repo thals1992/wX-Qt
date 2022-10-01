@@ -1,19 +1,19 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelNsslWrfInterface.h"
+#include "UtilityModelNsslWrfInterface.h"
 
-const QStringList UtilityModelNsslWrfInterface::models = {
+const vector<string> UtilityModelNsslWrfInterface::models{
     "WRF",
     "FV3",
     "HRRRV3",
-    "WRF_3KM"
+    "WRF_3KM",
 };
 
-const QStringList UtilityModelNsslWrfInterface::paramsNsslWrf = {
+const vector<string> UtilityModelNsslWrfInterface::paramsNsslWrf{
     "mslp",
     "10mwind",
     "sfct",
@@ -22,18 +22,15 @@ const QStringList UtilityModelNsslWrfInterface::paramsNsslWrf = {
     "250w",
     "500w",
     "850w",
-
     "mucape",
     "sbcape",
     "srh01",
     "srh03",
     "stpfixed",
-
     "qpf_001h",
     "qpf_006h",
     "qpf_total",
     "snowfall_total",
-
     "cref_uh075",
     "maxref1000m",
     "ref1000m_uh075",
@@ -49,7 +46,7 @@ const QStringList UtilityModelNsslWrfInterface::paramsNsslWrf = {
     "ltgthrt3"
 };
 
-const QStringList UtilityModelNsslWrfInterface::labelsNsslWrf = {
+const vector<string> UtilityModelNsslWrfInterface::labelsNsslWrf{
     "MSLP (mb)",
     "10 m Wind (kt)",
     "2-m Temperature",
@@ -58,18 +55,15 @@ const QStringList UtilityModelNsslWrfInterface::labelsNsslWrf = {
     "250 mb",
     "500 mb",
     "850 mb",
-
     "MUCAPE",
     "SBCAPE",
     "0-1km SRH",
     "0-3km SRH",
     "STP",
-
     "1-h QPF",
     "6-h QPF",
     "Total QPF",
     "Total Snowfall",
-
     "Reflectivity - Composite",
     "Reflectivity - 1h-max (1km AGL)",
     "Reflectivity - 1km AGL",
@@ -85,7 +79,7 @@ const QStringList UtilityModelNsslWrfInterface::labelsNsslWrf = {
     "Lightning - 1-h max Threat3"
 };
 
-const QStringList UtilityModelNsslWrfInterface::paramsNsslFv3 = {
+const vector<string> UtilityModelNsslWrfInterface::paramsNsslFv3{
     "mslp",
     "10mwind",
     "sfct",
@@ -93,23 +87,20 @@ const QStringList UtilityModelNsslWrfInterface::paramsNsslFv3 = {
     "250w",
     "500w",
     "850w",
-
     "sbcape",
     "srh01",
     "srh03",
     "stpfixed",
-
     "qpf_001h",
     "qpf_006h",
     "qpf_total",
-
     "cref_uh075",
     "uh25_004hmax",
     "dd_004hmax",
     "ud_004hmax"
 };
 
-const QStringList UtilityModelNsslWrfInterface::labelsNsslFv3 = {
+const vector<string> UtilityModelNsslWrfInterface::labelsNsslFv3{
     "MSLP (mb)",
     "10 m Wind (kt)",
     "2-m Temperature",
@@ -117,23 +108,20 @@ const QStringList UtilityModelNsslWrfInterface::labelsNsslFv3 = {
     "250 mb",
     "500 mb",
     "850 mb",
-
     "SBCAPE",
     "0-1km SRH",
     "0-3km SRH",
     "STP",
-
     "1-h QPF",
     "6-h QPF",
     "Total QPF",
-
     "Reflectivity - Composite",
     "Updraft Helicity - 4-h max (2-5km)",
     "Vertical Velocity - 4-h min Downdraft",
     "Vertical Velocity - 4-h max Updraft"
 };
 
-const QStringList UtilityModelNsslWrfInterface::paramsNsslHrrrv3 = {
+const vector<string> UtilityModelNsslWrfInterface::paramsNsslHrrrv3{
     "mslp",
     "10mwind",
     "sfct",
@@ -141,17 +129,14 @@ const QStringList UtilityModelNsslWrfInterface::paramsNsslHrrrv3 = {
     "250w",
     "500w",
     "850w",
-
     "mucape",
     "sbcape",
     "srh01",
     "srh03",
     "stpfixed",
-
     "qpf_001h",
     "qpf_006h",
     "qpf_total",
-
     "cref_uh075",
     "maxref1000m",
     "ref1000m_uh075",
@@ -160,7 +145,7 @@ const QStringList UtilityModelNsslWrfInterface::paramsNsslHrrrv3 = {
     "wspd_004hmax"
 };
 
-const QStringList UtilityModelNsslWrfInterface::labelsNsslHrrrv3 = {
+const vector<string> UtilityModelNsslWrfInterface::labelsNsslHrrrv3{
     "MSLP (mb)",
     "10 m Wind (kt)",
     "2-m Temperature",
@@ -168,17 +153,14 @@ const QStringList UtilityModelNsslWrfInterface::labelsNsslHrrrv3 = {
     "250 mb",
     "500 mb",
     "850 mb",
-
     "MUCAPE",
     "SBCAPE",
     "0-1km SRH",
     "0-3km SRH",
     "STP",
-
     "1-h QPF",
     "6-h QPF",
     "Total QPF",
-
     "Reflectivity - Composite",
     "Reflectivity - 1h-max (1km AGL)",
     "Reflectivity - 1km AGL",
@@ -187,7 +169,7 @@ const QStringList UtilityModelNsslWrfInterface::labelsNsslHrrrv3 = {
     "Wind Speed - 4-h max"
 };
 
-const QStringList UtilityModelNsslWrfInterface::sectorsLong = {
+const vector<string> UtilityModelNsslWrfInterface::sectorsLong{
     "CONUS",
     "Central Plains",
     "Mid Atlantic",
@@ -200,7 +182,7 @@ const QStringList UtilityModelNsslWrfInterface::sectorsLong = {
     "Southwest"
 };
 
-const QStringList UtilityModelNsslWrfInterface::sectors = {
+const vector<string> UtilityModelNsslWrfInterface::sectors{
     "conus",
     "cp",
     "ma",
@@ -210,5 +192,5 @@ const QStringList UtilityModelNsslWrfInterface::sectors = {
     "nw",
     "se",
     "sp",
-    "sw"
+    "sw",
 };

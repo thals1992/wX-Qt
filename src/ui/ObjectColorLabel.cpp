@@ -1,24 +1,24 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "ui/ObjectColorLabel.h"
-#include "objects/Color.h"
 #include "ui/ColorChooser.h"
 
-ObjectColorLabel::ObjectColorLabel(QWidget * parent, const WXColor& wxcolor) : HBox(parent) {
-    this->parent = parent;
-    this->wxcolor = wxcolor;
-    colorPatchCurrent = ColoredBox(parent, wxcolor);
+ObjectColorLabel::ObjectColorLabel(QWidget * parent, const WXColor& wxcolor)
+    : parent{ parent }
+    , wxcolor{ wxcolor }
+    , colorPatchCurrent{ ColoredBox{parent, wxcolor} }
+    , label{ Text{parent, wxcolor.uiLabel} }
+{
     colorPatchCurrent.get()->connect([this] { launchColorPicker(); });
-    label = Text(parent, wxcolor.uiLabel);
     addWidget(colorPatchCurrent.get());
     addWidget(label.get());
 }
 
 void ObjectColorLabel::launchColorPicker() {
-    auto chooser = ColorChooser(parent, &wxcolor, &colorPatchCurrent);
+    auto chooser = ColorChooser{parent, &wxcolor, &colorPatchCurrent};
     chooser.run();
 }

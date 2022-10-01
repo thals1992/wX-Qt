@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,37 +8,35 @@
 #define SETTINGSBOX_H
 
 #include <functional>
+#include <memory>
+#include <vector>
+#include "ui/Button.h"
 #include "ui/ComboBox.h"
+#include "ui/HBox.h"
 #include "ui/ObjectSwitch.h"
 #include "ui/ObjectNumberPicker.h"
 #include "ui/ScrolledWindow.h"
 #include "ui/Shortcut.h"
 #include "ui/Text.h"
-#include "ui/Widget.h"
 #include "ui/VBox.h"
-#include "ui/HBox.h"
+#include "ui/Widget.h"
+
+using std::vector;
 
 class SettingsBox : public Widget {
 public:
-    SettingsBox(QWidget * parent, ComboBox * comboBox, std::function<void()>);
+    explicit SettingsBox(QWidget *);
 
 private:
-    ComboBox * comboBox;
-    std::function<void()> reloadFn;
-    ObjectSwitch * sw1;
-    ObjectSwitch * sw2;
-    ObjectSwitch * sw3;
-    ObjectNumberPicker * np1;
-    ObjectNumberPicker * np2;
-    ScrolledWindow sw;
+    vector<std::unique_ptr<ObjectSwitch>> configs;
+    Button button;
+    Button buttonAbout;
     VBox box;
     HBox hbox0;
-    Shortcut shortcutAddLoction;
-    Shortcut shortcutManageLocations;
-    Shortcut shortcutColor;
-    Shortcut shortcutRadar;
     Text homeScreenLabel;
     Text generalLabel;
+    std::unique_ptr<ObjectNumberPicker> np1;
+    std::unique_ptr<ObjectNumberPicker> np2;
 };
 
 #endif  // SETTINGSBOX_H

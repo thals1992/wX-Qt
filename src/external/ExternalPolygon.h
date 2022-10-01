@@ -21,22 +21,24 @@
 #ifndef EXTERNALPOLYGON_H
 #define EXTERNALPOLYGON_H
 
-#include <QVector>
+#include <vector>
 #include "external/BoundingBox.h"
 #include "external/ExternalLine.h"
 #include "objects/LatLon.h"
 
+using std::vector;
+
 class ExternalPolygon {
 public:
-    ExternalPolygon(QVector<ExternalLine>, BoundingBox);
+    ExternalPolygon(const vector<ExternalLine>&, BoundingBox);
     bool inBoundingBox(ExternalPoint) const;
     bool contains(ExternalPoint) const;
     ExternalLine createRay(ExternalPoint) const;
-    bool intersect(const ExternalLine&, const ExternalLine&) const;
-    static bool polygonContainsPoint(const LatLon&, QVector<LatLon>);
+    static bool intersect(const ExternalLine&, const ExternalLine&) ;
+    static bool polygonContainsPoint(const LatLon&, const vector<LatLon>&);
 
 private:
-    QVector<ExternalLine> sides;
+    vector<ExternalLine> sides;
     BoundingBox boundingBox;
 };
 

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,19 +7,21 @@
 #ifndef DATASTORAGE_H
 #define DATASTORAGE_H
 
-#include <QString>
+#include <string>
+
+using std::string;
 
 class DataStorage {
 public:
     DataStorage();
-    explicit DataStorage(const QString&);
+    explicit DataStorage(const string&);
     void update();
-    QString getValue() const;
-    void setValue(const QString&);
+    string getValue() const;
+    void setValue(const string&);
 
 private:
-    QString preference;
-    QString val;
+    string preference;
+    string value;
 };
 
 #endif  // DATASTORAGE_H

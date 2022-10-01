@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,17 +7,18 @@
 #ifndef TABLE_H
 #define TABLE_H
 
+#include <string>
 #include <QFormLayout>
+
+using std::string;
 
 class Table {
 public:
-    Table();
-    explicit Table(QWidget * parent);
-    void addRow(const QString&, QWidget *);
+    explicit Table(QWidget *);
+    void addRow(const string&, QWidget *);
     QFormLayout * get();
 
 private:
-    QWidget * parent;
     QFormLayout * grid;
 };
 

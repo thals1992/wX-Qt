@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,15 +7,18 @@
 #ifndef UTILITYUI_H
 #define UTILITYUI_H
 
+#include <vector>
 #include <QByteArray>
 #include <QImage>
 #include <QLabel>
 #include <QLayout>
-#include <QVector>
+
+using std::vector;
 
 class UtilityUI {
 public:
-    static QVector<int> getScreenBounds();
+    static vector<int> getScreenBounds();
+    static bool isMobile();
     static int getImageWidth(int);
     static void updateImage(QLabel *, const QByteArray&, int);
     static void removeChildren(QLayout *);

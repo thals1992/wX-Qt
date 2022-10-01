@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,11 +7,15 @@
 #ifndef OBJECTCARDHAZARDS_H
 #define OBJECTCARDHAZARDS_H
 
-#include <QString>
+#include <string>
+#include <vector>
 #include <QWidget>
 #include "ui/Button.h"
 #include "ui/VBox.h"
 #include "util/ObjectHazards.h"
+
+using std::string;
+using std::vector;
 
 class ObjectCardHazards : public VBox {
 public:
@@ -20,11 +24,9 @@ public:
     void removeLabels();
 
 private:
-    void launchAlert(const QString&);
     VBox vbox;
-    QWidget * parent;
-    QString data;
-    QVector<Button *> labels;
+    string data;
+    vector<Button> labels;
 };
 
 #endif  // OBJECTCARDHAZARDS_H

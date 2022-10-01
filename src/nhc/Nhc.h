@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,10 +7,16 @@
 #ifndef NHC_H
 #define NHC_H
 
+#include <memory>
+#include <string>
+#include <vector>
 #include "nhc/ObjectNhc.h"
 #include "nhc/ObjectCardNhcStormReportItem.h"
 #include "ui/ScrolledWindow.h"
 #include "ui/Window.h"
+
+using std::string;
+using std::vector;
 
 class Nhc : public Window {
 public:
@@ -18,12 +24,12 @@ public:
 
 private:
     VBox boxText;
-    QVector<Image> images;
-    QStringList urls;
     VBox box;
     ScrolledWindow sw;
+    vector<Image> images;
+    vector<string> urls;
     ObjectNhc objectNhc;
-    QVector<ObjectCardNhcStormReportItem *> stormCards;
+    vector<std::unique_ptr<ObjectCardNhcStormReportItem>> stormCards;
 };
 
 #endif  // NHC_H

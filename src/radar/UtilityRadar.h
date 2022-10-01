@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,20 +7,21 @@
 #ifndef UTILITYRADAR_H
 #define UTILITYRADAR_H
 
-#include <QHash>
-#include <QString>
+#include <string>
+#include <unordered_map>
+
+using std::string;
+using std::unordered_map;
 
 class UtilityRadar {
 public:
-    static const QHash<QString, QString> soundingIdToName;
-    // static const QHash<QString, QString> wfoIdToName;
-    static const QHash<QString, QString> radarIdToName;
-    static const QHash<QString, QString> wfoSiteToLat;
-    static const QHash<QString, QString> wfoSiteToLon;
-    static const QHash<QString, QString> radarSiteToLat;
-    static const QHash<QString, QString> radarSiteToLon;
-    static const QHash<QString, QString> soundingSiteToLat;
-    static const QHash<QString, QString> soundingSiteToLon;
+    static const unordered_map<string, string> radarIdToName;
+    static const unordered_map<string, string> wfoSiteToLat;
+    static const unordered_map<string, string> wfoSiteToLon;
+    static const unordered_map<string, string> radarSiteToLat;
+    static const unordered_map<string, string> radarSiteToLon;
+    static const unordered_map<string, string> soundingSiteToLat;
+    static const unordered_map<string, string> soundingSiteToLon;
 };
 
 #endif  // UTILITYRADAR_H

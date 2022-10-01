@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,30 +7,32 @@
 #ifndef OBJECTNHC_H
 #define OBJECTNHC_H
 
-#include <QStringList>
-#include <QVector>
+#include <string>
+#include <vector>
 #include "nhc/ObjectNhcStormDetails.h"
+
+using std::string;
+using std::vector;
 
 class ObjectNhc {
 public:
-    ObjectNhc();
     void getTextData();
     void showTextData();
-    QVector<ObjectNhcStormDetails> stormDataList;
+    vector<ObjectNhcStormDetails> stormDataList;
 
 private:
-    QStringList ids;
-    QStringList binNumbers;
-    QStringList names;
-    QStringList classifications;
-    QStringList intensities;
-    QStringList pressures;
-    QStringList latitudes;
-    QStringList longitudes;
-    QStringList movementDirs;
-    QStringList movementSpeeds;
-    QStringList lastUpdates;
-    QStringList statusList;
+    vector<string> ids;
+    vector<string> binNumbers;
+    vector<string> names;
+    vector<string> classifications;
+    vector<string> intensities;
+    vector<string> pressures;
+    vector<string> latitudes;
+    vector<string> longitudes;
+    vector<string> movementDirs;
+    vector<string> movementSpeeds;
+    vector<string> lastUpdates;
+    vector<string> statusList;
 };
 
 #endif  // OBJECTNHC_H

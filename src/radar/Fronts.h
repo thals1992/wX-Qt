@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,22 +7,24 @@
 #ifndef FRONTS_H
 #define FRONTS_H
 
+#include <vector>
 #include <QColor>
 #include <QLineF>
 #include <QVector>
 #include "objects/LatLon.h"
 #include "radar/FrontTypeEnum.h"
-#include "util/ProjectionNumbers.h"
+#include "radar/ProjectionNumbers.h"
+
+using std::vector;
 
 class Fronts {
 public:
-    Fronts();
     explicit Fronts(FrontTypeEnum);
-    void translate(const ProjectionNumbers&);
-    FrontTypeEnum frontType;
-    QVector<LatLon> coordinates;
-    QVector<QLineF> qLines;
+    void translate(int, const ProjectionNumbers&);
     QColor penColor;
+    QVector<QLineF> coordinatesModified[4];
+    FrontTypeEnum frontType;
+    vector<LatLon> coordinates;
 };
 
 #endif  // FRONTS_H

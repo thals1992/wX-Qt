@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,38 +7,38 @@
 #ifndef LOCATIONEDITBOX_H
 #define LOCATIONEDITBOX_H
 
+#include <string>
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
 #include "ui/Entry.h"
+#include "ui/HBox.h"
 #include "ui/Table.h"
 #include "ui/Text.h"
 #include "ui/VBox.h"
 #include "ui/Widget.h"
 
+using std::string;
+
 class LocationEditBox : public Widget {
 public:
-    LocationEditBox(QWidget *, ComboBox *);
+    explicit LocationEditBox(QWidget *);
 
 private:
-    void lookupSearchTerm(const QString&);
-    void populateLabels(int index);
+    void lookupSearchTerm();
+    void populateLabels(int);
     void blankOutButtons();
-    void textchanged();
     void saveLocation();
-    Table table;
     VBox boxResults;
-    VBox box;
-    QWidget * parent;
-    QStringList cities;
-    QStringList citiesSelected;
+    HBox box;
+    Table table;
+    Button saveButton;
     Entry cityEdit;
     Entry editName;
     Entry editLat;
     Entry editLon;
     Entry editNexrad;
-    Button saveButton;
-    QVector<Button> buttons;
-    ComboBox * combobox;
+    vector<Button> buttons;
+    vector<string> cities;
 };
 
 #endif  // LOCATIONEDITBOX_H

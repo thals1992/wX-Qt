@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,20 +7,19 @@
 #ifndef OBJECTSEVENDAY_H
 #define OBJECTSEVENDAY_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
 #include "objects/LatLon.h"
+
+using std::string;
+using std::vector;
 
 class ObjectSevenDay {
 public:
-    ObjectSevenDay();
-    explicit ObjectSevenDay(const LatLon&);
-    QStringList icons;
-    QStringList shortForecasts;
-    QStringList detailedForecasts;
-    void process();
-
-private:
-    LatLon latLon;
+    void process(const LatLon&);
+    vector<string> icons;
+    vector<string> shortForecasts;
+    vector<string> detailedForecasts;
 };
 
 #endif  // OBJECTSEVENDAY_H

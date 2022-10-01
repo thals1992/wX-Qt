@@ -1,12 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "misc/UtilityOpcImages.h"
 
-const QStringList UtilityOpcImages::labels = {
+const vector<string> UtilityOpcImages::labels{
     "Atlantic Surface Analysis",
     "Atlantic Wind/Wave Analysis",
     "Atlantic 24-hour 500 mb",
@@ -48,7 +48,7 @@ const QStringList UtilityOpcImages::labels = {
     "Alaska/Arctic 96-hour Wave period & Direction"
 };
 
-const QStringList UtilityOpcImages::urls = {
+const vector<string> UtilityOpcImages::urls{
     "https://ocean.weather.gov/A_sfc_full_ocean_color.png",
     "https://ocean.weather.gov/shtml/ira1.gif",
     "https://ocean.weather.gov/shtml/A_24hr500.gif",

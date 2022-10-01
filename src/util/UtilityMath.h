@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,23 +7,25 @@
 #ifndef UTILITYMATH_H
 #define UTILITYMATH_H
 
-#include <cmath>
-#include <QString>
-#include <QVector>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilityMath {
 public:
-    static float distanceOfLine(float, float, float, float);
-    static QVector<float> computeTipPoint(float, float, float, float, bool);
-    static QVector<float> computeMiddlePoint(float, float, float, float, float);
-    static float pixPerDegreeLon(float, float);
-    static float degreesToRadians(float);
-    static float deg2rad(float);
-    static float rad2deg(float);
-    static QString heatIndex(const QString&, const QString&);
-    static QString convertWindDir(const QString&);
-    static QString celsiusToFahrenheit(const QString&);
-    static QString unitsPressure(const QString&);
+    static double distanceOfLine(double, double, double, double);
+    static vector<double> computeTipPoint(double, double, double, double, bool);
+    static vector<double> computeMiddlePoint(double, double, double, double, double);
+    static double pixPerDegreeLon(double, double);
+    static double degreesToRadians(double);
+    static double deg2rad(double);
+    static double rad2deg(double);
+    static string heatIndex(const string&, const string&);
+    static string convertWindDir(const string&);
+    static string celsiusToFahrenheit(const string&);
+    static string unitsPressure(const string&);
 };
 
 #endif  // UTILITYMATH_H

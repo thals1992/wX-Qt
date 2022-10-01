@@ -1,67 +1,81 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "radarcolorpalette/ObjectColorPalette.h"
-#include "objects/Color.h"
+#include <memory>
+#include <string>
+#include "objects/WString.h"
 #include "radar/UtilityNexradColors.h"
 #include "radarcolorpalette/UtilityColorPalette.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 
-QHash<int, QString> ObjectColorPalette::radarColorPalette;
-QHash<int, ObjectColorPalette *> ObjectColorPalette::colorMap;
+unordered_map<int, string> ObjectColorPalette::radarColorPalette;
+unordered_map<int, ObjectColorPalette *> ObjectColorPalette::colorMap;
 
-ObjectColorPalette::ObjectColorPalette(int code) {
-    redValues = std::unique_ptr<MemoryBuffer>(new MemoryBuffer(16));
-    greenValues = std::unique_ptr<MemoryBuffer>(new MemoryBuffer(16));
-    blueValues = std::unique_ptr<MemoryBuffer>(new MemoryBuffer(16));
-    colorMapCode = code;
-}
+ObjectColorPalette::ObjectColorPalette(int code)
+    : redValues{ std::make_unique<MemoryBuffer>(16) }
+    , greenValues{ std::make_unique<MemoryBuffer>(16) }
+    , blueValues{ std::make_unique<MemoryBuffer>(16) }
+    , colorMapCode{ code }
+{}
 
 void ObjectColorPalette::setupBuffers(int size) {
-    redValues = std::unique_ptr<MemoryBuffer>(new MemoryBuffer(size));
-    greenValues = std::unique_ptr<MemoryBuffer>(new MemoryBuffer(size));
-    blueValues = std::unique_ptr<MemoryBuffer>(new MemoryBuffer(size));
+    redValues = std::make_unique<MemoryBuffer>(size);
+    greenValues = std::make_unique<MemoryBuffer>(size);
+    blueValues = std::make_unique<MemoryBuffer>(size);
 }
 
-void ObjectColorPalette::position(int position) {
+void ObjectColorPalette::position(int position) const {
     redValues->setPosition(position);
     greenValues->setPosition(position);
     blueValues->setPosition(position);
 }
 
-void ObjectColorPalette::putInt(int colorAsInt) {
-    redValues->put(Color::red(colorAsInt));
-    greenValues->put(Color::green(colorAsInt));
-    blueValues->put(Color::blue(colorAsInt));
-}
-
-void ObjectColorPalette::putBytesViaBytes(unsigned char redByte, unsigned char greenByte, unsigned char blueByte) {
+void ObjectColorPalette::putBytesViaBytes(unsigned char redByte, unsigned char greenByte, unsigned char blueByte) const {
     redValues->put(redByte);
     greenValues->put(greenByte);
     blueValues->put(blueByte);
 }
 
-void ObjectColorPalette::putBytes(const ObjectColorPaletteLine& objectColorPaletteLine) {
+void ObjectColorPalette::putBytes(const ObjectColorPaletteLine& objectColorPaletteLine) const {
     redValues->put(objectColorPaletteLine.red);
     greenValues->put(objectColorPaletteLine.green);
     blueValues->put(objectColorPaletteLine.blue);
 }
 
 // comma separated r,g,b (4bit)
-void ObjectColorPalette::putLine(const QString& line) {
-    const auto colors = line.split(",");
+void ObjectColorPalette::putLine(const string& line) const {
+    const auto colors = WString::split(line, ",");
     putBytesViaBytes(To::Int(colors[0]), To::Int(colors[1]), To::Int(colors[2]));
+}
+
+void ObjectColorPalette::putBytesFromLine(const ObjectColorPaletteLine& objectColorPaletteLine) const {
+    redValues->put(objectColorPaletteLine.red);
+    greenValues->put(objectColorPaletteLine.green);
+    blueValues->put(objectColorPaletteLine.blue);
+}
+
+void ObjectColorPalette::putVector(const vector<double>& v) const {
+    redValues->put(static_cast<int>(v[0] * 255));
+    greenValues->put(static_cast<int>(v[1] * 255));
+    blueValues->put(static_cast<int>(v[2] * 255));
 }
 
 void ObjectColorPalette::initialize() {
     switch (colorMapCode) {
         case 19:
+            setupBuffers(4 * 16);
+            generate4bitGeneric(colorMapCode);
+            break;
         case 30:
+            setupBuffers(4 * 16);
+            generate4bitGeneric(colorMapCode);
+            break;
         case 56:
             setupBuffers(4 * 16);
             generate4bitGeneric(colorMapCode);
@@ -78,9 +92,9 @@ void ObjectColorPalette::initialize() {
     }
 }
 
-void ObjectColorPalette::generate(int productCode, const QString& code) {
+void ObjectColorPalette::generate(int productCode, const string& code) {
     auto objectColorPalette = colorMap[productCode];
-    QVector<ObjectColorPaletteLine> objectColorPaletteLines;
+    vector<ObjectColorPaletteLine> objectColorPaletteLines;
     auto scale = 0;
     auto lowerEnd = 0;
     auto prodOffset = 0.0;
@@ -130,36 +144,30 @@ void ObjectColorPalette::generate(int productCode, const QString& code) {
         default:
             break;
     }
-    QString red;
-    QString green;
-    QString blue;
     auto priorLineHas6 = false;
     const auto lines = UtilityColorPalette::getColorMapStringFromDisk(productCode, code);
-    for (auto z : UtilityList::range(lines.size())) {
-        if (lines[z].contains("olor") && !lines[z].contains("#")) {
-            const QStringList items = lines[z].contains(",") ? lines[z].split(","): lines[z].split(" ");
+    for (auto z : range(lines.size())) {
+        if (WString::contains(lines[z], "olor") && !WString::contains(lines[z], "#")) {
+            const auto items = WString::contains(lines[z], ",") ? WString::split(lines[z], ",") : WString::split(lines[z], " ");
             if (items.size() > 4) {
-                red = items[2];
-                green = items[3];
-                blue = items[4];
+                const auto& red = items[2];
+                const auto& green = items[3];
+                const auto& blue = items[4];
                 if (priorLineHas6) {
-                    objectColorPaletteLines.push_back(ObjectColorPaletteLine(static_cast<int>(To::Double(items[1]) * prodScale + prodOffset - 1), red, green, blue));
-                    objectColorPaletteLines.push_back(ObjectColorPaletteLine(static_cast<int>(To::Double(items[1]) * prodScale + prodOffset), red, green, blue));
+                    objectColorPaletteLines.emplace_back(static_cast<int>(To::Double(items[1]) * prodScale + prodOffset - 1), red, green, blue);
+                    objectColorPaletteLines.emplace_back(static_cast<int>(To::Double(items[1]) * prodScale + prodOffset), red, green, blue);
                     priorLineHas6 = false;
                 } else {
-                    objectColorPaletteLines.push_back(ObjectColorPaletteLine(static_cast<int>(To::Double(items[1]) * prodScale + prodOffset), red, green, blue) );
+                    objectColorPaletteLines.emplace_back(static_cast<int>(To::Double(items[1]) * prodScale + prodOffset), red, green, blue);
                 }
                 if (items.size() > 7) {
                     priorLineHas6 = true;
-                    red = items[5];
-                    green = items[6];
-                    blue = items[7];
                 }
             }
         }
     }
     if (productCode == 161) {
-        for ([[maybe_unused]] auto index : UtilityList::range(10)) {
+        for ([[maybe_unused]] auto index : range(10)) {
             objectColorPalette->putBytes(objectColorPaletteLines[0]);
         }
     }
@@ -167,19 +175,19 @@ void ObjectColorPalette::generate(int productCode, const QString& code) {
         objectColorPalette->putBytes(objectColorPaletteLines[0]);
         objectColorPalette->putBytes(objectColorPaletteLines[0]);
     }
-    for ([[maybe_unused]] auto index : UtilityList::range2(lowerEnd, objectColorPaletteLines[0].dbz)) {
+    for ([[maybe_unused]] auto index : range2(lowerEnd, objectColorPaletteLines[0].dbz)) {
         objectColorPalette->putBytes(objectColorPaletteLines[0]);
         if (scale == 2) {
             objectColorPalette->putBytes(objectColorPaletteLines[0]);
         }
     }
-    for (auto index : UtilityList::range(objectColorPaletteLines.size())) {
-        if (index < (objectColorPaletteLines.size() - 1)) {
-            const int low = objectColorPaletteLines[index].dbz;
-            const int lowColor = objectColorPaletteLines[index].asInt();
-            const int high = objectColorPaletteLines[index + 1].dbz;
-            const int highColor = objectColorPaletteLines[index + 1].asInt();
-            int diff = high - low;
+    for (auto index : range(objectColorPaletteLines.size())) {
+        if (static_cast<size_t>(index) < (objectColorPaletteLines.size() - 1)) {
+            const auto low = objectColorPaletteLines[index].dbz;
+            const auto lowColor = objectColorPaletteLines[index].asVector();
+            const auto high = objectColorPaletteLines[index + 1].dbz;
+            const auto highColor = objectColorPaletteLines[index + 1].asVector();
+            auto diff = high - low;
             objectColorPalette->putBytes(objectColorPaletteLines[index]);
             if (scale == 2) {
                 objectColorPalette->putBytes(objectColorPaletteLines[index]);
@@ -187,15 +195,15 @@ void ObjectColorPalette::generate(int productCode, const QString& code) {
             if (diff == 0) {
                 diff = 1;
             }
-            for (auto j : UtilityList::range2(1, diff)) {
+            for (auto j : range2(1, diff)) {
                 if (scale == 1) {
-                    const int colorInt = UtilityNexradColors::interpolateColor(static_cast<int>(lowColor), static_cast<int>(highColor), static_cast<double>(j) / static_cast<double>(diff * scale));
-                    objectColorPalette->putInt(colorInt);
+                    const auto colorInt = UtilityNexradColors::interpolateColor(lowColor, highColor, static_cast<double>(j) / static_cast<double>(diff * scale));
+                    objectColorPalette->putVector(colorInt);
                 } else if (scale == 2) {
-                    const int colorInt = UtilityNexradColors::interpolateColor(static_cast<int>(lowColor), static_cast<int>(highColor), static_cast<double>(((j * 2) - 1)) / static_cast<double>((diff * 2)));
-                    const int colorInt2 = UtilityNexradColors::interpolateColor(static_cast<int>(lowColor), static_cast<int>(highColor), static_cast<double>((j * 2)) / static_cast<double>((diff * 2)));
-                    objectColorPalette->putInt(colorInt);
-                    objectColorPalette->putInt(colorInt2);
+                    const auto colorInt = UtilityNexradColors::interpolateColor(lowColor, highColor, static_cast<double>(((j * 2) - 1)) / static_cast<double>((diff * 2)));
+                    const auto colorInt2 = UtilityNexradColors::interpolateColor(lowColor, highColor, static_cast<double>((j * 2)) / static_cast<double>((diff * 2)));
+                    objectColorPalette->putVector(colorInt);
+                    objectColorPalette->putVector(colorInt2);
                 }
             }
         } else {
@@ -209,15 +217,14 @@ void ObjectColorPalette::generate(int productCode, const QString& code) {
 
 void ObjectColorPalette::loadColorMap(int productCode) {
     refreshPref();
-    auto map = radarColorPalette[productCode];
-    generate(productCode, map);
+    generate(productCode, radarColorPalette[productCode]);
 }
 
 void ObjectColorPalette::generate4bitGeneric(int product) {
     colorMap[product]->position(0);
     const auto lines = UtilityColorPalette::getColorMapStringFromDisk(product, "CODENH");
     for (const auto& line : lines) {
-        if (line.contains(",")) {
+        if (WString::contains(line, ",")) {
             colorMap[product]->putLine(line);
         }
     }
@@ -225,26 +232,25 @@ void ObjectColorPalette::generate4bitGeneric(int product) {
 
 void ObjectColorPalette::loadColorMap165() {
     const auto radarColorPaletteCode = 165;
-    QVector<ObjectColorPaletteLine> objectColorPaletteLines;
+    vector<ObjectColorPaletteLine> objectColorPaletteLines;
     const auto text = UtilityColorPalette::getColorMapStringFromDisk(radarColorPaletteCode, "CODENH");
     for (const auto& data : text) {
-        const auto items = (data.contains(',')) ? data.split(',') : data.split(' ');
+        const auto items = (WString::contains(data, ",")) ? WString::split(data, ",") : WString::split(data, " ");
         if (items.size() > 4) {
-            objectColorPaletteLines.push_back(ObjectColorPaletteLine(items));
+            objectColorPaletteLines.emplace_back(items);
         }
     }
-    const int diff = 10;
-    for (auto i : UtilityList::range(objectColorPaletteLines.size())) {
-        for ([[maybe_unused]] auto j : UtilityList::range(diff)) {
-            colorMap[radarColorPaletteCode]->putInt(objectColorPaletteLines[i].asInt());
+    const auto diff = 10;
+    for (const auto& objectColorPaletteLine : objectColorPaletteLines) {
+        for ([[maybe_unused]] auto j : range(diff)) {
+            ObjectColorPalette::colorMap[radarColorPaletteCode]->putBytesFromLine(objectColorPaletteLine);
         }
     }
 }
 
 void ObjectColorPalette::refreshPref() {
     radarColorPalette.clear();
-    const QVector<int> radarProductCodes = {94, 99, 134, 135, 159, 161, 163, 165, 172};
-    for (auto data : radarProductCodes) {
-        radarColorPalette[data] = Utility::readPref("RADAR_COLOR_PALETTE_" + To::String(data), "CODENH");
+    for (auto data : {94, 99, 134, 135, 159, 161, 163, 165, 172}) {
+        radarColorPalette[data] = Utility::readPref("RADAR_COLOR_PALETTE_" + To::string(data), "CODENH");
     }
 }

@@ -1,52 +1,93 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelNcepInputOutput.h"
-#include "models/RunTimeData.h"
-#include "util/UtilityIO.h"
-#include "util/UtilityString.h"
+#include "UtilityModelNcepInputOutput.h"
+#include "../objects/WString.h"
+#include "../util/UtilityIO.h"
+#include "../util/UtilityString.h"
 
-const QString UtilityModelNcepInputOutput::pattern = "current_cycle_white . .([0-9 ]{11} UTC)";
+const string UtilityModelNcepInputOutput::pattern{"current_cycle_white . .([0-9 ]{11} UTC)"};
 
 RunTimeData UtilityModelNcepInputOutput::getRunTime(ObjectModel * om) {
-    RunTimeData runData;
-    const auto url = "https://mag.ncep.noaa.gov/model-guidance-model-parameter.php?group=Model%20Guidance&model=" + om->model.toUpper() + "&area=" + om->sector + "&ps=area";
+    auto runData = RunTimeData{};
+    auto url = ("https://mag.ncep.noaa.gov/model-guidance-model-parameter.php?group=Model%20Guidance&model=" +
+            WString::toUpper(om->model) +
+            "&area=" +
+            om->sector +
+            "&ps=area");
     auto html = UtilityIO::getHtml(url);
-    html = UtilityString::parse(html, pattern).replace("UTC", "Z").replace(" ", "");
-    auto htmlTmp = html;
-    auto runCompletionDataStr = htmlTmp.replace("Z", " UTC");
-    if (runCompletionDataStr != "") {
+    html = UtilityString::parse(html, pattern);
+    html = WString::replace(html, "UTC", "Z");
+    html = WString::replace(html, " ", "");
+    auto runCompletionDataStr = WString::replace(html, "Z", " UTC");
+    if (!runCompletionDataStr.empty()) {
         runCompletionDataStr = UtilityString::insert(runCompletionDataStr, 8, " ");
     }
-    // QString runCompletionUrl = "https://mag.ncep.noaa.gov/model-guidance-model-parameter.php?group=Model%20Guidance&model=" + om->model.toUpper();
-    // runCompletionUrl += "&area=" + om->sector.toLower();
-    // runCompletionUrl += "&cycle=" + runCompletionDataStr;
-    // runCompletionUrl += "&param=" + om->param + "&fourpan=no&imageSize=M&ps=area";
-    // runCompletionUrl = runCompletionUrl.replace(" ", "%20");
-    const QString ncepPattern1 = "([0-9]{2}Z)";
-    const auto time = UtilityString::parse(html, ncepPattern1);
+    auto runCompletionUrl = "https://mag.ncep.noaa.gov/model-guidance-model-parameter.php?group=Model%20Guidance&model=" + WString::toUpper(om->model);
+    runCompletionUrl += "&area=" + WString::toLower(om->sector);
+    runCompletionUrl += "&cycle=" + runCompletionDataStr;
+    runCompletionUrl += "&param=" + om->param + "&fourpan=no&imageSize=M&ps=area";
+    runCompletionUrl = WString::replace(runCompletionUrl, " ", "%20");
+    string ncepPattern1 = "([0-9]{2}Z)";
+    auto time = UtilityString::parse(html, ncepPattern1);
     runData.mostRecentRun = time;
     runData.timeStringConversion = time;
-    auto timeCompleteUrl = "https://mag.ncep.noaa.gov/model-fhrs.php?group=Model%20Guidance&model=" + om->model.toLower() + "&fhr_mode=image&loop_start=-1&loop_end=-1&area=" + om->sector + "&fourpan=no&imageSize=&preselected_formatted_cycle_date=" + runCompletionDataStr + "&cycle=" + runCompletionDataStr + "&param=" + om->param + "&ps=area";
-    const auto timeCompleteHtml = UtilityIO::getHtml(timeCompleteUrl.replace(" ", "%20"));
-    runData.imageCompleteStr = UtilityString::parse(timeCompleteHtml, "SubmitImageForm.(.*?).\"");
+    auto timeCompleteUrl = "https://mag.ncep.noaa.gov/model-fhrs.php?group=Model%20Guidance&model=" +
+            WString::toLower(om->model) +
+            "&fhrmode=image&loopstart=-1&loopend=-1&area=" +
+            om->sector +
+            "&fourpan=no&imageSize=&preselectedformattedcycledate=" +
+            runCompletionDataStr +
+            "&cycle=" +
+            runCompletionDataStr +
+            "&param=" +
+            om->param +
+            "&ps=area";
+    auto timeCompleteHTML = UtilityIO::getHtml(WString::replace(timeCompleteUrl, " ", "%20"));
     return runData;
 }
 
-QString UtilityModelNcepInputOutput::getImage(ObjectModel * om) {
-    QString imgUrl;
-    auto timeLocal = om->timeStr;
-    auto runTmp = om->run;
+string UtilityModelNcepInputOutput::getImageUrl(ObjectModel * om) {
+    string imgUrl;
+    auto timeLocal = om->getTime();
     if (om->model == "HRRR") {
-        timeLocal = om->timeStr + "00";
+        timeLocal = om->getTime() + "00";
     }
     if (om->model == "GFS") {
-        imgUrl = "https://mag.ncep.noaa.gov/data/" + om->model.toLower() + "/" + runTmp.replace("Z", "") + "/" + om->sector.toLower() + "/" + om->param + "/" + om->model.toLower() + "_" + om->sector.toLower() + "_" + timeLocal + "_" + om->param + ".gif";
+        imgUrl = "https://mag.ncep.noaa.gov/data/" +
+                WString::toLower(om->model) +
+                "/" +
+                WString::replace(om->run, "Z", "") +
+                "/" +
+                WString::toLower(om->sector) +
+                "/" +
+                om->param +
+                "/" +
+                WString::toLower(om->model) +
+                "_" +
+                WString::toLower(om->sector) +
+                "_" +
+                timeLocal +
+                "_" +
+                om->param +
+                ".gif";
     } else {
-        imgUrl = "https://mag.ncep.noaa.gov/data/" + om->model.toLower() + "/" + runTmp.replace("Z", "") + "/" + om->model.toLower() + "_" + om->sector.toLower() + "_" + timeLocal + "_" + om->param + ".gif";
+        imgUrl = "https://mag.ncep.noaa.gov/data/" +
+                WString::toLower(om->model) +
+                "/" +
+                WString::replace(om->run, "Z", "") +
+                "/" +
+                WString::toLower(om->model) +
+                "_" +
+                WString::toLower(om->sector) +
+                "_" +
+                timeLocal +
+                "_" +
+                om->param +
+                ".gif";
     }
     return imgUrl;
 }

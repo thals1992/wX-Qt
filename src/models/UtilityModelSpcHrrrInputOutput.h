@@ -1,21 +1,25 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef UTILITYMODELSPCHRRRRINPUTOUTPUT_H
-#define UTILITYMODELSPCHRRRRINPUTOUTPUT_H
+#ifndef UTILITYMODELSPCHRRRINPUTOUTPUT_H
+#define UTILITYMODELSPCHRRRINPUTOUTPUT_H
 
-#include "models/ObjectModel.h"
+#include <string>
+#include "ObjectModel.h"
+#include "RunTimeData.h"
 
 class UtilityModelSpcHrrrInputOutput {
 public:
     static RunTimeData getRunTime();
-    static QString getImage(ObjectModel *);
-    static QString getSectorCode(const QString&);
-    static QString getValidTime(const QString&, const QString&, const QString&);
-    static QString formatTime(const QString&);
+    static string getImageUrl(ObjectModel *);
+    static string getSectorCode(const string&);
+    static string getValidTime(const string&, const string&, const string&);
+
+private:
+    static string formatTime(const string&);
 };
 
-#endif  // UTILITYMODELSPCHRRRRINPUTOUTPUT_H
+#endif  // UTILITYMODELSPCHRRRINPUTOUTPUT_H

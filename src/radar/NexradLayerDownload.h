@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,29 +7,28 @@
 #ifndef NEXRADLAYERDOWNLOAD_H
 #define NEXRADLAYERDOWNLOAD_H
 
+#include <vector>
 #include "objects/ObjectPolygonWarning.h"
 #include "radar/NexradWidget.h"
 
+using std::vector;
+
 class NexradLayerDownload {
 public:
-    NexradLayerDownload();
-    NexradLayerDownload(QWidget *, QVector<NexradWidget *>);
+    NexradLayerDownload(QWidget *, vector<NexradWidget *> *);
     void downloadLayers();
 
 private:
-    void updateWarnings(PolygonType polygonGenericType);
-    void processMcd();
-    void processMpd();
-    void processWatch();
+    void updateWarnings(PolygonType);
+    void processWatch(PolygonType);
     void constructWBLines(int);
     void constructSwo();
     void constructHi(int);
     void constructSti(int);
     void constructTvs(int);
     void constructWpcFronts();
-    void constructSpotters();
-    QVector<NexradWidget *> nexradList;
     QWidget * parent;
+    vector<NexradWidget *> * nexradList;
 };
 
 #endif  // NEXRADLAYERDOWNLOAD_H

@@ -1,31 +1,35 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef VISUTILITYGOES_H
-#define VISUTILITYGOES_H
+#ifndef UTILITYGOES_H
+#define UTILITYGOES_H
 
-#include <QHash>
-#include <QStringList>
-#include "objects/LatLon.h"
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include "../objects/LatLon.h"
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 class UtilityGoes {
 public:
-    static const QHash<QString, QString> sizeMap;
-    static QString getImageSize(const QString&);
-    static QString getImageGoesFloater(QString, QString);
-    static QString getImage(const QString&, const QString&);
-    static QStringList getAnimation(const QString&, const QString&, int);
-    static QStringList getAnimationGoesFloater(const QString&, const QString&, int);
-    static const QStringList sectors;
-    static const QStringList sectorsWithAdditional;
-    static const QStringList sectorsInGoes17;
-    static const QStringList labels;
-    static const QStringList codes;
-    static QHash<QString, LatLon> sectorToLatLon;
-    static QString getNearestGoesLocation(const LatLon&);
+    static string getNearest(const LatLon&);
+    static string getImageFileName(const string&);
+    static string getImageGoesFloater(const string&, const string&);
+    static string getImage(const string&, const string&);
+    static vector<string> getAnimation(const string&, const string&, size_t);
+    static vector<string> getAnimationGoesFloater(const string&, const string&, size_t);
+    static const unordered_map<string, LatLon> sectorToLatLon;
+    static const vector<string> sectorsInGoes17;
+    static const unordered_map<string, string> sizeMap;
+    static const vector<string> sectors;
+    static const vector<string> labels;
+    static const vector<string> codes;
 };
 
-#endif  // VISUTILITYGOES_H
+#endif  // UTILITYGOES_H

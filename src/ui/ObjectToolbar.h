@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,22 +8,25 @@
 #define OBJECTTOOLBAR_H
 
 #include <functional>
+#include <vector>
 #include "ui/ButtonFlat.h"
 #include "ui/ComboBox.h"
 #include "ui/RouteItem.h"
 #include "ui/VBox.h"
 
+using std::function;
+using std::vector;
+
 class ObjectToolbar : public VBox {
 public:
-    ObjectToolbar();
-    explicit ObjectToolbar(QWidget *, std::function<void()>, ComboBox *);
+    ObjectToolbar(QWidget *, const function<void()>&);
     void launchSettings();
     void launchNexrad(int);
     void launchHourly();
     void launchWfoText();
     void launchSpcSwoSummary();
     void launchGoesViewer();
-    void launchSpcSwoDay1(const QString&);
+    void launchSpcSwoDay1(const string&);
     void launchNationalText();
     void launchSpcTstormOutlooks();
     void launchSpcCompmap();
@@ -35,20 +38,20 @@ public:
     void launchObservations();
     void launchSpcMeso();
     void launchModelViewer();
-    void launchModelViewerGeneric(const QString&);
+    void launchModelViewerGeneric(const string&);
     void launchNationalImages();
     void launchUsAlerts();
     void launchRainfallOutlookSummary();
     void launchSpcFireWeatherOutlookSummary();
-    void launchSpcStormReports(const QString&);
+    void launchSpcStormReports(const string&);
     void launchOpc();
+    void refresh();
 
 private:
     QWidget * parent;
-    ComboBox * comboBox;
-    std::function<void()> reloadFn;
-    QVector<RouteItem> routeItems;
-    QVector<ButtonFlat> buttons;
+    function<void()> reloadFn;
+    vector<RouteItem> routeItems;
+    vector<ButtonFlat> buttons;
 };
 
 #endif  // OBJECTTOOLBAR_H

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,12 +7,15 @@
 #ifndef PHOTO_H
 #define PHOTO_H
 
+#include <string>
 #include <QLabel>
 #include "ui/PhotoSizeEnum.h"
 
+using std::string;
+
 class Photo {
 public:
-    Photo();
+    Photo();  //  needed for ObjectCardCurrentConditions
     explicit Photo(QWidget *);
     Photo(QWidget *, const QPixmap &);
     Photo(QWidget *, PhotoSizeEnum);
@@ -23,13 +26,13 @@ public:
     void setToWidth(const QByteArray&, int);
     void setToWidthEven(const QByteArray&);
     void setBytes(const QByteArray&);
-    void setNwsIcon(QString);
+    void setNwsIcon(const string&);
     QLabel * get();
 
 private:
-    QLabel * image;
-    PhotoSizeEnum size;
-    int width;
+    QLabel * image{};
+    PhotoSizeEnum size{};
+    int width{};
 };
 
 #endif  // PHOTO_H

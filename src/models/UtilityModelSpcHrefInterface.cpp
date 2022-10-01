@@ -1,22 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelSpcHrefInterface.h"
+#include "UtilityModelSpcHrefInterface.h"
 
-//# titles = [
-//#         ObjectMenuTitle("SPC Guidance", 10),
-//#         ObjectMenuTitle("Synoptic", 8),
-//#         ObjectMenuTitle("Severe", 12),
-//#         ObjectMenuTitle("Winter", 26),
-//#         ObjectMenuTitle("Fire", 12),
-//#         ObjectMenuTitle("Precipitation", 16),
-//#         ObjectMenuTitle("Storm Attributes", 24)
-//#     ]
-
-const QStringList UtilityModelSpcHrefInterface::sectorsLong = {
+const vector<string> UtilityModelSpcHrefInterface::sectorsLong{
     "CONUS",
     "Central Plains",
     "Mid Atlantic",
@@ -29,7 +19,7 @@ const QStringList UtilityModelSpcHrefInterface::sectorsLong = {
     "Southwest"
 };
 
-const QStringList UtilityModelSpcHrefInterface::sectors = {
+const vector<string> UtilityModelSpcHrefInterface::sectors{
     "conus",
     "cp",
     "ma",
@@ -42,17 +32,14 @@ const QStringList UtilityModelSpcHrefInterface::sectors = {
     "sw"
 };
 
-const QStringList UtilityModelSpcHrefInterface::params = {
+const vector<string> UtilityModelSpcHrefInterface::params{
     "guidance_hail_spchazcal_004h",
     "guidance_tor_spchazcal_004h",
     "guidance_wind_spchazcal_004h",
     "guidance_hail_spchazcal_024h",
     "guidance_tor_spchazcal_024h",
     "guidance_wind_spchazcal_024h",
-    "guidance_tor_stp_024h",
-    "guidance_hrefct_001h",
     "guidance_hrefct_004h",
-    "guidance_hrefct_024h",
 
     "500w_mean,500h_mean",
     "700w_mean,700h_mean",
@@ -159,17 +146,14 @@ const QStringList UtilityModelSpcHrefInterface::params = {
     "wspd_024hmax_pb30_members"
 };
 
-const QStringList UtilityModelSpcHrefInterface::labels = {
+const vector<string> UtilityModelSpcHrefInterface::labels{
     "4-hr HREF/SREF Calibrated: Hail",
     "4-hr HREF/SREF Calibrated: Tornado",
     "4-hr HREF/SREF Calibrated: Wind",
     "24-hr HREF/SREF Calibrated: Hail",
     "24-hr HREF/SREF Calibrated: Tornado",
     "24-hr HREF/SREF Calibrated: Wind",
-    "24-hr STP Calibrated: Tornado",
-    "1-hr HREF Calibrated: Thunder",
     "4-hr HREF Calibrated: Thunder",
-    "24-hr HREF Calibrated: Thunder",
 
     "500 mb Height/Wind",
     "700 mb Height/Wind",
@@ -178,72 +162,72 @@ const QStringList UtilityModelSpcHrefInterface::labels = {
     "2m AGL Dew Point/MSLP/Wind",
     "Cloud Cover: mean",
     "Precipitable Water: mean",
-    "Precipitable Water: CP[>0.5, <0.8]",
+    "Precipitable Water: CP{>0.5, <0.8}",
 
     "Surface Based CAPE: max",
     "Surface Based CAPE: mean",
-    "Surface Based CAPE: P[>500]",
-    "Surface Based CAPE: P[>1000]",
-    "Surface Based CAPE: P[>2000]",
+    "Surface Based CAPE: P{>500}",
+    "Surface Based CAPE: P{>1000}",
+    "Surface Based CAPE: P{>2000}",
     "Surface Based CAPE: stamps",
     "Most Unstable CAPE: mean",
     "0-3 km SRH: mean",
     "0-1 km SRH: mean",
     "Fixed-Layer STP mean",
-    "Fixed-Layer STP P[>1]",
-    "Fixed-Layer STP P[>3]",
+    "Fixed-Layer STP P{>1}",
+    "Fixed-Layer STP P{>3}",
 
     "1-hr QPF and Precip Type: mean",
     "1-hr Snowfall: mean",
-    "1-hr Snowfall: P[>1\"]",
-    "1-hr Snowfall: P[>2\"]",
+    "1-hr Snowfall: P{>1\"}",
+    "1-hr Snowfall: P{>2\"}",
     "12-hr Snowfall: max",
     "12-hr Snowfall: mean",
     "12-hr Snowfall: PMM",
-    "12-hr Snowfall: P[>4\"]",
-    "12-hr Snowfall: P[>8\"]",
-    "12-hr Snowfall: P[>12\"]",
+    "12-hr Snowfall: P{>4\"}",
+    "12-hr Snowfall: P{>8\"}",
+    "12-hr Snowfall: P{>12\"}",
     "12-hr Snowfall: stamps",
     "24-hr Snowfall: max",
     "24-hr Snowfall: mean",
     "24-hr Snowfall: PMM",
-    "24-hr Snowfall: P[>4\"]",
-    "24-hr Snowfall: P[>8\"]",
-    "24-hr Snowfall: P[>12\"]",
+    "24-hr Snowfall: P{>4\"}",
+    "24-hr Snowfall: P{>8\"}",
+    "24-hr Snowfall: P{>12\"}",
     "24-hr Snowfall: stamps",
-    "Blizzard: CP[Vis, 10-m Vh] w/ snow",
+    "Blizzard: CP{Vis, 10-m Vh} w/ snow",
     "3-hr Freezing Rain: FRAM mean",
     "3-hr Freezing Rain: QPF max",
     "3-hr Freezing Rain: QPF mean",
-    "3-hr Freezing Rain: P[>0.06\"]",
+    "3-hr Freezing Rain: P{>0.06\"}",
     "24-hr Freezing Rain: FRAM mean",
     "24-hr Freezing Rain: QPF max",
     "24-hr Freezing Rain: QPF mean",
 
     "Fosberg Index: max",
     "Fosberg Index: mean",
-    "Fosberg Index: P[>50]",
-    "Fosberg Index: P[>75]",
+    "Fosberg Index: P{>50}",
+    "Fosberg Index: P{>75}",
     "10 m AGL Wind (Hourly Max): mean",
     "10 m AGL Gust: mean",
     "Relative Humidity: mean",
-    "Relative Humidity and Wind: CP[RH<10%, V>30mph]",
-    "Relative Humidity and Wind: CP[RH<15%, V>15mph]",
-    "Relative Humidity and Wind: CP[RH<15%, V>20mph]",
-    "Relative Humidity and Wind: CP[RH<20%, V>15mph]",
-    "Relative Humidity and Wind: CP[RH<20%, V>20mph]",
+    "Relative Humidity and Wind: CP{RH<10%, V>30mph}",
+    "Relative Humidity and Wind: CP{RH<15%, V>15mph}",
+    "Relative Humidity and Wind: CP{RH<15%, V>20mph}",
+    "Relative Humidity and Wind: CP{RH<20%, V>15mph}",
+    "Relative Humidity and Wind: CP{RH<20%, V>20mph}",
 
     "1-hr QPF and Precip Type: mean",
-    "1-hr QPF: P[>1\"]",
+    "1-hr QPF: P{>1\"}",
     "3-hr QPF: max",
     "3-hr QPF: mean",
     "3-hr QPF: pmm",
     "6-hr QPF: max",
     "6-hr QPF: mean",
     "6-hr QPF: pmm",
-    "6-hr QPF: P[>1\"]",
-    "6-hr QPF: P[>2\"]",
-    "6-hr QPF: P[>3\"]",
+    "6-hr QPF: P{>1\"}",
+    "6-hr QPF: P{>2\"}",
+    "6-hr QPF: P{>3\"}",
     "6-hr QPF: stamps",
     "24-hr QPF: max",
     "24-hr QPF: mean",
@@ -254,32 +238,32 @@ const QStringList UtilityModelSpcHrefInterface::labels = {
     "Reflectivity: hrwarw",
     "Reflectivity: hrwnmmb",
     "Reflectivity: namnest",
-    "Reflectivity: PB[>40]",
+    "Reflectivity: PB{>40}",
     "Reflectivity: stamps",
     "3-hr max Reflectivity: max",
-    "3-hr max Reflectivity: PB[>40]",
+    "3-hr max Reflectivity: PB{>40}",
     "24-hr max Reflectivity: max",
-    "24-hr max Reflectivity: PB[>40]",
+    "24-hr max Reflectivity: PB{>40}",
     "3-hr max Updraft Helicity (2-5 km): max",
-    "3-hr max Updraft Helicity (2-5 km): NP[>75]",
-    "3-hr max Updraft Helicity (2-5 km): NP[>150]",
-    "3-hr max Updraft Helicity (2-5 km): PB[>75]",
-    "3-hr max Updraft Helicity (2-5 km): PB[>150]",
+    "3-hr max Updraft Helicity (2-5 km): NP{>75}",
+    "3-hr max Updraft Helicity (2-5 km): NP{>150}",
+    "3-hr max Updraft Helicity (2-5 km): PB{>75}",
+    "3-hr max Updraft Helicity (2-5 km): PB{>150}",
     "24-hr max Updraft Helicity (2-5 km): max",
-    "24-hr max Updraft Helicity (2-5 km): NP[>75]",
-    "24-hr max Updraft Helicity (2-5 km): NP[>150]",
-    "24-hr max Updraft Helicity (2-5 km): PB[>75]",
-    "24-hr max Updraft Helicity (2-5 km): PB[>150]",
+    "24-hr max Updraft Helicity (2-5 km): NP{>75}",
+    "24-hr max Updraft Helicity (2-5 km): NP{>150}",
+    "24-hr max Updraft Helicity (2-5 km): PB{>75}",
+    "24-hr max Updraft Helicity (2-5 km): PB{>150}",
     "3-hr max Updraft: max",
-    "3-hr max Updraft: PB[>20]",
+    "3-hr max Updraft: PB{>20}",
     "24-hr max Updraft: max",
-    "24-hr max Updraft: PB[>20]",
+    "24-hr max Updraft: PB{>20}",
     "3-hr max Wind Speed: max",
-    "3-hr max Wind Speed: PB[>30]",
+    "3-hr max Wind Speed: PB{>30}",
     "24-hr max Wind Speed: max",
-    "24-hr max Wind Speed: PB[>30]",
-    "10m 3-hr max Wind Speed: max PB[>30]",
-    "10m 3-hr max Wind Speed: PB[>30]",
+    "24-hr max Wind Speed: PB{>30}",
+    "10m 3-hr max Wind Speed: max PB{>30}",
+    "10m 3-hr max Wind Speed: PB{>30}",
     "10m 24-hr max Wind Speed: max",
-    "10m 24-hr max Wind Speed: PB[>30]"
+    "10m 24-hr max Wind Speed: PB{>30}"
 };

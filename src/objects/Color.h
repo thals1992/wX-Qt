@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,8 +7,10 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include <vector>
 #include <QColor>
-#include <QVector>
+
+using std::vector;
 
 class Color {
 public:
@@ -18,12 +20,11 @@ public:
     static int blue(int);
     static QColor intToQColor(int);
     static int qcolorToInt(QColor);
-    static QVector<int> colorToHsv(int);
-    static int hsvToColor(const QVector<int>&);
+    static vector<double> colorToHsv(const vector<double>&);
+    static vector<double> hsvToColor(const vector<double>&);
     static QColor qtBlack();
     static const int RED;
     static const int GREEN;
-    static const int YELLOW;
     static const int MAGENTA;
 };
 

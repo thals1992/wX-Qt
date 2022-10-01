@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,58 +8,57 @@
 #include "common/GlobalArrays.h"
 #include "misc/UtilityWfoText.h"
 #include "objects/FutureText.h"
+#include "objects/WString.h"
 #include "settings/Location.h"
 #include "util/UtilityList.h"
+#include "util/UtilityUI.h"
 
-WfoText::WfoText(QWidget * parent) : Window(parent) {
-    setWindowTitle("WFO Text");
+WfoText::WfoText(QWidget * parent)
+    : Window{parent}
+    , sw{ ScrolledWindow{this, box} }
+    , comboboxProduct{ ComboBox{this, UtilityWfoText::wfoProdList} }
+    , comboboxSector{ ComboBox{this, GlobalArrays::wfos} }
+    , sector{ Location::office() }
+{
+    setTitle("WFO Text");
     maximize();
 
-    boxH = HBox(this);
-    box = VBox(this);
-    boxText = HBox(this);
-
     box.addMargins();
-    text = Text(this, "");
-
-    sector = Location::office();
-
-    comboboxProduct = ComboBox(this, UtilityWfoText::wfoProdList);
     comboboxProduct.setIndexByValue("AFD");
     comboboxProduct.connect([this] { changeProduct(); });
     boxH.addWidget(comboboxProduct.get());
 
-    comboboxSector = ComboBox(this, GlobalArrays::wfos);
     comboboxSector.setIndexByValue(sector);
     comboboxSector.connect([this] { changeSector(); });
-    boxH.addWidget(comboboxSector.get());
 
+    boxH.addWidget(comboboxSector.get());
     box.addLayout(boxH.get());
     box.addLayout(boxText.get());
-    for ([[maybe_unused]] auto unused : UtilityList::range(3)) {
-        textList.push_back(Text(this, ""));
+
+    if (UtilityUI::isMobile()) {
+        productCount = 1;
+    }
+    for ([[maybe_unused]] auto unused : range(productCount)) {
+        textList.emplace_back(this);
         textList.back().setFixedWidth();
         boxText.addWidget(textList.back().get());
     }
-    sw = ScrolledWindow(this, box);
     reload();
 }
 
 void WfoText::changeProduct() {
-    product = comboboxProduct.getValue().split(":")[0];
+    product = WString::split(comboboxProduct.getValue(), ":")[0];
     reload();
 }
 
 void WfoText::changeSector() {
-    sector = comboboxSector.getValue().split(":")[0];
+    sector = WString::split(comboboxSector.getValue(), ":")[0];
     reload();
 }
 
 void WfoText::reload() {
-    auto i = 0;
-    QStringList products = {product, "HWO", "LSR"};
-    for (const auto& product : products) {
-        new FutureText(this, product + sector, [this, i] (const auto& s) { textList[i].setText(s); });
-        i += 1;
+    const vector<string> products{product, "HWO", "LSR"};
+    for (auto i : range(productCount)) {
+        new FutureText{this, products[i] + sector, [this, i] (const auto& s) { textList[i].setText(s); }};
     }
 }

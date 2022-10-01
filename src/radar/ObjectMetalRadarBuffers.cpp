@@ -1,48 +1,32 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "radar/ObjectMetalRadarBuffers.h"
-#include <memory>
-#include "objects/MemoryBuffer.h"
+#include "objects/Color.h"
+#include "radarcolorpalette/ObjectColorPalette.h"
+#include "settings/RadarPreferences.h"
 
 ObjectMetalRadarBuffers::ObjectMetalRadarBuffers() {
-    numberOfRadials = 0;
-    numberOfRangeBins = 0;
-    binSize = 0.0;
-    productCode = 0;
-}
-
-ObjectMetalRadarBuffers::ObjectMetalRadarBuffers(FileStorage * fileStorage) {
-    numberOfRadials = 0;
-    numberOfRangeBins = 0;
-    binSize = 0.0;
-    productCode = 0;
-    this->fileStorage = fileStorage;
+    const auto size = 150000;
+    rectPoints.reserve(size);
+    color.reserve(size);
+    colorPens.reserve(size);
+    colorBrushes.reserve(size);
 }
 
 void ObjectMetalRadarBuffers::initialize() {
-    if (productCode == 37 || productCode == 38 || productCode == 41 || productCode == 57) {
-        if (floatBuffer.getCapacity() < (48 * 464 * 464)) {
-            floatBuffer = MemoryBuffer(48 * 464 * 464);
-        }
-        if (colorBuffer.getCapacity() < (12 * 464 * 464)) {
-            colorBuffer = MemoryBuffer(12 * 464 * 464);
-        }
-    } else {
-        if (floatBuffer.getCapacity() < (32 * numberOfRadials * numberOfRangeBins)) {
-            floatBuffer = MemoryBuffer(32 * numberOfRadials * numberOfRangeBins);
-        }
-        if ((colorBuffer.getCapacity() < 12 * numberOfRadials * numberOfRangeBins)) {
-            colorBuffer = MemoryBuffer(12 * numberOfRadials * numberOfRangeBins);
-        }
-    }
-    setToPositionZero();
+    rectPoints.clear();
+    color.clear();
+    colorPens.clear();
+    colorBrushes.clear();
 }
 
-void ObjectMetalRadarBuffers::setToPositionZero() {
-    floatBuffer.setPosition(0);
-    colorBuffer.setPosition(0);
+// DO NOT mark CONST
+void ObjectMetalRadarBuffers::setBackgroundColor() {
+    ObjectColorPalette::colorMap[productCode]->redValues->putByIndex(0, Color::red(Color::qcolorToInt(RadarPreferences::nexradRadarBackgroundColor)));
+    ObjectColorPalette::colorMap[productCode]->greenValues->putByIndex(0, Color::green(Color::qcolorToInt(RadarPreferences::nexradRadarBackgroundColor)));
+    ObjectColorPalette::colorMap[productCode]->blueValues->putByIndex(0, Color::blue(Color::qcolorToInt(RadarPreferences::nexradRadarBackgroundColor)));
 }

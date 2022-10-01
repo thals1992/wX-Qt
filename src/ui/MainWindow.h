@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,6 +7,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "misc/SevereNotice.h"
 #include "radar/NexradWidget.h"
 #include "settings/UIPreferences.h"
@@ -25,9 +28,13 @@
 #include "util/ObjectHazards.h"
 #include "util/ObjectSevenDay.h"
 
+using std::string;
+using std::unordered_map;
+using std::vector;
+
 class MainWindow : public Window {
 public:
-    explicit MainWindow(QWidget * parent = nullptr);
+    explicit MainWindow(QWidget * = nullptr);
     void reload();
 
 protected:
@@ -41,26 +48,30 @@ private:
     void updateHazards();
     void getHazards();
     void configChangeCheck();
-    QString computeTokenString();
+    static string computeTokenString();
     void addWidgets();
     void locationChange();
-    void launchImageScreen(QString);
-    ObjectToolbar * objectToolbar;
-    ObjectCurrentConditions objectCurrentConditions;
-    ObjectHazards objectHazards;
-    ObjectSevenDay objectSevenDay;
-    bool initializedCc = false;
-    bool initialized7Day = false;
-    ScrolledWindow sw;
+    void launchImageScreen(const string&);
+    HBox box;
+    VBox vbox;
+    VBox imageLayout;
+    VBox rightMostLayout;
     VBox forecastLayout;
     VBox boxCc;
     VBox boxSevenDay;
     VBox boxHazards;
-    ObjectCardCurrentConditions objectCardCurrentConditions;
-    ObjectCardHazards * objectCardHazards;
-    ObjectCardSevenDay objectCardSevenDay;
+    ScrolledWindow sw;
     ComboBox comboBox;
-    int imageIndex;
+    ObjectToolbar objectToolbar;
+    ObjectCurrentConditions objectCurrentConditions;
+    ObjectHazards objectHazards;
+    ObjectSevenDay objectSevenDay;
+    bool initializedCc{false};
+    bool initialized7Day{false};
+    ObjectCardCurrentConditions objectCardCurrentConditions;
+    ObjectCardHazards objectCardHazards;
+    ObjectCardSevenDay objectCardSevenDay;
+    int imageIndex{};
     Shortcut shortcutClose;
     Shortcut shortcutVis;
     Shortcut shortcutWfoText;
@@ -82,17 +93,11 @@ private:
     Shortcut shortcutReload;
     Shortcut shortcutKeyboard;
     Shortcut shortcutWpcText;
-    HBox box;
-    VBox vbox;
-    VBox imageLayout;
-    VBox rightMostLayout;
-    bool showImage;
-    QHash<QString, Image> imageWidgets;
-    QHash<QString, Text> textWidgets;
-    QHash<QString, QByteArray> byteArrays;
-    QHash<QString, QString> htmlMap;
-    QString tokenString;
-    int imageSize = UIPreferences::mainScreenImageSize;
+
+    unordered_map<string, Image> imageWidgets;
+    unordered_map<string, Text> textWidgets;
+    string tokenString;
+    int imageSize{UIPreferences::mainScreenImageSize};
     //
     // Mini SevereDashboard
     //
@@ -100,14 +105,14 @@ private:
     void updateWatch();
     bool launch(int);
     HBox boxSevereDashboard;
-    QStringList urls;
-    QVector<Image> images;
-    QHash<PolygonType, SevereNotice> watchesByType;
-    QVector<QByteArray> bytesList;
+    vector<string> urls;
+    vector<Image> images;
+    unordered_map<PolygonType, SevereNotice> watchesByType;
+    vector<QByteArray> bytesList;
     //
     // Nexrad widget
     //
-    QVector<NexradWidget *> nexradList;
+    vector<NexradWidget *> nexradList;
 };
 
 #endif  // MAINWINDOW_H

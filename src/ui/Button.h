@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,21 +8,21 @@
 #define OBJECTBUTTON_H
 
 #include <functional>
+#include <string>
 #include <QPushButton>
 #include "ui/Icon.h"
 
+using std::function;
+using std::string;
+
 class Button {
 public:
-    Button();
-    Button(QWidget *, QString);
-    Button(QWidget *, Icon, QString);
+    Button(QWidget *, Icon, const string&);
     QPushButton * get();
-    void connect(std::function<void()>);
-    void setText(const QString&);
-    QString getText() const;
+    void connect(const function<void()>&);
+    void setText(const string&);
+    string getText() const;
     void setVisible(bool);
-    void setCheckable(bool);
-    void setChecked(bool);
 
 private:
     QWidget * parent;

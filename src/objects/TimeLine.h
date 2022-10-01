@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,27 +8,26 @@
 #define TIMELINE_H
 
 #include <functional>
-#include <QString>
 #include <QObject>
 #include <QTimeLine>
 
+using std::function;
+
 class TimeLine {
 public:
-    TimeLine();
-    TimeLine(QObject *, int, int, std::function<void(int)>);
-    void update(int i);
+    TimeLine(QObject *, int, int, const function<void(int)>&);
     void stop();
     void setCount(int);
     void setSpeed(int);
-    int getCount();
+    int getCount() const;
     void start();
-    bool isRunning();
+    bool isRunning() const;
 
 private:
     QTimeLine::State state();
-    QTimeLine * timeLine;
     int count;
-    bool running = false;
+    QTimeLine * timeLine;
+    bool running{false};
 };
 
 #endif  // TIMELINE_H

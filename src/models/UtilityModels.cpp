@@ -1,45 +1,51 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModels.h"
-#include <cstdint>
-#include "util/To.h"
-#include "util/UtilityTime.h"
+#include <cmath>
+#include "UtilityModels.h"
+#include "../objects/ObjectDateTime.h"
+#include "../objects/WString.h"
+#include "../util/To.h"
 
-QString UtilityModels::convertTimeRuntoTimeString(QString runStr, QString timeStrFunc) {
-    auto timeStr = timeStrFunc.split(" ")[0];
-    const auto runInt = To::Int(runStr);
-    const auto timeInt = To::Int(timeStr);
-    const int realTimeGmt = runInt + timeInt;
-    const int64_t offsetFromUtc = UtilityTime::secondsFromUTC();
-    const int realTime = realTimeGmt + static_cast<int>(offsetFromUtc / 60 / 60);
-    int hourOfDay = realTime % 24;
-    QString amPm;
+const string UtilityModels::urlSeperator{","};
+
+string UtilityModels::convertTimeRuntoTimeString(const string& runStr, const string& timeStrFunc) {
+    auto timeStr = WString::split(timeStrFunc, " ")[0];
+    auto runInt = To::Int(runStr);
+    auto timeInt = To::Int(timeStr);
+    auto realTimeGmt = runInt + timeInt;
+    auto offsetFromUtc = ObjectDateTime::offsetFromUtcInSeconds();
+    auto realTime = realTimeGmt + static_cast<int>(floor(offsetFromUtc / 60 / 60));
+    auto hourOfDay = realTime % 24;
+    string amPm = "am";
     if (hourOfDay > 11) {
         amPm = "pm";
-        if (hourOfDay > 12) {
-            hourOfDay -= 12;
-        }
-    } else {
-        amPm = "am";
+        if (hourOfDay > 12) hourOfDay -= 12;
     }
-    double day = realTime / 24;
+    auto day = realTime / 24.0;
     if (hourOfDay < 0) {
         hourOfDay = 12 + hourOfDay;
         amPm = "pm";
         day -= 1;
     }
-    const auto localTime = QDate::currentDate();
-    const auto dayOfWeek = localTime.dayOfWeek();
-    QString futureDay;
+    auto dayOfWeek = ObjectDateTime::getDayOfWeek();
+    auto hourOfDayLocal = ObjectDateTime::getHour();
+    if (runInt >= 0 && runInt < -offsetFromUtc / 60 / 60 && (hourOfDayLocal - offsetFromUtc / 60 / 60) >= 24) {
+        day += 1;
+    }
+    string futureDay;
     auto dayMod = static_cast<int>(dayOfWeek + day) % 7;
+    // Vala/Dart: is Monday(1)..Sunday(7), Swift is Sat(0)..Fri(6)
     if (dayMod == 0) {
         dayMod = 7;
     }
     switch (dayMod) {
+        case 7:
+            futureDay = "Sun";
+            break;
         case 1:
             futureDay = "Mon";
             break;
@@ -58,31 +64,35 @@ QString UtilityModels::convertTimeRuntoTimeString(QString runStr, QString timeSt
         case 6:
             futureDay = "Sat";
             break;
-        case 7:
-            futureDay = "Sun";
-            break;
         default:
-            futureDay = "";
             break;
     }
-    auto returnString = futureDay + " " + To::String(hourOfDay) + amPm;
-    return returnString;
+    return futureDay + "  " + To::string(hourOfDay) + amPm;
 }
 
-QStringList UtilityModels::updateTime(QString run, QString modelCurrentTime, QStringList listTime, QString prefix) {
+vector<string> UtilityModels::updateTime(
+    const string& run,
+    const string& modelCurrentTime,
+    const vector<string>& listTime,
+    const string& prefix
+) {
     auto run2 = run;
-    run2 = run2.replace("Z", "");
-    run2 = run2.replace("z", "");
-    QStringList listTimeNew;
+    run2 = WString::replace(run2, "Z", "");
+    run2 = WString::replace(run2, "z", "");
+    vector<string> listTimeNew;
     auto modelCurrentTime2 = modelCurrentTime;
-    modelCurrentTime2 = modelCurrentTime2.replace("Z", "");
-    modelCurrentTime2 = modelCurrentTime2.replace("z", "");
-    if (modelCurrentTime2 != "") {
+    modelCurrentTime2 = WString::replace(modelCurrentTime2, "Z", "");
+    modelCurrentTime2 = WString::replace(modelCurrentTime2, "z", "");
+    if (!modelCurrentTime2.empty()) {
         if (To::Int(run2) > To::Int(modelCurrentTime2)) {
-            run2 = To::String(To::Int(run2) - 24);
+            run2 = To::string(To::Int(run2) - 24);
         }
-        for (const QString& value : listTime) {
-            const auto tmpStr = value.split(" ")[0].replace(prefix, "");
+        for (const auto& value : listTime) {
+            auto tmp = WString::split(value, " ")[0];
+            auto tmpStr = tmp;
+            if (!prefix.empty()) {
+                tmpStr = WString::replace(tmp, prefix, "");
+            }
             listTimeNew.push_back(prefix + tmpStr + " " + convertTimeRuntoTimeString(run2, tmpStr));
         }
     }

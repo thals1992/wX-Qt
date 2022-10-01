@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -18,35 +18,29 @@ public:
     explicit MemoryBuffer(const QByteArray &);
     MemoryBuffer(char *, int);
     void mark(int);
-    void mark();
     void reset();
-    int getCapacity() const;
+    int64_t getCapacity() const;
     int getPosition() const;
     void setPosition(int);
     float getFloat();
-    float getFloat(int) const;
-    float getFloatNative();
     float getFloatNative(int) const;
     void putFloat(float);
-    void putByte(unsigned char);
     void put(unsigned char);
-    void putInt(int);
-    void putSignedShort(int16_t);
+    void putByIndex(int, unsigned char);
     int16_t getShort();
-    int16_t getShortNative();
     uint16_t getUnsignedShort();
     int getInt();
     unsigned char get();
     unsigned char get(int) const;
     unsigned char getByIndex(int) const;
     void skipBytes(int);
-    bool eof() const;
-    QByteArray qbyteArray;
+    char * getConstData();
 
 private:
-    int position;
-    int markPosition;
-    int capacity;
+    QByteArray qbyteArray;
+    int position{};
+    int markPosition{};
+    int64_t capacity{};
 };
 
 #endif  // MEMORYBUFFER_H

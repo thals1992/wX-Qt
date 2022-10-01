@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -11,36 +11,28 @@
 #include "util/To.h"
 #include "util/UtilityList.h"
 
-SpcSwoSummary::SpcSwoSummary(QWidget * parent) : Window(parent) {
+SpcSwoSummary::SpcSwoSummary(QWidget * parent)
+    : Window{parent}
+    , sw{ ScrolledWindow{this, box} }
+{
     setTitle("SPC Convective Outlooks");
-    maximize();
-    box = VBox(this);
-    int numberAcross = 4;
-
+    const auto numberAcross = 4;
     for (const auto& day : day1to3List) {
-        auto items = UtilitySpcSwo::getImageUrls(day);
+        const auto items = UtilitySpcSwo::getImageUrls(day);
         urls.push_back(items[0]);
     }
     for (const auto& day : day4To8List) {
         urls.push_back(UtilitySpcSwo::getImageUrlsDays48(day));
     }
-    box.addImageRows(urls, images, numberAcross);
+    box.addImageRows(this, urls, images, numberAcross);
     box.addStretch();
-    sw = ScrolledWindow(this, box);
-    for (auto index : UtilityList::range(urls.size())) {
-        const auto url = urls[index];
-        images[index].connect([this, index] { launch(index); });
+    for (auto index : range(urls.size())) {
+        images[index].connect([this, index] { new SpcSwoDay1{this, To::string(index + 1)}; });
         images[index].setNumberAcross(numberAcross);
-        new FutureBytes(this, url, [this, index] (const auto& ba) { images[index].setBytes(ba); });
+        new FutureBytes{this, urls[index], [this, index] (const auto& ba) { images[index].setBytes(ba); }};
     }
-
-    for (auto index : UtilityList::range(urls.size() + 1)) {
-        shortcuts.push_back(Shortcut(QKeySequence("Ctrl+" + To::String(index)), this));
-        shortcuts.back().connect([this, index] { launch(index - 1); });
+    for (auto index : range(urls.size() + 1)) {
+        shortcuts.emplace_back(QKeySequence{"Ctrl+" + QString::fromStdString(To::string(index))}, this);
+        shortcuts.back().connect([this, index] { new SpcSwoDay1{this, To::string(index)}; });
     }
-}
-
-void SpcSwoSummary::launch(int index) {
-    qDebug() << index;
-    new SpcSwoDay1(this, To::String(index + 1));
 }

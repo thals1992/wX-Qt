@@ -1,17 +1,20 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#include "models/UtilityModelGlcfsInputOutput.h"
-#include "util/UtilityString.h"
+#include "UtilityModelGlcfsInputOutput.h"
+#include "../objects/WString.h"
+#include "../util/UtilityString.h"
 
-QString UtilityModelGlcfsInputOutput::getImage(ObjectModel * om) {
+string UtilityModelGlcfsInputOutput::getImageUrl(ObjectModel * om) {
     auto sectorLocal = om->sector;
-    if (om->sector.split(" ").size() > 1) {
-        sectorLocal = UtilityString::substring(om->sector.split(" ")[1], 0, 1).toLower();
+    if (WString::split(om->sector, " ").size() > 1) {
+        auto tmp = WString::split(om->sector, " ")[1];
+        tmp = UtilityString::substring(tmp, 0, 1);
+        tmp = WString::toLower(tmp);
+        sectorLocal = tmp;
     }
-    auto url = "https://www.glerl.noaa.gov/res/glcfs/fcast/" + sectorLocal + om->param + "+" + om->timeStr + ".gif";
-    return url;
+    return "https://www.glerl.noaa.gov/res/glcfs/fcast/" + sectorLocal + om->param + "+" + om->getTime() + ".gif";
 }

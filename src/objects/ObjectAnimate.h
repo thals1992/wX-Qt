@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,39 +8,47 @@
 #define OBJECTANIMATE_H
 
 #include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+#include "objects/DownloadParallelBytes.h"
 #include "objects/TimeLine.h"
 #include "ui/ButtonToggle.h"
 #include "ui/Photo.h"
+
+using std::function;
+using std::string;
+using std::vector;
 
 class ObjectAnimate : public QObject {
 
     Q_OBJECT
 
 public:
-    ObjectAnimate();
     ObjectAnimate(
         QWidget *,
         Photo *,
-        std::function<QStringList(QString, QString, int)>,
-        std::function<void()>,
+        const function<vector<string>(string, string, int)>&,
+        const function<void()>&,
         ButtonToggle *);
     void stopAnimate();
     void animateClicked();
-    QString product;
-    QString sector;
-    std::function<QStringList(QString, QString, int)> getFunction;
+    string product;
+    string sector;
+    function<vector<string>(string, string, int)> getFunction;
+    int frameCount;
 
 private:
     void loadAnimationFrame(int);
-    void downloadFrames(QStringList);
-    QVector<QByteArray> animationFrames;
+    void downloadFrames(const vector<string>&);
     QWidget * parent;
-    int animationSpeed;
     Photo * image;
-    std::function<void()> downloadImage;
-    std::function<void(int)> updateImage;
-    TimeLine timeLine;
+    function<void()> downloadImage;
     ButtonToggle * animateButton;
+    int animationSpeed;
+    TimeLine timeLine;
+    vector<QByteArray> animationFrames;
+    std::unique_ptr<DownloadParallelBytes> dpb;
 };
 
 #endif  // OBJECTANIMATE_H

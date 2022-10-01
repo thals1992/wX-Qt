@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -12,13 +12,14 @@
 #include "util/MyApplication.h"
 
 int main(int argc, char * argv[]) {
-    QApplication a(argc, argv);
-    qDebug() << a.arguments();
+    QApplication a{argc, argv};
+    // qDebug() << a.arguments();
     MyApplication::onCreate();
-    a.setWindowIcon(QIcon(GlobalVariables::imageDir + "wx_launcher.png"));
+    a.setWindowIcon(QIcon{QString::fromStdString(GlobalVariables::imageDir) + "wx_launcher.png"});
     if (a.arguments().size() == 3 && a.arguments()[1] == "-r") {
-        Nexrad r(nullptr, 1, true, a.arguments()[2], false);
-        r.show();
+        // TODO FIXME
+        // Nexrad r(nullptr, 1, true, a.arguments()[2], false);
+        // r.show();
         return a.exec();
     } else {
         MainWindow w;

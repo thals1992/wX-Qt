@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,34 +8,30 @@
 #include "objects/FutureBytes.h"
 #include "objects/FutureText.h"
 #include "spc/UtilitySpcSwo.h"
-#include "ui/PhotoSizeEnum.h"
 #include "util/To.h"
 #include "util/UtilityList.h"
 
-SpcSwoDay1::SpcSwoDay1(QWidget * parent, const QString& day) : Window(parent) {
+SpcSwoDay1::SpcSwoDay1(QWidget * parent, const string& day)
+    : Window{parent}
+    , text{ Text{this} }
+    , sw{ ObjectTwoWidgetScroll{this, imageVBox.get(), text.get()} }
+{
     setTitle("SPC Convective Outlook Day " + day);
-    maximize();
     if (To::Int(day) > 3) {
         urls = UtilitySpcSwo::getImageUrls("48");
     } else {
         urls = UtilitySpcSwo::getImageUrls(day);
     }
-    imageVBox = VBox(this);
     for ([[maybe_unused]] const auto& unused : urls) {
-        images.push_back(Photo(this, PhotoSizeEnum::scaled));
+        images.emplace_back(this);
         imageVBox.addWidget(images.back().get());
     }
-    product = "";
+    auto product = "SWODY" + day;
     if (day == "4" || day == "5" || day == "6" || day == "7" || day == "8" || day == "48") {
         product = "SWOD48";
-    } else {
-        product = "SWODY" + day;
     }
-    text = Text(this, "");
-    sw = ObjectTwoWidgetScroll(this, imageVBox.get(), text.get());
-    new FutureText(this, product, [this] (const auto& s) { text.setText(s); });
-    for (auto index : UtilityList::range(urls.size())) {
-        auto url = urls[index];
-        new FutureBytes(this, url, [this, index] (const auto& ba) { images[index].setBytes(ba); });
+    new FutureText{this, product, [this] (const auto& s) { text.setText(s); }};
+    for (auto index : range(urls.size())) {
+        new FutureBytes{this, urls[index], [this, index] (const auto& ba) { images[index].setBytes(ba); }};
     }
 }

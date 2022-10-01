@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,11 +7,13 @@
 #ifndef UTILITYLOG_H
 #define UTILITYLOG_H
 
-#include <QString>
+#include <string>
+
+using std::string;
 
 class UtilityLog {
 public:
-    static void d(const QString&);
+    static void d(const string&);
 };
 
 #endif  // UTILITYLOG_H

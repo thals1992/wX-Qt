@@ -1,17 +1,21 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef SPCUTILITYSPCMESOINPUTOUTPUT_H
-#define SPCUTILITYSPCMESOINPUTOUTPUT_H
+#ifndef UTILITYSPCMESOINPUTOUTPUT_H
+#define UTILITYSPCMESOINPUTOUTPUT_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilitySpcMesoInputOutput {
 public:
-    static QStringList getAnimation(const QString&, const QString&, int);
+    static vector<string> getAnimation(const string&, const string&, size_t);
 };
 
-#endif  // SPCUTILITYSPCMESOINPUTOUTPUT_H
+#endif  // UTILITYSPCMESOINPUTOUTPUT_H

@@ -1,10 +1,12 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "settings/Location.h"
+#include <algorithm>
+#include "objects/WString.h"
 #include "radar/UtilityMetar.h"
 #include "settings/UtilityLocation.h"
 #include "util/To.h"
@@ -13,84 +15,65 @@
 #include "util/UtilityList.h"
 #include "util/UtilityString.h"
 
-int Location::currentLocationIndex = 0;
-int Location::numberOfLocations = 1;
-QVector<ObjectLocation> Location::locations;
+int Location::currentLocationIndex{0};
+int Location::numberOfLocations{1};
+vector<ObjectLocation> Location::locations;
+ComboBox * Location::comboBox;
 
 int Location::getNumLocations() {
     return numberOfLocations;
 }
 
-QString Location::radar() {
-    return locations[currentLocationIndex].rid;
+string Location::radar() {
+    return locations[currentLocationIndex].getRadarSite();
 }
 
-QString Location::radarSite() {
-    return locations[currentLocationIndex].rid;
+string Location::radarSite() {
+    return locations[currentLocationIndex].getRadarSite();
 }
 
-QString Location::wfo() {
-    return locations[currentLocationIndex].wfo;
+string Location::wfo() {
+    return locations[currentLocationIndex].getWfo();
 }
 
-QString Location::office() {
-    return locations[currentLocationIndex].wfo;
+string Location::office() {
+    return locations[currentLocationIndex].getWfo();
 }
 
-QString Location::getRadarSite(int locationNumber) {
-    return locations[locationNumber].rid;
+string Location::getRadarSite(int locationNumber) {
+    return locations[locationNumber].getRadarSite();
 }
 
-QString Location::getWfo(int locationNumber) {
-    return locations[locationNumber].wfo;
+string Location::getWfo(int locationNumber) {
+    return locations[locationNumber].getWfo();
 }
 
 LatLon Location::getLatLon(int locationNumber) {
-    return LatLon(getX(locationNumber), getY(locationNumber));
+    return locations[locationNumber].getLatLon();
 }
 
-float Location::x() {
-    return To::Float(locations[currentLocationIndex].lat);
-}
-
-float Location::getX(int locationNumber) {
-    return To::Float(locations[locationNumber].lat);
-}
-
-float Location::y() {
-    return To::Float(locations[currentLocationIndex].lon);
-}
-
-QString Location::name() {
-    return locations[currentLocationIndex].name;
-}
-
-QString Location::locationName() {
+string Location::name() {
     return locations[currentLocationIndex].getName();
 }
 
-QString Location::getName(int locationNumber) {
-    return locations[locationNumber].name;
+string Location::locationName() {
+    return locations[currentLocationIndex].getName();
 }
 
-float Location::getY(int locationNumber) {
-    return To::Float(locations[locationNumber].lon);
+string Location::getName(int locationNumber) {
+    return locations[locationNumber].getName();
 }
 
 LatLon Location::getLatLonCurrent() {
-    return LatLon(x(), y());
+    return locations[currentLocationIndex].getLatLon();
 }
 
-LatLon Location::getLatLonCurrentByString() {
-    const auto locationNumber = To::Int(Utility::readPref("CURRENT_LOC_FRAGMENT", "1")) - 1;
-    return LatLon(getX(locationNumber), getY(locationNumber));
-}
-
-QStringList Location::listOfNames() {
-    QStringList names;
-    for (const auto& location : locations) {
-        names.push_back(location.name);
-    }
+vector<string> Location::listOfNames() {
+    vector<string> names;
+    std::transform(locations.cbegin(), locations.cend(), std::back_inserter(names), [] (const auto& location ) { return location.getName();} );
+//    for (const auto& location : locations) {
+//        names.push_back(location.getName());
+//    }
     return names;
 }
 
@@ -99,8 +82,8 @@ void Location::refreshLocationData() {
     locations.clear();
     const auto locationString = Utility::readPref("CURRENT_LOC_FRAGMENT", "1");
     currentLocationIndex = To::Int(locationString) - 1;
-    for (auto index : UtilityList::range(numberOfLocations)) {
-        locations.push_back(ObjectLocation(index));
+    for (auto index : range(numberOfLocations)) {
+        locations.emplace_back(index);
     }
 }
 
@@ -108,7 +91,7 @@ void Location::initNumLocations() {
     numberOfLocations = To::Int(Utility::readPref("LOC_NUM_INT", "1"));
 }
 
-QStringList Location::getWfoRadarSiteFromPoint(const LatLon& latLon) {
+vector<string> Location::getWfoRadarSiteFromPoint(const LatLon& latLon) {
     const auto pointData = UtilityIO::getHtml("https://api.weather.gov/points/" + latLon.latForNws() + "," + latLon.lonForNws());
     // "cwa": "IWX",
     // "radarStation": "KGRR"
@@ -118,33 +101,32 @@ QStringList Location::getWfoRadarSiteFromPoint(const LatLon& latLon) {
     return {wfo, radarStation};
 }
 
-void Location::changeLocationByIndex(int index) {
+void Location::setCurrentLocation(int index) {
     currentLocationIndex = index;
     Utility::writePrefInt("CURRENT_LOC_FRAGMENT", index + 1);
 }
 
-QStringList Location::save(LatLon latLon, const QString& labelStr) {
+vector<string> Location::save(const LatLon& latLon, const string& labelStr) {
     numberOfLocations += 1;
-    const auto locNum = To::String(numberOfLocations);
-    Utility::writePref("LOC" + locNum + "_X", latLon.latString);
-    Utility::writePref("LOC" + locNum + "_Y", latLon.lonString);
+    const auto locNum = To::string(numberOfLocations);
+    Utility::writePref("LOC" + locNum + "_X", latLon.latStr());
+    Utility::writePref("LOC" + locNum + "_Y", latLon.lonStr());
     Utility::writePref("LOC" + locNum + "_LABEL", labelStr);
     Utility::writePref("LOC_NUM_INT", locNum);
-    QString wfo = "";
-    QString radarSite = "";
     const auto wfoAndRadar = getWfoRadarSiteFromPoint(latLon);
-    wfo = wfoAndRadar[0];
-    radarSite = wfoAndRadar[1];
-    if (wfo == "") {
-        wfo = UtilityLocation::getNearestOffice("WFO", latLon).toLower();
+    auto wfo = wfoAndRadar[0];
+    auto radarSite = wfoAndRadar[1];
+    // if (true) {
+    if (wfo.empty()) {
+        wfo = WString::toLower(UtilityLocation::getNearestOffice("WFO", latLon));
     }
-    if (radarSite == "") {
+    if (radarSite.empty()) {
         radarSite = UtilityLocation::getNearestOffice("RADAR", latLon);
     }
-    Utility::writePref("RID" + locNum, radarSite.toUpper());
-    Utility::writePref("NWS" + locNum, wfo.toUpper());
+    Utility::writePref("RID" + locNum, WString::toUpper(radarSite));
+    Utility::writePref("NWS" + locNum, WString::toUpper(wfo));
     refreshLocationData();
-    return {locNum, "Saving location " + locNum + " as " + labelStr + " (" + latLon.latString + "," + latLon.lonString + ") " + "/" + " " + wfo.toUpper() + "(" + radarSite.toUpper() + ")"};
+    return {locNum, "Saving location " + locNum + " as " + labelStr + " (" + latLon.latStr() + "," + latLon.lonStr() + ") " + "/" + " " + WString::toUpper(wfo) + "(" + WString::toUpper(radarSite) + ")"};
 }
 
 void Location::deleteItem(int index) {
@@ -154,9 +136,9 @@ void Location::deleteItem(int index) {
     if (index == (numberOfLocations - 1)) {
         numberOfLocations -= 1;
     } else {
-        for (auto i : UtilityList::range2(index + 1, numberOfLocations)) {
-            const auto jStr = To::String(i + 1);
-            const auto iStr = To::String(i);
+        for (auto i : range2(index + 1, numberOfLocations)) {
+            const auto jStr = To::string(i + 1);
+            const auto iStr = To::string(i);
             const auto x = Utility::readPref("LOC" + jStr + "_X", "");
             const auto y = Utility::readPref("LOC" + jStr + "_Y", "");
             const auto name = Utility::readPref("LOC" + jStr + "_LABEL", "");
@@ -174,24 +156,31 @@ void Location::deleteItem(int index) {
     refreshLocationData();
 }
 
-void Location::setCurrentLocationStr(const QString& indexAsString) {
+void Location::setCurrentLocationStr(const string& indexAsString) {
     Utility::writePref("CURRENT_LOC_FRAGMENT", indexAsString);
     Utility::writePrefInt("LOC_NUM_INT", numberOfLocations);
     currentLocationIndex = To::Int(indexAsString) - 1;
 }
 
-QVector<LatLon> Location::getListLatLons() {
-    QVector<LatLon> latLons;
-    for (auto i : UtilityList::range(locations.size())) {
+vector<LatLon> Location::getListLatLons() {
+    vector<LatLon> latLons;
+    for (auto i : range(locations.size())) {
         latLons.push_back(getLatLon(i));
     }
     return latLons;
 }
 
-QString Location::getObs() {
+string Location::getObs() {
     return UtilityMetar::findClosestObservation(getLatLonCurrent()).name;
 }
 
 int Location::getCurrentLocation() {
     return currentLocationIndex;
+}
+
+void Location::setMainScreenComboBox() {
+    comboBox->block();
+    comboBox->setList(listOfNames());
+    comboBox->setIndex(getCurrentLocation());
+    comboBox->unblock();
 }

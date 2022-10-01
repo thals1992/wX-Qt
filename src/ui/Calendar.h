@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -9,21 +9,21 @@
 
 #include <functional>
 #include <QCalendarWidget>
-#include <QString>
+
+using std::function;
 
 class Calendar {
 public:
-    Calendar();
     explicit Calendar(QWidget * parent);
-    void connect(std::function<void()>);
-    int getDay();
-    int getMonth();
+    void connect(const function<void()>&);
     int getYear();
+    int getMonth();
+    int getDayOfMonth();
     QCalendarWidget * get();
 
 private:
-    QCalendarWidget * cal;
     QWidget * parent;
+    QCalendarWidget * cal;
     QDate date;
 };
 

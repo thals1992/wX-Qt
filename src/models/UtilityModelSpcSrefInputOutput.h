@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,14 +7,16 @@
 #ifndef UTILITYMODELSPCSREFINPUTOUTPUT_H
 #define UTILITYMODELSPCSREFINPUTOUTPUT_H
 
-#include "models/ObjectModel.h"
+#include <string>
+#include "ObjectModel.h"
+#include "RunTimeData.h"
 
 class UtilityModelSpcSrefInputOutput {
 public:
-    static QString pattern1;
-    static QString pattern2;
     static RunTimeData getRunTime();
-    static QString getImage(ObjectModel *);
+    static string getImageUrl(ObjectModel *);
+    static const string srefPattern2;
+    static const string srefPattern3;
 };
 
 #endif  // UTILITYMODELSPCSREFINPUTOUTPUT_H

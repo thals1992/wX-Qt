@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,23 +7,20 @@
 #include "misc/AlertsDetail.h"
 #include "objects/FutureVoid.h"
 
-AlertsDetail::AlertsDetail(QWidget * parent, const QString& url) : Window(parent) {
-    this->url = url;
+AlertsDetail::AlertsDetail(QWidget * parent, const string& url)
+    : Window{ parent }
+    , sw{ ScrolledWindow{this, box} }
+    , text{ Text{this} }
+    , url{ url }
+{
     setSize(700, 900);
-    box = VBox(this);
     box.addMargins();
-    text = Text(this, "");
     box.addWidget(text.get());
     box.setAlignment(text.get(), Qt::AlignTop);
-    sw = ScrolledWindow(this, box);
-    new FutureVoid(this, [&] { download(); }, [&] { updateText(); });
+    new FutureVoid{this, [this, url] { capAlert = CapAlert{url}; }, [this] { update(); }};
 }
 
-void AlertsDetail::download() {
-    capAlert = CapAlert(url);
-}
-
-void AlertsDetail::updateText() {
+void AlertsDetail::update() {
     text.setText(capAlert.text);
     setTitle(capAlert.title);
 }

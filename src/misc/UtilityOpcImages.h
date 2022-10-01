@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,12 +7,16 @@
 #ifndef UTILITYOPCIMAGES_H
 #define UTILITYOPCIMAGES_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilityOpcImages {
 public:
-    static const QStringList labels;
-    static const QStringList urls;
+    static const vector<string> labels;
+    static const vector<string> urls;
 };
 
 #endif  // UTILITYOPCIMAGES_H

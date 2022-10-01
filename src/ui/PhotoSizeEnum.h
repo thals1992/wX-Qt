@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,10 +8,10 @@
 #define PHOTOSIZEENUM_H
 
 enum PhotoSizeEnum {
-    full = 0,
-    scaled = 1,
-    even = 2,
-    normal = 3
+    Full,
+    Scaled,
+    Even ,
+    Normal
 };
 
 #endif  // PHOTOSIZEENUM_H

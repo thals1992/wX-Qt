@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,31 +8,19 @@
 #include "common/GlobalVariables.h"
 #include "ui/IconMapping.h"
 
-Button::Button() {
-}
-
-Button::Button(QWidget * parent, QString label) {
-    this->parent = parent;
-    button = new QPushButton(parent);
-    button->setToolTip(label);
-    if (label != "") {
-        button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-        button->setText(label);
-    }
-}
-
-Button::Button(QWidget * parent, Icon icon, QString label) {
-    this->parent = parent;
-    button = new QPushButton(parent);
-    button->setToolTip(label);
-    if (icon != Icon::None) {
-        auto pixmap = QPixmap(GlobalVariables::imageDir + IconMapping::toString(icon));
-        auto buttonIcon = QIcon(pixmap);
+Button::Button(QWidget * parent, Icon icon, const string& label)
+    : parent{ parent }
+    , button{ new QPushButton{parent} }
+{
+    button->setToolTip(QString::fromStdString(label));
+    if (icon != None) {
+        const auto pixmap = QPixmap{QString::fromStdString(GlobalVariables::imageDir + IconMapping::toString(icon))};
+        const auto buttonIcon = QIcon{pixmap};
         button->setIcon(buttonIcon);
     }
-    if (label != "" && icon == Icon::None) {
+    if (!label.empty() && icon == None) {
         button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-        button->setText(label);
+        button->setText(QString::fromStdString(label));
     }
 }
 
@@ -40,26 +28,18 @@ QPushButton * Button::get() {
     return button;
 }
 
-void Button::connect(std::function<void()> f) {
-    QObject::connect(get(), &QPushButton::released, parent, f);
+void Button::connect(const function<void()>& fn) {
+    QObject::connect(get(), &QPushButton::released, parent, fn);
 }
 
-void Button::setText(const QString& s) {
-    button->setText(s);
+void Button::setText(const string& s) {
+    button->setText(QString::fromStdString(s));
 }
 
-QString Button::getText() const {
-    return button->text();
+string Button::getText() const {
+    return button->text().toStdString();
 }
 
 void Button::setVisible(bool b) {
     button->setVisible(b);
-}
-
-void Button::setCheckable(bool b) {
-    button->setCheckable(b);
-}
-
-void Button::setChecked(bool b) {
-    button->setChecked(b);
 }

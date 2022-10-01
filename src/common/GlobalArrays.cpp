@@ -1,99 +1,40 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "common/GlobalArrays.h"
+#include <algorithm>
+#include "objects/WString.h"
+#include "util/UtilityList.h"
 
-QString GlobalArrays::getRadarCodeAtIndex(int index) {
-    auto radarList = radars();
-    auto radarDescription = radarList[index];
-    auto items = radarDescription.split(":");
-    return items[0];
+string GlobalArrays::getRadarCodeAtIndex(int index) {
+    auto radarDescription = radars()[index];
+    return WString::split(radarDescription, ":")[0];
 }
 
-QStringList GlobalArrays::radars() {
-    QStringList radarList;
-    for (const auto& radar : nexradRadars) {
-        radarList.push_back(radar);
-    }
-    for (const auto& radar : tdwrRadarsForMap) {
-        radarList.push_back(radar);
-    }
+vector<string> GlobalArrays::radars() {
+    vector<string> radarList{nexradRadars};
+    addAll(radarList, tdwrRadarsForMap);
     return radarList;
 }
 
-QStringList GlobalArrays::tdwrRadarCodes() {
-    QStringList radarList;
-    for (const auto& radar : tdwrRadars) {
-        radarList.push_back(radar.split(" ")[0]);
-    }
+vector<string> GlobalArrays::tdwrRadarCodes() {
+    vector<string> radarList;
+    std::transform(tdwrRadars.begin(), tdwrRadars.end(), std::back_inserter(radarList),
+                    [] (const auto& s) -> string { return WString::split(s, " ")[0]; });
     return radarList;
 }
 
-QStringList GlobalArrays::nexradRadarCodes() {
-    QStringList radarList;
-    for (const auto& radar : nexradRadars) {
-        radarList.push_back(radar.split(":")[0]);
-    }
+vector<string> GlobalArrays::nexradRadarCodes() {
+    vector<string> radarList;
+    std::transform(nexradRadars.begin(), nexradRadars.end(), std::back_inserter(radarList),
+                    [] (const auto& s) -> string { return WString::split(s, ":")[0]; });
     return radarList;
 }
 
-const QStringList GlobalArrays::states = {
-    "AL: Alabama",
-    "AK: Alaska",
-    "AZ: Arizona",
-    "AR: Arkansas",
-    "CA: California",
-    "CO: Colorado",
-    "CT: Connecticut",
-    "DE: Delaware",
-    "FL: Florida",
-    "GA: Georgia",
-    "HI: Hawaii",
-    "ID: Idaho",
-    "IL: Illinois",
-    "IN: Indiana",
-    "IA: Iowa",
-    "KS: Kansas",
-    "KY: Kentucky",
-    "LA: Louisiana",
-    "ME: Maine",
-    "MD: Maryland",
-    "MA: Massachusetts",
-    "MI: Michigan",
-    "MN: Minnesota",
-    "MS: Mississippi",
-    "MO: Missouri",
-    "MT: Montana",
-    "NE: Nebraska",
-    "NV: Nevada",
-    "NH: New Hampshire",
-    "NJ: New Jersey",
-    "NM: New Mexico",
-    "NY: New York",
-    "NC: North Carolina",
-    "ND: North Dakota",
-    "OH: Ohio",
-    "OK: Oklahoma",
-    "OR: Oregon",
-    "PA: Pennsylvania",
-    "RI: Rhode Island",
-    "SC: South Carolina",
-    "SD: South Dakota",
-    "TN: Tennessee",
-    "TX: Texas",
-    "UT: Utah",
-    "VT: Vermont",
-    "VA: Virginia",
-    "WA: Washington",
-    "WV: West Virginia",
-    "WI: Wisconsin",
-    "WY: Wyoming",
-};
-
-const QStringList GlobalArrays::wfos = {
+const vector<string> GlobalArrays::wfos{
     "AFC: AK, Anchorage",
     "AFG: AK, Fairbanks",
     "AJK: AK, Juneau",
@@ -218,7 +159,7 @@ const QStringList GlobalArrays::wfos = {
     "RIW: WY, Riverton"
 };
 
-const QStringList GlobalArrays::nexradRadars = {
+const vector<string> GlobalArrays::nexradRadars{
     "ABC: AK, Bethel",
     "APD: AK, Fairbanks/Pedro Dome",
     "AHG: AK, Kenai",
@@ -377,134 +318,7 @@ const QStringList GlobalArrays::nexradRadars = {
     "RIW: WY, Riverton",
 };
 
-const QStringList GlobalArrays::soundingSites = {
-    "KEY",
-    "MFL",
-    "YLW",
-    "WPL",
-    "YMO",
-    "WMW",
-    "76225",
-    "LIX",
-    "ABR",
-    "ALB",
-    "ABQ",
-    "AMA",
-    "BIS",
-    "RNK",
-    "BOI",
-    "BRO",
-    "BUF",
-    "CAR",
-    "ILX",
-    "CHS",
-    "MPX",
-    "CHH",
-    "CRP",
-    "DRT",
-    "DNR",
-    "DDC",
-    "LKN",
-    "EPZ",
-    "FWD",
-    "APX",
-    "GGW",
-    "GJT",
-    "GYX",
-    "TFX",
-    "GRB",
-    "GSO",
-    "INL",
-    "JAN",
-    "JAX",
-    "LCH",
-    "LZK",
-    "MFR",
-    "MAF",
-    "BNA",
-    "MHX",
-    "OUN",
-    "LBF",
-    "OAK",
-    "FFC",
-    "PIT",
-    "DVN",
-    "UIL",
-    "UNR",
-    "REV",
-    "RIW",
-    "SLE",
-    "SLC",
-    "NKX",
-    "BMX",
-    "SHV",
-    "OTX",
-    "SGF",
-    "IAD",
-    "TLH",
-    "TBW",
-    "TOP",
-    "TUS",
-    "OKX",
-    "OAX",
-    "WAL",
-    "DTX",
-    "ILN",
-    "VBG",
-    "1Y7",
-    "76405",
-    "76458"
-};
-
-const QStringList GlobalArrays::nwsImageProducts = {
-    "VIS_CONUS:CONUS Visible",
-    "CONUSWV:CONUS Water Vapor",
-    "RAD_2KM:Radar Mosaic",
-    "GOES16:GOES product last viewed",
-    "SND:Sounding/Hodograph",
-    "SPCMESO_500:Mesoanalysis 500mb",
-    "SPCMESO_MSLP:Mesoanalysis MSLP",
-    "SPCMESO_TTD:Mesoanalysis Temp/Wind/Dwpt",
-    "SPCMESO_RGNLRAD:Mesoanalysis Radar",
-    "SPCMESO_LLLR:Mesoanalysis lllr",
-    "SPCMESO_LAPS:Mesoanalysis laps",
-    "USWARN:US Warning map",
-    "AKWARN:AK Warning map",
-    "HIWARN:HI Warning map",
-    "FMAPD1:National Forecast Chart Day 1",
-    "FMAPD2:National Forecast Chart Day 2",
-    "FMAPD3:National Forecast Chart Day 3",
-    "FMAP12:Fronts/Weather Type - 12hr",
-    "FMAP24:Fronts/Weather Type - 24hr",
-    "FMAP36:Fronts/Weather Type - 36hr",
-    "FMAP48:Fronts/Weather Type - 48hr",
-    "FMAP72:Fronts/Weather Type - 72hr",
-    "FMAP96:Fronts/Weather Type - 96hr",
-    "FMAP120:Fronts/Weather Type - 120hr",
-    "FMAP144:Fronts/Weather Type - 144hr",
-    "FMAP168:Fronts/Weather Type - 168hr",
-    "FMAP3D:Forecast map - 3day",
-    "FMAP4D:Forecast map - 4day",
-    "FMAP5D:Forecast map - 5day",
-    "FMAP6D:Forecast map - 6day",
-    "LTG:Lightning map",
-    "SWOD1:SPC Convective Outlook Day 1",
-    "SWOD2:SPC Convective Outlook Day 2",
-    "SWOD3:SPC Convective Outlook Day 3",
-    "STRPT:SPC Storm reports for today",
-    "QPF1:QPF Day 1",
-    "QPF2:QPF Day 2",
-    "QPF3:QPF Day 3",
-    "QPF1-2:QPF Day 1-2",
-    "QPF1-3:QPF Day 1-3",
-    "QPF4-5:QPF Day 4-5",
-    "QPF6-7:QPF Day 6-7",
-    "QPF1-5:QPF 5 Day Total",
-    "QPF1-7:QPF 7 Day Total",
-    "WPC_ANALYSIS: WPC Analysis, Radar, Warnings"
-};
-
-const QStringList GlobalArrays::tdwrRadars = {
+const vector<string> GlobalArrays::tdwrRadars{
     "TPHX AZ, Phoenix",
     "TDEN CO, Denver",
     "TFLL FL, Fort Lauderdale",
@@ -551,7 +365,7 @@ const QStringList GlobalArrays::tdwrRadars = {
     "TMKE WI, Milwaukee"
 };
 
-const QStringList GlobalArrays::tdwrRadarsForMap = {
+const vector<string> GlobalArrays::tdwrRadarsForMap{
     "TPHX: AZ, Phoenix",
     "TDEN: CO, Denver",
     "TFLL: FL, Fort Lauderdale",

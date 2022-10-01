@@ -1,17 +1,18 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
-#ifndef UTILITYMODELSGLCFSINPUTOUTPUT_H
-#define UTILITYMODELSGLCFSINPUTOUTPUT_H
+#ifndef UTILITYMODELGLCFSINPUTOUTPUT_H
+#define UTILITYMODELGLCFSINPUTOUTPUT_H
 
-#include "models/ObjectModel.h"
+#include <string>
+#include "ObjectModel.h"
 
 class UtilityModelGlcfsInputOutput {
 public:
-    static QString getImage(ObjectModel *);
+    static string getImageUrl(ObjectModel *);
 };
 
-#endif  // UTILITYMODELSGLCFSINPUTOUTPUT_H
+#endif  // UTILITYMODELGLCFSINPUTOUTPUT_H

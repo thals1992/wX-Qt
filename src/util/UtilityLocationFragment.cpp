@@ -1,34 +1,36 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
 
 #include "util/UtilityLocationFragment.h"
+#include <iostream>
+#include "objects/WString.h"
 #include "util/UtilityString.h"
 
-const QString UtilityLocationFragment::nws7dayTemp1 = "with a low around (-?[0-9]{1,3})\\.";
-const QString UtilityLocationFragment::nws7dayTemp2 = "with a high near (-?[0-9]{1,3})\\.";
-const QString UtilityLocationFragment::nws7dayTemp3 = "teady temperature around (-?[0-9]{1,3})\\.";
-const QString UtilityLocationFragment::nws7dayTemp4 = "Low around (-?[0-9]{1,3})\\.";
-const QString UtilityLocationFragment::nws7dayTemp5 = "High near (-?[0-9]{1,3})\\.";
-const QString UtilityLocationFragment::nws7dayTemp6 = "emperature falling to around (-?[0-9]{1,3}) ";
-const QString UtilityLocationFragment::nws7dayTemp7 = "emperature rising to around (-?[0-9]{1,3}) ";
-const QString UtilityLocationFragment::nws7dayTemp8 = "emperature falling to near (-?[0-9]{1,3}) ";
-const QString UtilityLocationFragment::nws7dayTemp9 = "emperature rising to near (-?[0-9]{1,3}) ";
-const QString UtilityLocationFragment::nws7dayTemp10 = "High near (-?[0-9]{1,3}),";
-const QString UtilityLocationFragment::nws7dayTemp11 = "Low around (-?[0-9]{1,3}),";
-const QString UtilityLocationFragment::sevenDayWind1 = "wind ([0-9]*) to ([0-9]*) mph";
-const QString UtilityLocationFragment::sevenDayWind2 = "wind around ([0-9]*) mph";
-const QString UtilityLocationFragment::sevenDayWind3 = "with gusts as high as ([0-9]*) mph";
-const QString UtilityLocationFragment::sevenDayWind4 = " ([0-9]*) to ([0-9]*) mph after";
-const QString UtilityLocationFragment::sevenDayWind5 = " around ([0-9]*) mph after ";
-const QString UtilityLocationFragment::sevenDayWind6 = " ([0-9]*) to ([0-9]*) mph in ";
-const QString UtilityLocationFragment::sevenDayWind7 = "around ([0-9]*) mph";
-const QString UtilityLocationFragment::sevenDayWind8 = "Winds could gust as high as ([0-9]*) mph\\.";
-const QString UtilityLocationFragment::sevenDayWind9 = " ([0-9]*) to ([0-9]*) mph.";
+const string UtilityLocationFragment::nws7dayTemp1{"with a low around (-?[0-9]{1,3})\\."};
+const string UtilityLocationFragment::nws7dayTemp2{"with a high near (-?[0-9]{1,3})\\."};
+const string UtilityLocationFragment::nws7dayTemp3{"teady temperature around (-?[0-9]{1,3})\\."};
+const string UtilityLocationFragment::nws7dayTemp4{"Low around (-?[0-9]{1,3})\\."};
+const string UtilityLocationFragment::nws7dayTemp5{"High near (-?[0-9]{1,3})\\."};
+const string UtilityLocationFragment::nws7dayTemp6{"emperature falling to around (-?[0-9]{1,3}) "};
+const string UtilityLocationFragment::nws7dayTemp7{"emperature rising to around (-?[0-9]{1,3}) "};
+const string UtilityLocationFragment::nws7dayTemp8{"emperature falling to near (-?[0-9]{1,3}) "};
+const string UtilityLocationFragment::nws7dayTemp9{"emperature rising to near (-?[0-9]{1,3}) "};
+const string UtilityLocationFragment::nws7dayTemp10{"High near (-?[0-9]{1,3}),"};
+const string UtilityLocationFragment::nws7dayTemp11{"Low around (-?[0-9]{1,3}),"};
+const string UtilityLocationFragment::sevenDayWind1{"wind ([0-9]*) to ([0-9]*) mph"};
+const string UtilityLocationFragment::sevenDayWind2{"wind around ([0-9]*) mph"};
+const string UtilityLocationFragment::sevenDayWind3{"with gusts as high as ([0-9]*) mph"};
+const string UtilityLocationFragment::sevenDayWind4{" ([0-9]*) to ([0-9]*) mph after"};
+const string UtilityLocationFragment::sevenDayWind5{" around ([0-9]*) mph after "};
+const string UtilityLocationFragment::sevenDayWind6{" ([0-9]*) to ([0-9]*) mph in "};
+const string UtilityLocationFragment::sevenDayWind7{"around ([0-9]*) mph"};
+const string UtilityLocationFragment::sevenDayWind8{"Winds could gust as high as ([0-9]*) mph\\."};
+const string UtilityLocationFragment::sevenDayWind9{" ([0-9]*) to ([0-9]*) mph."};
 
-const QHash<QString, QString> UtilityLocationFragment::windDir = {
+const unordered_map<string, string> UtilityLocationFragment::windDir{
     {"north", "N"},
     {"north northeast", "NNE"},
     {"northeast", "NE"},
@@ -47,54 +49,54 @@ const QHash<QString, QString> UtilityLocationFragment::windDir = {
     {"north northwest", "NNW"}
 };
 
-QString UtilityLocationFragment::extract7DayMetrics(const QString& chunk) {
-    QString spacing = " ";
+string UtilityLocationFragment::extract7DayMetrics(const string& chunk) {
+    const string spacing = " ";
     // wind 24 to 29 mph;
-    auto wind = UtilityString::parseTwo(chunk, sevenDayWind1);
+    const auto wind = UtilityString::parseTwo(chunk, sevenDayWind1);
     // wind around 9 mph;
-    auto wind2 = UtilityString::parse(chunk, sevenDayWind2);
+    const auto wind2 = UtilityString::parse(chunk, sevenDayWind2);
     // 5 to 10 mph after;
-    auto wind3 = UtilityString::parseTwo(chunk, sevenDayWind4);
+    const auto wind3 = UtilityString::parseTwo(chunk, sevenDayWind4);
     // around 5 mph after;
-    auto wind4 = UtilityString::parse(chunk, sevenDayWind5);
+    const auto wind4 = UtilityString::parse(chunk, sevenDayWind5);
     // 5 to 7 mph in;
-    auto wind5 = UtilityString::parseTwo(chunk, sevenDayWind6);
+    const auto wind5 = UtilityString::parseTwo(chunk, sevenDayWind6);
     // around 6 mph.;
-    auto wind7 = UtilityString::parse(chunk, sevenDayWind7);
+    const auto wind7 = UtilityString::parse(chunk, sevenDayWind7);
     // with gusts as high as 21 mph;
     auto gust = UtilityString::parse(chunk, sevenDayWind3);
     // 5 to 7 mph.;
-    auto wind9 = UtilityString::parseTwo(chunk, sevenDayWind9);
-    // Winds could gusts as high as 21 mph.;
-    if (gust == "") {
+    const auto wind9 = UtilityString::parseTwo(chunk, sevenDayWind9);
+    // Winds could gust as high as 21 mph.;
+    if (gust.empty()) {
         gust = UtilityString::parse(chunk, sevenDayWind8);
     }
-    if (gust != "") {
+    if (!gust.empty()) {
         gust = " G " + gust + " mph";
     } else {
         gust = " mph";
     }
-    if (wind[0] != "" && wind[1] != "") {
+    if (!wind[0].empty() && !wind[1].empty()) {
         return spacing + wind[0] + "-" + wind[1] + gust;
-    } else if (wind2 != "") {
+    } else if (!wind2.empty()) {
         return spacing + wind2 + gust;
-    } else if (wind3[0] != "" && wind3[1] != "") {
+    } else if (!wind3[0].empty() && !wind3[1].empty()) {
         return spacing + wind3[0] + "-" + wind3[1] + gust;
-    } else if (wind4 != "") {
+    } else if (!wind4.empty()) {
         return spacing + wind4 + gust;
-    } else if (wind5[0] != "" && wind5[1] != "") {
+    } else if (!wind5[0].empty() && !wind5[1].empty()) {
         return spacing + wind5[0] + "-" + wind5[1] + gust;
-    } else if (wind7 != "") {
+    } else if (!wind7.empty()) {
         return spacing + wind7 + gust;
-    } else if (wind9[0] != "" && wind9[1] != "") {
+    } else if (!wind9[0].empty() && !wind9[1].empty()) {
         return spacing + wind9[0] + "-" + wind9[1] + gust;
     } else {
         return "";
     }
 }
 
-QString UtilityLocationFragment::extractWindDirection(const QString& chunk) {
-    const QStringList patterns = {
+string UtilityLocationFragment::extractWindDirection(const string& chunk) {
+    const vector<string> patterns{
         "Breezy, with a[n]? (.*?) wind",
         "wind becoming (\\w+\\s?\\w*) around",
         "wind becoming (.*?) [0-9]",
@@ -103,27 +105,36 @@ QString UtilityLocationFragment::extractWindDirection(const QString& chunk) {
         "Blustery, with a[n]? (.*?) wind",
         "Light (.*?) wind"
     };
-    QStringList windResults;
+    vector<string> windResults;
     for (const auto& pattern : patterns) {
         windResults.push_back(UtilityString::parse(chunk, pattern));
     }
-    QString retStr = "";
+    string retStr;
     for (const auto& windToken : windResults) {
-        if (windToken != "") {
+        if (!windToken.empty()) {
             retStr = windToken;
             break;
         }
     }
-    if (retStr == "") {
+    if (retStr.empty()) {
         return "";
     } else {
-        auto ret = windDir[retStr.toLower()];
-        return " " + ret + "";
+        const auto tmp = WString::toLower(retStr);
+        string ret;
+        if (windDir.find(tmp) == windDir.end()) {
+            // std::cout << "WIND not found: " << tmp << std::endl;
+            ret = "";
+        } else {
+            ret = " " + windDir.at(tmp);
+        }
+        return ret;
+        // const auto ret = windDir.at(WString::toLower(retStr));
+        // return " " + ret + "";
     }
 }
 
-QString UtilityLocationFragment::extractTemp(const QString& blob) {
-    const auto regexps = {
+string UtilityLocationFragment::extractTemp(const string& blob) {
+    const vector<string> regexps{
         nws7dayTemp1,
         nws7dayTemp2,
         nws7dayTemp3,
@@ -137,8 +148,8 @@ QString UtilityLocationFragment::extractTemp(const QString& blob) {
         nws7dayTemp11
     };
     for (const auto& regexp : regexps) {
-        auto temp = UtilityString::parse(blob, regexp);
-        if (temp != "") {
+        const auto temp = UtilityString::parse(blob, regexp);
+        if (!temp.empty()) {
             return temp;
         }
     }

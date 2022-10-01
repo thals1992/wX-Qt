@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,18 +7,22 @@
 #ifndef UTILITYMODELESRLINTERFACE_H
 #define UTILITYMODELESRLINTERFACE_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilityModelEsrlInterface {
 public:
-    static const QStringList models;
-    static const QStringList sectorsHrrr;
-    static const QStringList sectorsHrrrAk;
-    static const QStringList modelHrrrParams;
-    static const QStringList modelHrrrLabels;
-    static const QStringList sectorsRap;
-    static const QStringList modelRapParams;
-    static const QStringList modelRapLabels;
+    static const vector<string> models;
+    static const vector<string> sectorsHrrr;
+    static const vector<string> sectorsHrrrAk;
+    static const vector<string> modelHrrrParams;
+    static const vector<string> modelHrrrLabels;
+    static const vector<string> sectorsRap;
+    static const vector<string> modelRapParams;
+    static const vector<string> modelRapLabels;
 };
 
 #endif  // UTILITYMODELESRLINTERFACE_H

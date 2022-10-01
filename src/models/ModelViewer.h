@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,6 +7,7 @@
 #ifndef MODELVIEWER_H
 #define MODELVIEWER_H
 
+#include <string>
 #include "models/ObjectModel.h"
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
@@ -15,9 +16,11 @@
 #include "ui/VBox.h"
 #include "ui/Window.h"
 
+using std::string;
+
 class ModelViewer : public Window {
 public:
-    ModelViewer(QWidget *, const QString&);
+    ModelViewer(QWidget *, const string&);
 
 private:
     void changeModelCb();
@@ -36,18 +39,17 @@ private:
     void getRun();
     void getRunStatus();
     void updateRunStatus();
-    QString modelType;
-    ObjectModel modelObj;
-    ComboBox comboboxTime;
-    ComboBox comboboxModel;
-    ComboBox comboboxRun;
-    ComboBox comboboxProduct;
-    ComboBox comboboxSector;
-    Button leftButton;
-    Button rightButton;
     HBox boxH;
     VBox box;
     Photo photo;
+    ObjectModel modelObj;
+    ComboBox comboboxRun;
+    ComboBox comboboxModel;
+    ComboBox comboboxSector;
+    ComboBox comboboxProduct;
+    ComboBox comboboxTime;
+    Button leftButton;
+    Button rightButton;
 };
 
 #endif  // MODELVIEWER_H

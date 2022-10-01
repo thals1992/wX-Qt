@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -7,13 +7,17 @@
 #ifndef SPCUTILITYSPCCOMPMAP_H
 #define SPCUTILITYSPCCOMPMAP_H
 
-#include <QStringList>
+#include <string>
+#include <vector>
+
+using std::string;
+using std::vector;
 
 class UtilitySpcCompmap {
 public:
-    static QString getImage(const QString&);
-    static const QStringList labels;
-    static const QStringList urlIndices;
+    static string getImage(const string&);
+    static const vector<string> labels;
+    static const vector<string> urlIndices;
 };
 
 #endif  // SPCUTILITYSPCCOMPMAP_H

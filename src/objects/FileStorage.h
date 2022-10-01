@@ -1,5 +1,5 @@
 // *****************************************************************************
-// * Copyright (c) 2020, 2021 joshua.tee@gmail.com. All rights reserved.
+// * Copyright (c) 2020, 2021, 2022 joshua.tee@gmail.com. All rights reserved.
 // *
 // * Refer to the COPYING file of the official project for license.
 // *****************************************************************************
@@ -8,40 +8,49 @@
 #define FILESTORAGE_H
 
 #include <QByteArray>
-#include <QHash>
-#include <QString>
+#include <QLineF>
 #include <QVector>
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "objects/DownloadTimer.h"
 #include "objects/MemoryBuffer.h"
+#include "radar/RadarGeometryTypeEnum.h"
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 class FileStorage {
 public:
     FileStorage();
     void clearBuffers();
-    void setMemoryBuffer(QByteArray);
-    void setMemoryBufferForAnimation(int, QByteArray);
-    void setMemoryBufferForL3TextProducts(const QString&, QByteArray);
-    QByteArray byteArray;
+    void setMemoryBuffer(const QByteArray&);
+    void setMemoryBufferForAnimation(int, const QByteArray&);
+    void setMemoryBufferForL3TextProducts(const string&, const QByteArray&);
     MemoryBuffer memoryBuffer;
-    QHash<QString, QString> level3TextProductMap;
-    QVector<MemoryBuffer> animationMemoryBuffer;
-    QString radarInfo = "";
-    QString radarDate = "";
-    QString radarVcp = "";
-    int radarAgeMilli = 0;
-    QVector<float> stiData;
-    QVector<float> hiData;
-    QVector<float> tvsData;
-    QStringList obsArr;
-    QStringList obsArrExt;
-    QStringList obsArrWb;
-    QStringList obsArrWbGust;
-    QVector<float> obsArrX;
-    QVector<float> obsArrY;
-    QVector<int> obsArrAviationColor;
-    QString obsOldRadarSite;
+    unordered_map<string, string> level3TextProductMap;
+    vector<MemoryBuffer> animationMemoryBuffer;
+    string radarInfo;
+    int radarAgeMilli{};
+    vector<double> stiData;
+    vector<double> hiData;
+    vector<double> tvsData;
+    vector<string> obsArr;
+    vector<string> obsArrExt;
+    vector<string> obsArrWb;
+    vector<string> obsArrWbGust;
+    vector<double> obsArrX;
+    vector<double> obsArrY;
+    vector<int> obsArrAviationColor;
+    string obsOldRadarSite;
     DownloadTimer obsDownloadTimer;
+    unordered_map<RadarGeometryTypeEnum, QVector<QLineF>> relativeBuffers;
+    vector<double> locationDotsTransformed;
+    vector<double> locationDotsTransformedGps;
+    // double gpsX{};
+    // double gpsY{};
 };
 
 #endif  // FILESTORAGE_H
