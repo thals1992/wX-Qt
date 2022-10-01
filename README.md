@@ -14,12 +14,19 @@ Do not use for operational purposes.  Copyright 2020, 2021 joshua.tee@gmail.com 
 Privacy Policy: this app does not collect any data from the user or the user’s device.
 Please report bugs or suggestions via email."
 wxqt is licensed under the GNU GPLv3 license. For more information on the license please go here:"
-http://www.gnu.org/licenses/gpl-3.0.en.html
+https://www.gnu.org/licenses/gpl-3.0.en.html
 ```
 
 ## For those interested in forking or running a modified program:
 Please modify `QString GlobalVariables::appName` and `GlobalVariables::appCreatorEmail` in `src/common/GlobalVariables.cpp` as these are used in HTTP requests to the NWS.
 FYI - you will notice that I've abstracted the native toolkit widgets. This was done as non-public ports to other UI tookits share this codebase, etc.
+
+## Differences from the original Dec 2021 release
+  - color legend stays in one spot
+  - zoom in/out in nexrad stays over the spot that is centered
+  - current device location circle/dot added in nexrad (off by default)
+  - nexrad animations are faster
+  - can now change the color of the nexrad background
 
 ## Differences from mobile versions (similar in content to wXL23 but native desktop with keyboard shortcuts, etc):
 - Nexrad Level 2 is not supported. See the wXL23 [FAQ](https://gitlab.com/joshua.tee/wxl23/-/blob/master/doc/FAQ.md#why-is-level-2-radar-not-the-default) for why I can't provide a good experience with this.
@@ -55,7 +62,7 @@ From the main screen and nexrad radar do `Ctrl-/` (? key) to get keyboard shortc
 ```bash
 git clone https://gitlab.com/joshua.tee/wxqt.git
 cd wxqt
-./makeAll.bash
+./makeAll.py
 ```
 3. After compilation you can simply launch with script
 ```bash
