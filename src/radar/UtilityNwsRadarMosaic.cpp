@@ -5,20 +5,12 @@
 // *****************************************************************************
 
 #include "radar/UtilityNwsRadarMosaic.h"
-#include <algorithm>
 #include "../radar/RID.h"
+#include "../settings/UtilityLocation.h"
 #include "../util/To.h"
 
-string UtilityNwsRadarMosaic::getNearestMosaic(const LatLon& latLon) {
-    vector<RID> sites;
-    for (const auto& m : UtilityNwsRadarMosaic::cityToLatLon) {
-        sites.emplace_back(m.first, m.second, latLon.dist(m.second));
-    }
-    std::sort(
-        sites.begin(),
-        sites.end(),
-        [] (const auto& s1, const auto& s2) { return s1.distance < s2.distance; });
-    return sites[0].name;
+string UtilityNwsRadarMosaic::getNearest(const LatLon& latLon) {
+    return UtilityLocation::getNearest(latLon, cityToLatLon);
 }
 
 string UtilityNwsRadarMosaic::get(const string& sector) {

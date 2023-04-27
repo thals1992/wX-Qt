@@ -6,7 +6,7 @@
 
 #include "nhc/ObjectNhc.h"
 #include "common/GlobalVariables.h"
-#include "util/UtilityDownload.h"
+#include "util/DownloadText.h"
 #include "util/UtilityIO.h"
 #include "util/UtilityList.h"
 #include "util/UtilityString.h"
@@ -35,7 +35,7 @@ void ObjectNhc::getTextData() {
     movementSpeeds = UtilityString::parseColumn(html, "\"movementSpeed\": (.*?),");
     lastUpdates = UtilityString::parseColumn(html, "\"lastUpdate\": \"(.*?)\"");
     for (const auto& bin : binNumbers) {
-        const auto text = UtilityDownload::getTextProduct("MIATCP" + bin);
+        const auto text = DownloadText::byProduct("MIATCP" + bin);
         const auto status = UtilityString::parse(text, "(\\.\\.\\..*?\\.\\.\\.)");
         statusList.push_back(status);
     }

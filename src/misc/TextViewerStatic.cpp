@@ -16,5 +16,5 @@ TextViewerStatic::TextViewerStatic(QWidget * parent, const string& html, int wid
     } else {
         setSize(width, height);
     }
-    box.addWidget(text.get());
+    box.addWidget(text);
 }

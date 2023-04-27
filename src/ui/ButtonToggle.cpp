@@ -27,7 +27,7 @@ ButtonToggle::ButtonToggle(QWidget * parent, Icon icon, const string& label)
 }
 
 void ButtonToggle::connect(const function<void()>& fn) {
-    QObject::connect(get(), &QPushButton::released, parent, fn);
+    QObject::connect(button, &QPushButton::released, parent, fn);
 }
 
 void ButtonToggle::setText(const string& s) {
@@ -54,6 +54,6 @@ void ButtonToggle::setActive(bool b) {
     button->setChecked(b);
 }
 
-QPushButton * ButtonToggle::get() {
+QPushButton * ButtonToggle::getView() {
     return button;
 }

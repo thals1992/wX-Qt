@@ -7,32 +7,7 @@
 #include "util/Utility.h"
 #include <QString>
 #include "MyApplication.h"
-#include "radar/UtilityRadar.h"
 #include "util/To.h"
-
-string Utility::getRadarSiteName(const string& radarSite) {
-    return UtilityRadar::radarIdToName.at(radarSite);
-}
-
-LatLon Utility::getRadarSiteLatLon(const string& radarSite) {
-    return {UtilityRadar::radarSiteToLat.at(radarSite), "-" + UtilityRadar::radarSiteToLon.at(radarSite)};
-}
-
-string Utility::getRadarSiteX(const string& radarSite) {
-    return UtilityRadar::radarSiteToLat.at(radarSite);
-}
-
-string Utility::getRadarSiteY(const string& radarSite) {
-    return UtilityRadar::radarSiteToLon.at(radarSite);
-}
-
-LatLon Utility::getWfoSiteLatLon(const string& wfo) {
-    return {UtilityRadar::wfoSiteToLat.at(wfo), UtilityRadar::wfoSiteToLon.at(wfo)};
-}
-
-LatLon Utility::getSoundingSiteLatLon(const string& wfo) {
-    return {UtilityRadar::soundingSiteToLat.at(wfo), "-" + UtilityRadar::soundingSiteToLon.at(wfo)};
-}
 
 string Utility::readPref(const string& key, const string& value) {
     return MyApplication::preferences->value(QString::fromStdString(key), QString::fromStdString(value)).toString().toStdString();

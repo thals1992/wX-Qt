@@ -5,7 +5,7 @@
 // *****************************************************************************
 
 #include "common/GlobalVariables.h"
-#include "objects/ObjectPolygonWatch.h"
+#include "objects/PolygonWatch.h"
 #include "objects/WString.h"
 #include "misc/SevereNotice.h"
 #include "util/To.h"
@@ -20,13 +20,13 @@ void SevereNotice::getBitmaps() {
     urls.clear();
     if (type == Mcd) {
         noAlertsVerbiage = "No Mesoscale Discussions are currently in effect.";
-        html = ObjectPolygonWatch::polygonDataByType[Mcd]->numberList.getValue();
+        html = PolygonWatch::byType[Mcd]->numberList.getValue();
     } else if (type == Watch) {
         noAlertsVerbiage = "No watches are currently valid";
-        html = ObjectPolygonWatch::polygonDataByType[Watch]->numberList.getValue();
+        html = PolygonWatch::byType[Watch]->numberList.getValue();
     } else if (type == Mpd) {
         noAlertsVerbiage = "No MPDs are currently in effect.";
-        html = ObjectPolygonWatch::polygonDataByType[Mpd]->numberList.getValue();
+        html = PolygonWatch::byType[Mpd]->numberList.getValue();
     }
     string text;
     if (!WString::contains(html, noAlertsVerbiage)) {
@@ -38,7 +38,7 @@ void SevereNotice::getBitmaps() {
             if (!number.empty()) {
                 string url;
                 if (type == Mcd) {
-                    url = GlobalVariables::nwsSPCwebsitePrefix + "/products/md/mcd" + number + ".gif";
+                    url = GlobalVariables::nwsSPCwebsitePrefix + "/products/md/mcd" + number + ".png";
                 } else if (type == Watch) {
                     url = GlobalVariables::nwsSPCwebsitePrefix + "/products/watch/ww" + number + "_radar.gif";
                 } else if (type == Mpd) {
@@ -51,18 +51,13 @@ void SevereNotice::getBitmaps() {
 }
 
 string SevereNotice::getShortName() const {
-    switch (type) {
-        case Mcd:
-            return "MCD";
-        case Mpd:
-            return "MPD";
-        case Watch:
-            return "WATCH";
-        default:
-            return "";
-    }
+    return WString::toUpper(PolygonWatch::namesByEnumId.at(type));
 }
 
 string SevereNotice::getCount() const {
     return To::string(static_cast<int>(urls.size()));
+}
+
+int SevereNotice::getCountAsInt() const {
+    return static_cast<int>(urls.size());
 }

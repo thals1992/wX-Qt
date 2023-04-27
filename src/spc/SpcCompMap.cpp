@@ -35,11 +35,11 @@ SpcCompMap::SpcCompMap(QWidget * parent)
     });
     comboboxProduct.setIndex(index);
     comboboxProduct.connect([this] { changeProduct(); });
-    buttonBox.addWidget(buttonBack.get());
-    buttonBox.addWidget(buttonForward.get());
-    buttonBox.addWidget(comboboxProduct.get());
-    box.addLayout(buttonBox.get());
-    box.addWidgetAndCenter(photo.get());
+    buttonBox.addWidget(buttonBack);
+    buttonBox.addWidget(buttonForward);
+    buttonBox.addWidget(comboboxProduct);
+    box.addLayout(buttonBox);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
     reload();
 }

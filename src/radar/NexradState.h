@@ -11,7 +11,7 @@
 #include <vector>
 #include <QWidget>
 #include "radar/ProjectionNumbers.h"
-#include "radar/WXMetalNexradLevelData.h"
+#include "radar/NexradLevelData.h"
 #include "ui/RadarStatusBox.h"
 #include "ui/TextViewMetal.h"
 
@@ -45,7 +45,7 @@ public:
     vector<TextViewMetal> observations;
     vector<string> initialRadarProducts{"N0Q", "N0U", "EET", "DVL"};
     double zoomToHideMiscFeatures{0.2};
-    vector<WXMetalNexradLevelData> levelDataList;
+    vector<NexradLevelData> levelDataList;
 
 private:
     ProjectionNumbers pn;

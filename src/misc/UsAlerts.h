@@ -13,7 +13,7 @@
 #include <QWidget>
 #include "CapAlertXml.h"
 #include "../ui/ComboBox.h"
-#include "../ui/ObjectCardAlertDetail.h"
+#include "../ui/CardAlertDetail.h"
 #include "../ui/Photo.h"
 #include "../ui/ScrolledWindow.h"
 #include "../ui/Window.h"
@@ -38,7 +38,7 @@ private:
     vector<CapAlertXml> capAlerts;
     vector<string> defaultFilter{"Tornado Warning", "Severe Thunderstorm Warning", "Flash Flood Warning"};
     vector<string> eventList;
-    vector<ObjectCardAlertDetail> alertDetailList;
+    vector<CardAlertDetail> alertDetailList;
     unordered_map<string, int> filterCount;
     string html;
 };

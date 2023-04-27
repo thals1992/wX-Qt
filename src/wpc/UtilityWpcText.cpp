@@ -6,18 +6,18 @@
 
 #include "UtilityWpcText.h"
 
-vector<ObjectMenuTitle> UtilityWpcText::titles{
-    ObjectMenuTitle{"General Forecast Discussions", 10},
-    ObjectMenuTitle{"Precipitation Discussions", 2},
-    ObjectMenuTitle{"Hazards", 7},
-    ObjectMenuTitle{"Ocean Weather", 38},
-    ObjectMenuTitle{"Misc North American Weather", 5},
-    ObjectMenuTitle{"Misc Intl Weather", 4},
-    ObjectMenuTitle{"SPC", 8},
-    ObjectMenuTitle{"NHC", 7},
-    ObjectMenuTitle{"Great Lakes", 7},
-    ObjectMenuTitle{"Canada", 8},
-    ObjectMenuTitle{"Space Weather", 6}
+vector<MenuTitle> UtilityWpcText::titles{
+    MenuTitle{"General Forecast Discussions", 10},
+    MenuTitle{"Precipitation Discussions", 2},
+    MenuTitle{"Hazards", 7},
+    MenuTitle{"Ocean Weather", 38},
+    MenuTitle{"Misc North American Weather", 5},
+    MenuTitle{"Misc Intl Weather", 4},
+    MenuTitle{"SPC", 8},
+    MenuTitle{"NHC", 7},
+    MenuTitle{"Great Lakes", 7},
+    MenuTitle{"Canada", 8},
+    MenuTitle{"Space Weather", 6}
 };
 
 const vector<string> UtilityWpcText::labels{

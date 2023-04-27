@@ -10,27 +10,32 @@
 #include <string>
 #include <vector>
 #include <QVBoxLayout>
+#include "ui/Box.h"
 #include "ui/HBox.h"
 #include "ui/Image.h"
+#include "ui/Widget2.h"
 #include "ui/Window.h"
 
 using std::string;
 using std::vector;
 
-class VBox {
+class VBox : public Box {
 public:
     VBox();
     void addWidget(QWidget *, int = 0, Qt::Alignment = Qt::Alignment());
-    void addWidgetAndCenter(QWidget *);
+    void addWidget(Widget2&, int = 0, Qt::Alignment = Qt::Alignment());
+    void addWidgetAndCenter(Widget2&);
     void addLayout(QLayout *, int = 0);
+    void addLayout(Box&, int = 0);
     void addStretch();
     void setSpacing(int);
     void addMargins();
     void setAlignment(QWidget *, Qt::Alignment);
+    void setAlignment(Widget2&, Qt::Alignment);
     void getAndShow(Window *);
     void removeChildren();
     void addImageRows(QWidget *, const vector<string>&, vector<Image>&, int);
-    QVBoxLayout * get();
+    QVBoxLayout * getView();
 
 private:
     QVBoxLayout * box;

@@ -11,14 +11,15 @@
 #include <QByteArray>
 #include <QWidget>
 #include "ui/ClickableLabel.h"
+#include "ui/Widget2.h"
 
 using std::function;
 
-class Image {
+class Image : public Widget2 {
 public:
     Image();  // needed for MainWindow
     explicit Image(QWidget *);
-    ClickableLabel * get();
+    ClickableLabel * getView();
     void setBytes(const QByteArray&);
     void setToWidth(const QByteArray&, int);
     void setNumberAcross(int);

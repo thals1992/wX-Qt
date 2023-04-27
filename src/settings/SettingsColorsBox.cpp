@@ -10,19 +10,19 @@ SettingsColorsBox::SettingsColorsBox(QWidget * parent) : Widget{parent} {
     loadColors();
     size_t i = 0;
     for (const auto& color : colors) {
-        objectColorLabels.push_back(std::make_unique<ObjectColorLabel>(this, color));
+        objectColorLabels.push_back(std::make_unique<ColorLabel>(this, color));
         if (i >= colors.size() / 2) {
-            vbox2.addLayout(objectColorLabels.back()->get());
+            vbox2.addLayout(objectColorLabels.back()->getView());
         } else {
-            vbox1.addLayout(objectColorLabels.back()->get());
+            vbox1.addLayout(objectColorLabels.back()->getView());
         }
         i += 1;
     }
     vbox1.addStretch();
     vbox2.addStretch();
-    box.addLayout(vbox1.get());
-    box.addLayout(vbox2.get());
-    setLayout(box.get());
+    box.addLayout(vbox1);
+    box.addLayout(vbox2);
+    setLayout(box.getView());
 }
 
 void SettingsColorsBox::loadColors() {

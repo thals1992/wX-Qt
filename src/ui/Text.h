@@ -9,14 +9,16 @@
 
 #include <string>
 #include <QLabel>
+#include "ui/Widget2.h"
 
 using std::string;
 
-class Text {
+class Text : public Widget2 {
 public:
     Text(); // needed for unordered_map in MainWindow
     explicit Text(QWidget *, const string& = "");
-    QLabel * get();
+    // QLabel * get();
+    QLabel * getView();
     void setWordWrap(bool);
     void setText(const QString&);
     void setText(const string&);

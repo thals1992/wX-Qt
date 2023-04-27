@@ -11,7 +11,6 @@
 #include "radar/UtilityNwsRadarMosaic.h"
 #include "settings/Location.h"
 #include "settings/UIPreferences.h"
-#include "ui/Icon.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 
@@ -27,17 +26,17 @@ RadarMosaicNws::RadarMosaicNws(QWidget * parent)
 {
     setTitle("Radar Mosaics");
     if (!UIPreferences::rememberMosaic) {
-        objectAnimate.sector = UtilityNwsRadarMosaic::getNearestMosaic(Location::getLatLonCurrent());
+        objectAnimate.sector = UtilityNwsRadarMosaic::getNearest(Location::getLatLonCurrent());
     } else {
-        objectAnimate.sector = Utility::readPref("REMEMBER_MOSAIC_SECTOR", UtilityNwsRadarMosaic::getNearestMosaic(Location::getLatLonCurrent()));
+        objectAnimate.sector = Utility::readPref("REMEMBER_MOSAIC_SECTOR", UtilityNwsRadarMosaic::getNearest(Location::getLatLonCurrent()));
     }
     animateButton.connect([this] { objectAnimate.animateClicked(); });
     comboboxSector.setIndex(findex(objectAnimate.sector, UtilityNwsRadarMosaic::sectors));
     comboboxSector.connect([this] { changeSector(); });
-    boxH.addWidget(comboboxSector.get());
-    boxH.addWidget(animateButton.get());
-    box.addLayout(boxH.get());
-    box.addWidgetAndCenter(photo.get());
+    boxH.addWidget(comboboxSector);
+    boxH.addWidget(animateButton);
+    box.addLayout(boxH);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
     shortcutAnimate.connect([this] { objectAnimate.animateClicked(); });
     reload();

@@ -11,14 +11,15 @@
 #include <string>
 #include <QPushButton>
 #include "ui/Icon.h"
+#include "ui/Widget2.h"
 
 using std::function;
 using std::string;
 
-class Button {
+class Button : public Widget2 {
 public:
     Button(QWidget *, Icon, const string&);
-    QPushButton * get();
+    QPushButton * getView();
     void connect(const function<void()>&);
     void setText(const string&);
     string getText() const;

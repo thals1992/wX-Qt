@@ -9,6 +9,7 @@
 #include <iostream>
 #include "common/GlobalVariables.h"
 #include "objects/WString.h"
+#include "settings/UtilityLocation.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "util/UtilityCanvasProjection.h"
@@ -118,8 +119,8 @@ LatLon LatLon::fromList(vector<double> coords) {
 }
 
 LatLon LatLon::fromRadarSite(const string& radarSite) {
-    const auto ridX = Utility::getRadarSiteX(radarSite);
-    const auto ridY = Utility::getRadarSiteY(radarSite);
+    const auto ridX = UtilityLocation::getRadarSiteX(radarSite);
+    const auto ridY = UtilityLocation::getRadarSiteY(radarSite);
     const auto latNum = To::Double(ridX);
     const auto lonNum = -1.0 * To::Double(ridY);
     return {latNum, lonNum};

@@ -13,8 +13,8 @@
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
 #include "ui/HBox.h"
-#include "ui/ObjectSwitch.h"
-#include "ui/ObjectNumberPicker.h"
+#include "ui/Switch.h"
+#include "ui/NumberPicker.h"
 #include "ui/ScrolledWindow.h"
 #include "ui/Shortcut.h"
 #include "ui/Text.h"
@@ -28,15 +28,15 @@ public:
     explicit SettingsBox(QWidget *);
 
 private:
-    vector<std::unique_ptr<ObjectSwitch>> configs;
+    vector<std::unique_ptr<Switch>> configs;
     Button button;
     Button buttonAbout;
     VBox box;
     HBox hbox0;
     Text homeScreenLabel;
     Text generalLabel;
-    std::unique_ptr<ObjectNumberPicker> np1;
-    std::unique_ptr<ObjectNumberPicker> np2;
+    std::unique_ptr<NumberPicker> np1;
+    std::unique_ptr<NumberPicker> np2;
 };
 
 #endif  // SETTINGSBOX_H

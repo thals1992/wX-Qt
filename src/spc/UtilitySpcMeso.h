@@ -9,14 +9,14 @@
 
 #include <string>
 #include <vector>
-#include "../ui/ObjectMenuTitle.h"
+#include "../ui/MenuTitle.h"
 
 using std::string;
 using std::vector;
 
 class UtilitySpcMeso {
 public:
-    static vector<ObjectMenuTitle> titles;
+    static vector<MenuTitle> titles;
     static const vector<string> favList;
     static const vector<string> imgSf;
     static const vector<string> products;

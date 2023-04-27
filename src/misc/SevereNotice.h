@@ -20,6 +20,7 @@ public:
     void getBitmaps();
     string getShortName() const;
     string getCount() const;
+    int getCountAsInt() const;
     vector<string> urls;
 
 private:

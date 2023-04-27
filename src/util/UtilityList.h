@@ -7,9 +7,11 @@
 #ifndef UTILITYLIST_H
 #define UTILITYLIST_H
 
+#include <functional>
 #include <string>
 #include <vector>
 #include <QStringList>
+
 using std::function;
 using std::string;
 using std::vector;

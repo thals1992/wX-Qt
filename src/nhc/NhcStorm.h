@@ -9,10 +9,10 @@
 
 #include <string>
 #include <vector>
-#include "nhc/ObjectNhcStormDetails.h"
+#include "nhc/NhcStormDetails.h"
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
-#include "ui/ObjectTwoWidgetScroll.h"
+#include "ui/TwoWidgetScroll.h"
 #include "ui/Photo.h"
 #include "ui/Text.h"
 #include "ui/VBox.h"
@@ -23,18 +23,18 @@ using std::vector;
 
 class NhcStorm : public Window {
 public:
-    NhcStorm(QWidget *, const ObjectNhcStormDetails&);
+    NhcStorm(QWidget *, const NhcStormDetails&);
 
 private:
     void reload();
     void changeProduct();
     void launchGoes();
     QWidget * parent;
-    ObjectNhcStormDetails stormData;
+    NhcStormDetails stormData;
     VBox boxText;
     VBox boxImages;
     VBox box;
-    ObjectTwoWidgetScroll sw;
+    TwoWidgetScroll sw;
     vector<Photo> images;
     vector<string> urls;
     ComboBox comboboxProduct;

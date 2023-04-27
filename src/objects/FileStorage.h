@@ -28,9 +28,7 @@ public:
     void clearBuffers();
     void setMemoryBuffer(const QByteArray&);
     void setMemoryBufferForAnimation(int, const QByteArray&);
-    void setMemoryBufferForL3TextProducts(const string&, const QByteArray&);
     MemoryBuffer memoryBuffer;
-    unordered_map<string, string> level3TextProductMap;
     vector<MemoryBuffer> animationMemoryBuffer;
     string radarInfo;
     int radarAgeMilli{};

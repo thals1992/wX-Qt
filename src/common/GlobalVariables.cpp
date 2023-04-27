@@ -81,6 +81,7 @@ const string GlobalVariables::degreeSymbol{"\u00B0"};
 const string GlobalVariables::nwsSPCwebsitePrefix{"https://www.spc.noaa.gov"};
 const string GlobalVariables::nwsWPCwebsitePrefix{"https://www.wpc.ncep.noaa.gov"};
 const string GlobalVariables::nwsAWCwebsitePrefix{"https://www.aviationweather.gov"};
+const string GlobalVariables::nwsGraphicalWebsitePrefix{"https://graphical.weather.gov"};
 const string GlobalVariables::nwsNhcWebsitePrefix{"https://www.nhc.noaa.gov"};
 const string GlobalVariables::goes16Url{"https://cdn.star.nesdis.noaa.gov/"};
 const string GlobalVariables::nwsApiUrl{"https://api.weather.gov/"};

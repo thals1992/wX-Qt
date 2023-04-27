@@ -6,8 +6,8 @@
 
 #include "settings/RadarPreferences.h"
 #include "objects/Color.h"
-#include "objects/ObjectPolygonWarning.h"
-#include "objects/ObjectPolygonWatch.h"
+#include "objects/PolygonWarning.h"
+#include "objects/PolygonWatch.h"
 #include "objects/WString.h"
 #include "radar/RadarGeometry.h"
 #include "ui/TextViewMetal.h"
@@ -79,8 +79,8 @@ void RadarPreferences::initialize() {
     locdotSize = Utility::readPrefInt("RADAR_LOCDOT_SIZE", 20) / lineFactor;
     aviationSize = Utility::readPrefInt("RADAR_AVIATION_SIZE", 20) / lineFactor;
 
-    ObjectPolygonWarning::load();
-    ObjectPolygonWatch::load();
+    PolygonWarning::load();
+    PolygonWatch::load();
     initializeColors();
     RadarGeometry::initialize();
 }

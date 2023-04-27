@@ -10,10 +10,10 @@ Table::Table(QWidget * parent)
     : grid{ new QFormLayout{parent} }
 {}
 
-void Table::addRow(const string& label, QWidget * w) {
-    grid->addRow(QString::fromStdString(label), w);
+void Table::addRow(const string& label, Widget2& w) {
+    grid->addRow(QString::fromStdString(label), w.getView());
 }
 
-QFormLayout * Table::get() {
+QFormLayout * Table::getView() {
     return grid;
 }

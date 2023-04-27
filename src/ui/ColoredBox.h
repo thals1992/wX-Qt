@@ -11,15 +11,16 @@
 #include <QLabel>
 #include "objects/WXColor.h"
 #include "ui/ClickableLabel.h"
+#include "ui/Widget2.h"
 
 using std::function;
 
-class ColoredBox {
+class ColoredBox : public Widget2 {
 public:
     ColoredBox(QWidget *, const WXColor&);
     void regenerate(const WXColor&);
     void connect(const function<void()>&);
-    ClickableLabel * get();
+    ClickableLabel * getView();
 
 private:
     ClickableLabel * colorPatchCurrent;

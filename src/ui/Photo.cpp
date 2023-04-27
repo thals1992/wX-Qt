@@ -60,7 +60,7 @@ void Photo::setAlignment(Qt::Alignment alignment) {
 }
 
 void Photo::setToWidthEven(const QByteArray& ba) {
-    UtilityUI::updateImage(get(), ba, width);
+    UtilityUI::updateImage(getView(), ba, width);
 }
 
 void Photo::setBytes(const QByteArray& ba) {
@@ -79,9 +79,9 @@ void Photo::setNwsIcon(const string& url) {
     const auto width = UIPreferences::imageSizeNwsForecast;
     const auto pixmap = QPixmap::fromImage(UtilityForecastIcon::getIcon(url));
     const auto pixmapResized = pixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    get()->setPixmap(pixmapResized);
+    getView()->setPixmap(pixmapResized);
 }
 
-QLabel * Photo::get() {
+QLabel * Photo::getView() {
     return image;
 }

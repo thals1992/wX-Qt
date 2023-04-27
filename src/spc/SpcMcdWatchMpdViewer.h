@@ -11,7 +11,7 @@
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
 #include "ui/Photo.h"
-#include "ui/ObjectTwoWidgetScroll.h"
+#include "ui/TwoWidgetScroll.h"
 #include "ui/Shortcut.h"
 #include "ui/Text.h"
 #include "ui/Window.h"
@@ -29,7 +29,7 @@ private:
     VBox boxText;
     Text text;
     Photo photo;
-    ObjectTwoWidgetScroll sw;
+    TwoWidgetScroll sw;
     Button button;
     Shortcut shortcut;
     string token;

@@ -98,10 +98,10 @@ void ComboBox::blockSignals(bool b) {
 }
 
 void ComboBox::connect(const function<void()>& fn) {
-    QObject::connect(get(), static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), parent, fn);
+    QObject::connect(comboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), parent, fn);
 }
 
-QComboBox * ComboBox::get() {
+QComboBox * ComboBox::getView() {
     return comboBox;
 }
 

@@ -27,6 +27,7 @@ vector<PrefBool> UIPreferences::homeScreenItemsImage{
     PrefBool{"Visible Satellite", "VISIBLE_SATELLITE", true},
     PrefBool{"Alerts", "USWARN", false},
     PrefBool{"Analysis", "ANALYSIS_RADAR_AND_WARNINGS", false},
+    PrefBool{"RTMA Temp", "RTMA_TEMP", false},
 };
 vector<PrefBool> UIPreferences::homeScreenItemsText{
     PrefBool{"Hourly", "HOURLY", true},

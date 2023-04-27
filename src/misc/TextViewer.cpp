@@ -17,6 +17,6 @@ TextViewer::TextViewer(QWidget * parent, const string& url, int width, int heigh
     } else {
         setSize(width, height);
     }
-    box.addWidget(text.get());
+    box.addWidget(text);
     new FutureText{this, url, [this] (const auto& s) { text.setText(s); }};
 }

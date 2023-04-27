@@ -26,14 +26,14 @@ WfoText::WfoText(QWidget * parent)
     box.addMargins();
     comboboxProduct.setIndexByValue("AFD");
     comboboxProduct.connect([this] { changeProduct(); });
-    boxH.addWidget(comboboxProduct.get());
+    boxH.addWidget(comboboxProduct);
 
     comboboxSector.setIndexByValue(sector);
     comboboxSector.connect([this] { changeSector(); });
 
-    boxH.addWidget(comboboxSector.get());
-    box.addLayout(boxH.get());
-    box.addLayout(boxText.get());
+    boxH.addWidget(comboboxSector);
+    box.addLayout(boxH);
+    box.addLayout(boxText);
 
     if (UtilityUI::isMobile()) {
         productCount = 1;
@@ -41,7 +41,7 @@ WfoText::WfoText(QWidget * parent)
     for ([[maybe_unused]] auto unused : range(productCount)) {
         textList.emplace_back(this);
         textList.back().setFixedWidth();
-        boxText.addWidget(textList.back().get());
+        boxText.addWidget(textList.back());
     }
     reload();
 }

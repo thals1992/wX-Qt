@@ -17,7 +17,8 @@
 RadarGeomInfo::RadarGeomInfo() = default;
 
 RadarGeomInfo::RadarGeomInfo(RadarGeometryTypeEnum type)
-    : isEnabled{ WString::startsWith(Utility::readPref(prefToken.at(type), defaultPref.at(type)), "t") }
+    : type{ type }
+    , isEnabled{ WString::startsWith(Utility::readPref(prefToken.at(type), defaultPref.at(type)), "t") }
 {
     if (isEnabled) {
         loadData(typeToFileName.at(type), lineData);
@@ -25,6 +26,18 @@ RadarGeomInfo::RadarGeomInfo(RadarGeometryTypeEnum type)
         // qcolor = Color::intToQColor(colorInt);
         // lineSize = Utility::readPrefInt(prefTokenLineSize.at(type), lineSizeDefault) / lineFactor;
     } else {
+        lineData.clear();
+    }
+    colorInt = Utility::readPrefInt(prefTokenColorInt.at(type), prefTokenColorIntDefault.at(type));
+    qcolor = Color::intToQColor(colorInt);
+    lineSize = Utility::readPrefInt(prefTokenLineSize.at(type), lineSizeDefault) / lineFactor;
+}
+
+void RadarGeomInfo::update() {
+    isEnabled = WString::startsWith(Utility::readPref(prefToken.at(type), defaultPref.at(type)), "t");
+    if (isEnabled && lineData.empty()) {
+        loadData(typeToFileName.at(type), lineData);
+    } else if (!isEnabled) {
         lineData.clear();
     }
     colorInt = Utility::readPrefInt(prefTokenColorInt.at(type), prefTokenColorIntDefault.at(type));

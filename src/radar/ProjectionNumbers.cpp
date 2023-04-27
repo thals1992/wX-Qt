@@ -6,6 +6,7 @@
 
 #include "radar/ProjectionNumbers.h"
 #include "settings/Location.h"
+#include "settings/UtilityLocation.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "util/UtilityMath.h"
@@ -17,8 +18,8 @@ ProjectionNumbers::ProjectionNumbers() {
 void ProjectionNumbers::setRadarSite(const string& radarSite) {
     this->radarSite = radarSite;
     scale = 190.00;
-    latString = Utility::getRadarSiteX(radarSite);
-    lonString = Utility::getRadarSiteY(radarSite);
+    latString = UtilityLocation::getRadarSiteX(radarSite);
+    lonString = UtilityLocation::getRadarSiteY(radarSite);
     oneDegreeScaleFactor = UtilityMath::pixPerDegreeLon(To::Double(latString), scale);
 }
 

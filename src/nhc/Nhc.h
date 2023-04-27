@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include "nhc/ObjectNhc.h"
-#include "nhc/ObjectCardNhcStormReportItem.h"
+#include "nhc/CardNhcStormReportItem.h"
 #include "ui/ScrolledWindow.h"
 #include "ui/Window.h"
 
@@ -29,7 +29,7 @@ private:
     vector<Image> images;
     vector<string> urls;
     ObjectNhc objectNhc;
-    vector<std::unique_ptr<ObjectCardNhcStormReportItem>> stormCards;
+    vector<std::unique_ptr<CardNhcStormReportItem>> stormCards;
 };
 
 #endif  // NHC_H

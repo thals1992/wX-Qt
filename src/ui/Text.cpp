@@ -20,7 +20,11 @@ Text::Text(QWidget * parent, const string& text)
     textView->setTextInteractionFlags(Qt::TextSelectableByMouse);
 }
 
-QLabel * Text::get() {
+// QLabel * Text::get() {
+//     return textView;
+// }
+
+QLabel * Text::getView() {
     return textView;
 }
 

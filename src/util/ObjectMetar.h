@@ -21,7 +21,7 @@ public:
     static string changePressureUnits(const string&);
     static string changeDegreeUnits(const string&);
     static string decodeIconFromMetar(const string&, const RID&);
-    LatLon location;
+    // LatLon location;
     RID obsClosest;
     string condition;
     string temperature;

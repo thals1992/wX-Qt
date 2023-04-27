@@ -6,8 +6,9 @@
 
 #include "wpc/NationalImages.h"
 #include <algorithm>
+#include "common/GlobalVariables.h"
 #include "objects/FutureBytes.h"
-#include "ui/Icon.h"
+#include "objects/WString.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 #include "wpc/UtilityWpcImages.h"
@@ -25,10 +26,10 @@ NationalImages::NationalImages(QWidget * parent)
     buttonBack.connect([this] { moveLeftClicked(); });
     buttonForward.connect([this] { moveRightClicked(); });
 
-    hbox.addWidget(buttonBack.get());
-    hbox.addWidget(buttonForward.get());
-    box.addLayout(hbox.get());
-    box.addWidgetAndCenter(photo.get());
+    hbox.addWidget(buttonBack);
+    hbox.addWidget(buttonForward);
+    box.addLayout(hbox);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
 
     auto itemsSoFar = 0;
@@ -38,7 +39,7 @@ NationalImages::NationalImages(QWidget * parent)
     }
     for (auto& objectMenuTitle : UtilityWpcImages::titles) {
         popoverMenus.emplace_back(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (const auto& s) { changeProductByCode(s); });
-        hbox.addWidget(popoverMenus.back().get());
+        hbox.addWidget(popoverMenus.back());
     }
     shortcutLeft.connect([this] { moveLeftClicked(); });
     shortcutRight.connect([this] { moveRightClicked(); });
@@ -59,7 +60,10 @@ void NationalImages::moveRightClicked() {
 
 void NationalImages::reload() {
     Utility::writePrefInt(prefToken, index);
-    const auto& url = UtilityWpcImages::urls[index];
+    auto url = UtilityWpcImages::urls[index];
+    if (WString::contains(url, GlobalVariables::nwsGraphicalWebsitePrefix + "/images/conus/")) {
+        url += "1_conus.png";
+    }
     setTitle(UtilityWpcImages::labels[index]);
     new FutureBytes{this, url, [this] (const auto& ba) { photo.setBytes(ba); }};
 }

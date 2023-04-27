@@ -12,14 +12,13 @@
 #include "objects/WString.h"
 #include "util/UtilityIO.h"
 #include "util/UtilityMath.h"
-#include "radar/UtilityMetar.h"
+#include "radar/Metar.h"
 #include "util/To.h"
 #include "util/UtilityMetarConditions.h"
 #include "util/UtilityString.h"
 
 ObjectMetar::ObjectMetar(const LatLon& location, int index)
-    : location{ location }
-    , obsClosest{ UtilityMetar::findClosestObservation(location, index) }
+    : obsClosest{ Metar::findClosestObservation(location, index) }
 {}
 
 void ObjectMetar::process() {

@@ -9,7 +9,6 @@
 #include "objects/FutureBytes.h"
 #include "spc/UtilitySpcMeso.h"
 #include "spc/UtilitySpcMesoInputOutput.h"
-#include "ui/Icon.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
 
@@ -37,25 +36,25 @@ SpcMeso::SpcMeso(QWidget * parent)
     comboboxSector.setIndex(findex(objectAnimate.sector, UtilitySpcMeso::sectorCodes));
     comboboxSector.connect([this] { changeSector(); });
 
-    boxFav.addWidget(comboboxSector.get());
-    boxFav.addWidget(animateButton.get());
-    boxH.addWidget(buttonBack.get());
-    boxH.addWidget(buttonForward.get());
-    box.addLayout(boxH.get());
+    boxFav.addWidget(comboboxSector);
+    boxFav.addWidget(animateButton);
+    boxH.addWidget(buttonBack);
+    boxH.addWidget(buttonForward);
+    box.addLayout(boxH);
 
     auto j = 0;
     for (const auto& item : UtilitySpcMeso::favList) {
         buttons.emplace_back(this, None, "");
         buttons.back().setText(item);
         buttons.back().connect([this, j] { changeProductForFav(j); });
-        boxFav.addWidget(buttons.back().get());
+        boxFav.addWidget(buttons.back());
         j += 1;
     }
     boxFav.addStretch();
 
-    imageLayout.addLayout(boxFav.get());
-    imageLayout.addWidget(photo.get());
-    box.addLayout(imageLayout.get());
+    imageLayout.addLayout(boxFav);
+    imageLayout.addWidget(photo);
+    box.addLayout(imageLayout);
     box.getAndShow(this);
 
     auto itemsSoFar = 0;
@@ -63,9 +62,9 @@ SpcMeso::SpcMeso(QWidget * parent)
         menu.setList(UtilitySpcMeso::labels, itemsSoFar);
         itemsSoFar += menu.count;
     }
-    for (auto& objectMenuTitle : UtilitySpcMeso::titles) {
-        popoverMenus.emplace_back(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (const auto& s) { changeProductByCode(s); });
-        boxH.addWidget(popoverMenus.back().get());
+    for (auto& menuTitle : UtilitySpcMeso::titles) {
+        popoverMenus.emplace_back(this, menuTitle.title, menuTitle.get(), [this] (const auto& s) { changeProductByCode(s); });
+        boxH.addWidget(popoverMenus.back());
     }
     shortcutAnimate.connect([this] { objectAnimate.animateClicked(); });
     shortcutLeft.connect([this] { moveLeftClicked(); });

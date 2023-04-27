@@ -9,7 +9,7 @@
 
 #include <string>
 #include <vector>
-#include "nhc/ObjectNhcStormDetails.h"
+#include "nhc/NhcStormDetails.h"
 
 using std::string;
 using std::vector;
@@ -18,7 +18,7 @@ class ObjectNhc {
 public:
     void getTextData();
     void showTextData();
-    vector<ObjectNhcStormDetails> stormDataList;
+    vector<NhcStormDetails> stormDataList;
 
 private:
     vector<string> ids;

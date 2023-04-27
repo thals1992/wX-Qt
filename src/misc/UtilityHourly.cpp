@@ -72,7 +72,7 @@ string UtilityHourly::parse(const string& html) {
     const auto shortForecasts = UtilityString::parseColumn(html, "\"shortForecast\": \"(.*?)\"");
     string stringValue;
     for (auto index : range(startTimes.size())) {
-        const auto time = translateTime(Utility::safeGet(startTimes, index));
+        const auto time = ObjectDateTime::translateTimeForHourly(Utility::safeGet(startTimes, index));
         const auto temperature = Utility::safeGet(temperatures, index);
         const auto windSpeed = WString::replace(Utility::safeGet(windSpeeds, index), " to ", "-");
         const auto windDirection = Utility::safeGet(windDirections, index);
@@ -93,23 +93,4 @@ string UtilityHourly::shortenConditions(const string& stringF) {
         hourly = WString::replace(hourly, data.first, data.second);
     }
     return hourly;
-}
-
-string UtilityHourly::translateTime(const string& originalTime) {
-    auto value = originalTime;
-    value = WString::replace(value, "T", "-");
-    const auto originalTimeComponents = WString::split(value, "-");
-    const auto hour = To::Int(WString::replace(originalTimeComponents[3], ":00:00", ""));
-    return getDayOfWeek(originalTime) + " " + To::string(hour);
-}
-
-string UtilityHourly::getDayOfWeek(const string& originalTime) {
-    auto value = originalTime;
-    value = WString::replace(value, "T", "-");
-    auto originalTimeComponents = WString::split(value, "-");
-    const auto year = To::Int(originalTimeComponents[0]);
-    const auto month = To::Int(originalTimeComponents[1]);
-    const auto day = To::Int(originalTimeComponents[2]);
-    const auto hour = To::Int(WString::replace(originalTimeComponents[3], ":00:00", ""));
-    return ObjectDateTime::dayOfWeekAbbreviation(year, month, day, hour);
 }

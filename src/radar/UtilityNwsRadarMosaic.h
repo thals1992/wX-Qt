@@ -18,7 +18,7 @@ using std::unordered_map;
 
 class UtilityNwsRadarMosaic {
 public:
-    static string getNearestMosaic(const LatLon&);
+    static string getNearest(const LatLon&);
     static string get(const string&);
     static vector<string> getAnimation(const string&, const string&, int);
     static const string baseUrl;

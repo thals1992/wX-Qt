@@ -9,14 +9,16 @@
 
 #include <string>
 #include <QFormLayout>
+#include "ui/Box.h"
+#include "ui/Widget2.h"
 
 using std::string;
 
-class Table {
+class Table : public Box {
 public:
     explicit Table(QWidget *);
-    void addRow(const string&, QWidget *);
-    QFormLayout * get();
+    void addRow(const string&, Widget2&);
+    QFormLayout * getView();
 
 private:
     QFormLayout * grid;

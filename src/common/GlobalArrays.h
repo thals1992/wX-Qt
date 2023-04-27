@@ -22,7 +22,6 @@ public:
     static const vector<string> wfos;
     static const vector<string> nexradRadars;
     static const vector<string> tdwrRadars;
-    static const vector<string> tdwrRadarsForMap;
 };
 
 #endif  // GLOBALARRAYS_H

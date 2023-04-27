@@ -6,19 +6,19 @@
 
 #include "UtilitySpcMeso.h"
 
-vector<ObjectMenuTitle> UtilitySpcMeso::titles{
-    ObjectMenuTitle{"Observations", 3},
-    ObjectMenuTitle{"Surface", 15},
-    ObjectMenuTitle{"Upper Air", 25},
-    ObjectMenuTitle{"Thermodynamics", 19},
-    ObjectMenuTitle{"Wind Shear", 19},
-    ObjectMenuTitle{"Composite Indices", 23},
-    ObjectMenuTitle{"Multi-Parameter Fields", 11},
-    ObjectMenuTitle{"Heavy Rain", 8},
-    ObjectMenuTitle{"Winter Weather", 14},
-    ObjectMenuTitle{"Fire Weather", 6},
-    ObjectMenuTitle{"Classic", 3},
-    ObjectMenuTitle{"Beta", 10},
+vector<MenuTitle> UtilitySpcMeso::titles{
+    MenuTitle{"Observations", 3},
+    MenuTitle{"Surface", 15},
+    MenuTitle{"Upper Air", 25},
+    MenuTitle{"Thermodynamics", 19},
+    MenuTitle{"Wind Shear", 19},
+    MenuTitle{"Composite Indices", 23},
+    MenuTitle{"Multi-Parameter Fields", 11},
+    MenuTitle{"Heavy Rain", 8},
+    MenuTitle{"Winter Weather", 14},
+    MenuTitle{"Fire Weather", 6},
+    MenuTitle{"Classic", 3},
+    MenuTitle{"Beta", 10},
 };
 
 const vector<string> UtilitySpcMeso::favList{

@@ -10,14 +10,15 @@
 #include <functional>
 #include <string>
 #include <QPushButton>
+#include "ui/Widget2.h"
 
 using std::function;
 using std::string;
 
-class ButtonFlat {
+class ButtonFlat : public Widget2 {
 public:
     ButtonFlat(const string&, const string&, QWidget *);
-    QPushButton * get();
+    QPushButton * getView();
     void connect(const function<void()>&);
     void setText(const string&);
     void setVisible(bool);

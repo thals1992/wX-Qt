@@ -10,12 +10,13 @@
 #include <string>
 #include <QLabel>
 #include "ui/PhotoSizeEnum.h"
+#include "ui/Widget2.h"
 
 using std::string;
 
-class Photo {
+class Photo : public Widget2 {
 public:
-    Photo();  //  needed for ObjectCardCurrentConditions
+    Photo();  //  needed for CardCurrentConditions
     explicit Photo(QWidget *);
     Photo(QWidget *, const QPixmap &);
     Photo(QWidget *, PhotoSizeEnum);
@@ -27,7 +28,7 @@ public:
     void setToWidthEven(const QByteArray&);
     void setBytes(const QByteArray&);
     void setNwsIcon(const string&);
-    QLabel * get();
+    QLabel * getView();
 
 private:
     QLabel * image{};

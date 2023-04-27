@@ -7,25 +7,23 @@
 #include "MainWindow.h"
 #include "common/GlobalVariables.h"
 #include "objects/FutureText.h"
-#include "objects/FutureBytes.h"
 #include "objects/FutureVoid.h"
-#include "objects/ObjectPolygonWatch.h"
+#include "objects/PolygonWatch.h"
 #include "misc/TextViewerStatic.h"
 #include "misc/UsAlerts.h"
-#include "radar/Nexrad.h"
 #include "spc/SpcMcdWatchMpdViewer.h"
 #include "spc/SpcStormReports.h"
 #include "settings/Location.h"
-#include "util/UtilityDownload.h"
+#include "util/DownloadImage.h"
 #include "util/UtilityIO.h"
 #include "util/UtilityList.h"
 #include "util/UtilityUI.h"
 
 MainWindow::MainWindow(QWidget * parent)
     : Window{parent}
-    , sw{ ScrolledWindow{this, vbox.get()} }
+    , sw{ ScrolledWindow{this, vbox} }
     , comboBox{ ComboBox{this, Location::listOfNames()} }
-    , objectToolbar{ ObjectToolbar{this, [this] { reload(); }} }
+    , objectToolbar{ Toolbar{this, [this] { reload(); }} }
     , shortcutClose{ Shortcut{QKeySequence{"Q"}, this} }
     , shortcutVis{ Shortcut{QKeySequence{"C"}, this} }  // was QKeySequence("Ctrl+C")
     , shortcutWfoText{ Shortcut{QKeySequence{"A"}, this} }
@@ -47,6 +45,7 @@ MainWindow::MainWindow(QWidget * parent)
     , shortcutReload{ Shortcut{QKeySequence{"U"}, this} }
     , shortcutKeyboard{ Shortcut{QKeySequence{"/"}, this} }
     , shortcutWpcText{ Shortcut{QKeySequence{"T"}, this} }
+    , shortcutRtma{ Shortcut{QKeySequence{"B"}, this} }
 {
     setTitle(GlobalVariables::appName);
     watchesByType.insert({Watch, SevereNotice{Watch}});
@@ -79,17 +78,17 @@ MainWindow::MainWindow(QWidget * parent)
     }
     boxSevenDay.setSpacing(0);
     addWidgets();
-    vbox.addLayout(boxSevereDashboard.get());
-    vbox.addLayout(box.get());
-    box.addLayout(objectToolbar.get());
-    box.addLayout(imageLayout.get());
-    box.addLayout(forecastLayout.get());
-    box.addLayout(rightMostLayout.get());
+    vbox.addLayout(boxSevereDashboard);
+    vbox.addLayout(box);
+    box.addLayout(objectToolbar);
+    box.addLayout(imageLayout);
+    box.addLayout(forecastLayout);
+    box.addLayout(rightMostLayout);
 
-    forecastLayout.addWidget(comboBox.get());
-    forecastLayout.addLayout(boxCc.get());
-    forecastLayout.addLayout(boxHazards.get());
-    forecastLayout.addLayout(boxSevenDay.get());
+    forecastLayout.addWidget(comboBox);
+    forecastLayout.addLayout(boxCc);
+    forecastLayout.addLayout(boxHazards);
+    forecastLayout.addLayout(boxSevenDay);
     forecastLayout.addStretch();
     // QScroller::grabGesture(vbox.get(), QScroller::TouchGesture);
     shortcutClose.connect([this] { close(); });
@@ -113,6 +112,7 @@ MainWindow::MainWindow(QWidget * parent)
     shortcutReload.connect([this] { reload(); });
     shortcutKeyboard.connect([this] { new TextViewerStatic{this, GlobalVariables::mainScreenShortcuts, 700, 600}; });
     shortcutWpcText.connect([this] { objectToolbar.launchNationalText(); });
+    shortcutRtma.connect([this] { objectToolbar.launchRtma(); });
 
     reload();
 }
@@ -127,41 +127,41 @@ void MainWindow::locationChange() {
 }
 
 void MainWindow::updateHazards() {
-    objectCardHazards.removeLabels();
-    objectCardHazards = ObjectCardHazards{this, objectHazards};
-    boxHazards.addLayout(objectCardHazards.get());
+    cardHazards.removeLabels();
+    cardHazards = CardHazards{this, hazards};
+    boxHazards.addLayout(cardHazards);
 }
 
 void MainWindow::getHazards() {
-    objectHazards.process(Location::getLatLonCurrent());
+    hazards.process(Location::getLatLonCurrent());
 }
 
 void MainWindow::update7day() {
-    if (!initialized7Day || objectCardSevenDay.sevenDayCard.empty()) {
-        objectCardSevenDay = ObjectCardSevenDay{this, boxSevenDay, objectSevenDay.detailedForecasts, objectSevenDay.icons};
+    if (!initialized7Day || sevenDayCollection.sevenDayCard.empty()) {
+        sevenDayCollection = SevenDayCollection{this, boxSevenDay, &sevenDay};
         initialized7Day = true;
     } else {
-        objectCardSevenDay.update(objectSevenDay.detailedForecasts, objectSevenDay.icons);
+        sevenDayCollection.update();
     }
 }
 
 void MainWindow::get7day() {
-    objectSevenDay.process(Location::getLatLonCurrent());
+    sevenDay.process(Location::getLatLonCurrent());
 }
 
 void MainWindow::updateCc() {
     if (!initializedCc) {
-        objectCardCurrentConditions = ObjectCardCurrentConditions{this, objectCurrentConditions};
-        boxCc.addLayout(objectCardCurrentConditions.get());
+        cardCurrentConditions = CardCurrentConditions{this, currentConditions};
+        boxCc.addLayout(cardCurrentConditions);
         initializedCc = true;
     } else {
-        objectCardCurrentConditions.update(objectCurrentConditions);
+        cardCurrentConditions.update(currentConditions);
     }
 }
 
 void MainWindow::getCc() {
-    objectCurrentConditions.process(Location::getLatLonCurrent(), 0);
-    objectCurrentConditions.timeCheck();
+    currentConditions.process(Location::getLatLonCurrent(), 0);
+    currentConditions.timeCheck();
 }
 
 void MainWindow::reload() {
@@ -178,7 +178,7 @@ void MainWindow::reload() {
     }
     for (const auto& item : UIPreferences::homeScreenItemsImage) {
         if (item.isEnabled()) {
-            const auto url = UtilityDownload::getImageProduct(item.prefToken);
+            const auto url = DownloadImage::byProduct(item.prefToken);
             const auto token = item.prefToken;
             new FutureBytes{this, url, [this, token] (const auto& ba) { imageWidgets[token].setToWidth(ba, UIPreferences::mainScreenImageSize); }};
         }
@@ -189,10 +189,10 @@ void MainWindow::reload() {
         nexradList[pane]->nexradState.reset();
         nexradList[pane]->nexradState.zoom = 0.6;
 
-        nexradList[pane]->nexradDraw.initGeom();
-        nexradList[pane]->update();
-        // FIXME TODO crashes in downloadData FutureBytes
-         nexradList[pane]->downloadData();
+//        nexradList[pane]->nexradDraw.initGeom();
+//        nexradList[pane]->update();
+//        // FIXME TODO crashes in downloadData FutureBytes
+//         nexradList[pane]->downloadData();
     }
     if (UIPreferences::mainScreenSevereDashboard) {
         new FutureVoid{this, [this] { downloadWatch(); }, [this] { updateWatch(); }};
@@ -204,12 +204,12 @@ void MainWindow::reload() {
 void MainWindow::downloadWatch() {
     urls.clear();
     for (auto type : {Mcd, Mpd, Watch}) {
-        ObjectPolygonWatch::polygonDataByType[type]->download();
+        PolygonWatch::byType[type]->download();
     }
-    urls.push_back(UtilityDownload::getImageProduct("USWARN"));
-    urls.push_back(UtilityDownload::getImageProduct("STRPT"));
+    urls.push_back(DownloadImage::byProduct("USWARN"));
+    urls.push_back(DownloadImage::byProduct("STRPT"));
     for (auto type : {Watch, Mcd, Mpd}) {
-        ObjectPolygonWatch::polygonDataByType[type]->download();
+        PolygonWatch::byType[type]->download();
         watchesByType.at(type).getBitmaps();
         addAll(urls, watchesByType.at(type).urls);
     }
@@ -228,7 +228,7 @@ void MainWindow::updateWatch() {
     for (auto index : range(urls.size())) {
         images[index].setBytes(bytesList[index]);
         images[index].connect([this, index] { launch(index); });
-        boxSevereDashboard.addWidget(images[index].get());
+        boxSevereDashboard.addWidget(images[index]);
     }
 }
 
@@ -273,7 +273,7 @@ void MainWindow::addWidgets() {
             imageWidgets[item.prefToken] = Image{this};
             const auto tokenFinal = item.prefToken;
             imageWidgets[item.prefToken].connect([this, tokenFinal] { launchImageScreen(tokenFinal); });
-            imageLayout.addWidget(imageWidgets[item.prefToken].get());
+            imageLayout.addWidget(imageWidgets[item.prefToken]);
         }
         imageSize = UIPreferences::mainScreenImageSize;
         imageIndex += 1;
@@ -288,7 +288,7 @@ void MainWindow::addWidgets() {
         if (item.isEnabled()) {
             textWidgets[item.prefToken] = Text{this};
             textWidgets[item.prefToken].setFixedWidth();
-            rightMostLayout.addWidget(textWidgets[item.prefToken].get());
+            rightMostLayout.addWidget(textWidgets[item.prefToken]);
         }
     }
 }
@@ -321,5 +321,7 @@ void MainWindow::launchImageScreen(const string& token) {
         objectToolbar.launchNationalImages();
     } else if (token == "USWARN") {
         objectToolbar.launchUsAlerts();
+    } else if (token == "RTMA_TEMP") {
+        objectToolbar.launchRtma();
     }
 }

@@ -9,9 +9,9 @@
 #include "objects/FutureVoid.h"
 #include "objects/WString.h"
 #include "settings/Location.h"
-#include "ui/ObjectDividerLine.h"
+#include "ui/DividerLine.h"
 #include "util/To.h"
-#include "util/UtilityDownload.h"
+#include "util/DownloadText.h"
 #include "util/UtilityIO.h"
 #include "util/UtilityList.h"
 #include "util/UtilityString.h"
@@ -25,8 +25,8 @@ LsrByWfo::LsrByWfo(QWidget * parent)
     setTitle("Local Storm Reports");
     comboboxSector.setIndexByValue(wfo);
     comboboxSector.connect([this] { changeSector(); });
-    box.addWidget(comboboxSector.get());
-    box.addLayout(boxText.get());
+    box.addWidget(comboboxSector);
+    box.addLayout(boxText);
     reload();
 }
 
@@ -53,8 +53,8 @@ void LsrByWfo::getLsrFromWfo() {
         for (auto version : range3(1, maxVersions, 2)) {
             lsrList.emplace_back("");
             textList.emplace_back(this);
-            boxText.addWidget(textList[i].get());
-            boxText.addWidget(ObjectDividerLine(this).get());
+            boxText.addWidget(textList[i]);
+            boxText.addWidget(DividerLine(this).get());
             new FutureVoid{this, [i, version, this] { download(i, version); }, [i, this] { update(i); }};
             i += 1;
         }
@@ -62,7 +62,7 @@ void LsrByWfo::getLsrFromWfo() {
 }
 
 void LsrByWfo::download(int i, int version) {
-    lsrList[i] = UtilityDownload::getTextProductWithVersion("LSR" + wfo, version);
+    lsrList[i] = DownloadText::getTextProductWithVersion("LSR" + wfo, version);
 }
 
 void LsrByWfo::update(int i) {

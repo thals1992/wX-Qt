@@ -18,8 +18,8 @@ Observations::Observations(QWidget * parent)
     setTitle("Observations");
     comboBox.setIndexByPref(prefToken, 0);
     comboBox.connect([this] { reload(); });
-    box.addWidget(comboBox.get());
-    box.addWidgetAndCenter(photo.get());
+    box.addWidget(comboBox);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
     reload();
 }

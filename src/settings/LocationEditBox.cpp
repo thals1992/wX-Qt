@@ -28,22 +28,22 @@ LocationEditBox::LocationEditBox(QWidget * parent)
     cityEdit.connect([this] { lookupSearchTerm(); });
     saveButton.connect([this] { saveLocation(); });
 
-    table.addRow("Enter City:", cityEdit.get());
-    table.addRow("Name", editName.get());
-    table.addRow("Latitude", editLat.get());
-    table.addRow("Longitude", editLon.get());
-    table.addRow("Nexrad", editNexrad.get());
-    table.addRow("", saveButton.get());
-    box.addLayout(table.get());
+    table.addRow("Enter City:", cityEdit);
+    table.addRow("Name", editName);
+    table.addRow("Latitude", editLat);
+    table.addRow("Longitude", editLon);
+    table.addRow("Nexrad", editNexrad);
+    table.addRow("", saveButton);
+    box.addLayout(table);
 
     for (auto index : range(6)) {
         buttons.emplace_back(this, None, "");
-        boxResults.addWidget(buttons[index].get());
+        boxResults.addWidget(buttons[index]);
         buttons[index].connect([this, index] { populateLabels(index); });
     }
     boxResults.addStretch();
-    box.addLayout(boxResults.get());
-    setLayout(box.get());
+    box.addLayout(boxResults);
+    setLayout(box.getView());
     blankOutButtons();
 }
 

@@ -16,12 +16,6 @@ using std::vector;
 
 class Utility {
 public:
-    static string getRadarSiteName(const string&);
-    static LatLon getRadarSiteLatLon(const string&);
-    static string getRadarSiteX(const string&);
-    static string getRadarSiteY(const string&);
-    static LatLon getWfoSiteLatLon(const string&);
-    static LatLon getSoundingSiteLatLon(const string&);
     static string readPref(const string&, const string&);
     static int readPrefInt(const string&, int);
     static void writePref(const string&, const string&);

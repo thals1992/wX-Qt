@@ -48,6 +48,15 @@ string ObjectDateTime::toString(const string& s) {
     return dateTime.toString(QString::fromStdString(s)).toStdString();
 }
 
+string ObjectDateTime::format(const string& s) {
+    return dateTime.toString(QString::fromStdString(s)).toStdString();
+}
+
+void ObjectDateTime::utcToLocal() {
+    dateTime.setTimeSpec(Qt::UTC);
+    dateTime = dateTime.toLocalTime();
+}
+
 QDateTime ObjectDateTime::get() const {
     return dateTime;
 }
@@ -88,6 +97,11 @@ ObjectDateTime ObjectDateTime::decodeVtecTime(const string& timeRange) {
 }
 
 ObjectDateTime ObjectDateTime::fromString(const string& time, const string& format) {
+    auto dateTime = QDateTime::fromString(QString::fromStdString(time), QString::fromStdString(format));
+    return ObjectDateTime{dateTime};
+}
+
+ObjectDateTime ObjectDateTime::parse(const string& time, const string& format) {
     auto dateTime = QDateTime::fromString(QString::fromStdString(time), QString::fromStdString(format));
     return ObjectDateTime{dateTime};
 }
@@ -197,6 +211,25 @@ vector<string> ObjectDateTime::generateModelRuns([[maybe_unused]] const string& 
     //      runs.append(newDateTime.toString(dateStr));
     //  }
     return runs;
+}
+
+string ObjectDateTime::translateTimeForHourly(const string& originalTime) {
+    auto value = originalTime;
+    value = WString::replace(value, "T", "-");
+    const auto originalTimeComponents = WString::split(value, "-");
+    const auto hour = To::Int(WString::replace(originalTimeComponents[3], ":00:00", ""));
+    return getDayOfWeekForHourly(originalTime) + " " + To::string(hour);
+}
+
+string ObjectDateTime::getDayOfWeekForHourly(const string& originalTime) {
+    auto value = originalTime;
+    value = WString::replace(value, "T", "-");
+    auto originalTimeComponents = WString::split(value, "-");
+    const auto year = To::Int(originalTimeComponents[0]);
+    const auto month = To::Int(originalTimeComponents[1]);
+    const auto day = To::Int(originalTimeComponents[2]);
+    const auto hour = To::Int(WString::replace(originalTimeComponents[3], ":00:00", ""));
+    return ObjectDateTime::dayOfWeekAbbreviation(year, month, day, hour);
 }
 
 QDebug operator<<(QDebug dbg, const ObjectDateTime &objectDateTime) {

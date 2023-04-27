@@ -24,12 +24,12 @@ Button::Button(QWidget * parent, Icon icon, const string& label)
     }
 }
 
-QPushButton * Button::get() {
+QPushButton * Button::getView() {
     return button;
 }
 
 void Button::connect(const function<void()>& fn) {
-    QObject::connect(get(), &QPushButton::released, parent, fn);
+    QObject::connect(button, &QPushButton::released, parent, fn);
 }
 
 void Button::setText(const string& s) {

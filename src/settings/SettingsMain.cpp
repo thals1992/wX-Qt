@@ -26,7 +26,7 @@ SettingsMain::SettingsMain(QWidget * parent, const function<void()>& reloadFn, b
     , shortcutAddLocation{ Shortcut{QKeySequence{"A"}, this} }
 {
     setTitle("Settings");
-    setSize(800, 600);
+//    setSize(800, 600);
     if (showLocationItems) {
         settingsLocationsBox = new SettingsLocationsBox{parent};
         locationEditBox = new LocationEditBox{parent};

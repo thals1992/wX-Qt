@@ -11,7 +11,7 @@
 #include <vector>
 #include "objects/WXColor.h"
 #include "ui/HBox.h"
-#include "ui/ObjectColorLabel.h"
+#include "ui/ColorLabel.h"
 #include "ui/VBox.h"
 #include "ui/Widget.h"
 
@@ -27,7 +27,7 @@ private:
     VBox vbox1;
     VBox vbox2;
     vector<WXColor> colors;
-    vector<std::unique_ptr<ObjectColorLabel>> objectColorLabels;
+    vector<std::unique_ptr<ColorLabel>> objectColorLabels;
 };
 
 #endif  // SETTINGSCOLORSBOX_H

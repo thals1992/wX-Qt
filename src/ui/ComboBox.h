@@ -11,12 +11,13 @@
 #include <string>
 #include <vector>
 #include <QComboBox>
+#include "ui/Widget2.h"
 
 using std::function;
 using std::string;
 using std::vector;
 
-class ComboBox  {
+class ComboBox : public Widget2 {
 public:
     explicit ComboBox(QWidget *);
     ComboBox(QWidget *, const vector<string>&);
@@ -32,7 +33,7 @@ public:
     void block();
     void unblock();
     void connect(const function<void()>&);
-    QComboBox * get();
+    QComboBox * getView();
     void setVisible(bool);
     string getValue() const;
 

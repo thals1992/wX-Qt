@@ -38,6 +38,6 @@ ScrolledWindow::ScrolledWindow(Window * parent, VBox& layout)
         QScroller::grabGesture(scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     }
     parent->setCentralWidget(scrollArea);
-    parent->centralWidget->setLayout(layout.get());
+    parent->centralWidget->setLayout(layout.getView());
     parent->show();
 }

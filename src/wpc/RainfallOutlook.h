@@ -7,7 +7,7 @@
 #ifndef WPCRAINFALLOUTLOOK_H
 #define WPCRAINFALLOUTLOOK_H
 
-#include "ui/ObjectTwoWidgetScroll.h"
+#include "ui/TwoWidgetScroll.h"
 #include "ui/Photo.h"
 #include "ui/Text.h"
 #include "ui/Window.h"
@@ -19,7 +19,7 @@ public:
 private:
     Photo photo;
     Text text;
-    ObjectTwoWidgetScroll sw;
+    TwoWidgetScroll sw;
 };
 
 #endif  // WPCRAINFALLOUTLOOK_H

@@ -18,14 +18,14 @@ SpcMcdWatchMpdViewer::SpcMcdWatchMpdViewer(QWidget * parent, const string& url)
     , parent{ parent }
     , text{ Text{this} }
     , photo{ Photo{this, Scaled} }
-    , sw{ ObjectTwoWidgetScroll{this, photo.get(), boxText.get()} }
+    , sw{ TwoWidgetScroll{this, photo, boxText} }
     , button{ Button{this, None, "Radar"} }
     , shortcut{ Shortcut{QKeySequence{"R"}, this} }
     , token{ getToken(url) }
 {
     setTitle(token);
-    boxText.addWidget(button.get());
-    boxText.addWidget(text.get());
+    boxText.addWidget(button);
+    boxText.addWidget(text);
     new FutureBytes{this, url, [this] (const auto& ba) { photo.setBytes(ba); }};
     new FutureText{this, token, [this] (const auto& s) { updateText(s); }};
 }
@@ -51,6 +51,7 @@ string SpcMcdWatchMpdViewer::getToken(const string& url) {
     const auto items = WString::split(url, "/");
     auto s = items[items.size() - 1];
     s = WString::replace(s, ".gif", "");
+    s = WString::replace(s, ".png", "");
     s = WString::toUpper(s);
     const auto tokenTrimmed = UtilityString::substring(s, s.size() - 4, s.size());
     if (WString::contains(url, "www.wpc.ncep.noaa.gov")) {

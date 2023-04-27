@@ -5,6 +5,7 @@
 // *****************************************************************************
 
 #include "objects/Color.h"
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 
@@ -64,26 +65,32 @@ vector<double> Color::colorToHsv(const vector<double>& color) {
     auto b = color[2];
     double h;
     double s;
-    auto min = r < g ? r : g;
-    min = min < b ? min : b;
-    auto max = r > g ? r : g;
-    max = max > b ? max : b;
-    auto v = max;                                // v
-    auto delta = max - min;
+    auto minV = std::min(r, g);
+    minV = std::min(minV, b);
+    auto maxV = std::max(r, g);
+    maxV = std::max(maxV, b);
+
+    // auto minV = r < g ? r : g;
+    // minV = minV < b ? minV : b;
+    // auto maxV = r > g ? r : g;
+    // maxV = maxV > b ? maxV : b;
+
+    auto v = maxV;                              // v
+    auto delta = maxV - minV;
     if (delta < 0.00001) {
         return {0, 0, v};
     }
-    if (max > 0.0) {  // NOTE: if Max is == 0, this divide would cause a crash
-        s = (delta / max);
+    if (maxV > 0.0) {  // NOTE: if Max is == 0, this divide would cause a crash
+        s = (delta / maxV);
     } else {
         // if max is 0, then r = g = b = 0
         // s = 0, h is undefined
         return {NAN, 0.0, v};
     }
-    if (r >= max) {                         // > is bogus, just keeps compiler happy
+    if (r >= maxV) {                         // > is bogus, just keeps compiler happy
         h = (g - b) / delta;        // between yellow & magenta
     } else {
-        if (g >= max) {
+        if (g >= maxV) {
             h = 2.0 + (b - r) / delta;  // between cyan & yellow
         } else {
             h = 4.0 + (r - g) / delta;  // between magenta & cyan

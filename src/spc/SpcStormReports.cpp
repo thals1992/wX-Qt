@@ -13,8 +13,8 @@
 #include "objects/WString.h"
 #include "spc/LsrByWfo.h"
 #include "spc/UtilitySpcStormReports.h"
-#include "ui/ObjectCardBlackHeaderText.h"
-#include "ui/ObjectDividerLine.h"
+#include "ui/CardBlackHeaderText.h"
+#include "ui/DividerLine.h"
 #include "ui/PhotoSizeEnum.h"
 #include "util/To.h"
 #include "util/UtilityList.h"
@@ -22,7 +22,7 @@
 
 SpcStormReports::SpcStormReports(QWidget * parent, const string& spcStormReportsDay)
     : Window{parent}
-    , sw{ ScrolledWindow{this, box.get()} }
+    , sw{ ScrolledWindow{this, box} }
     , calendar{ Calendar{this} }
     , photo{ Photo{this, Scaled} }
     , comboBox{ ComboBox{this} }
@@ -39,12 +39,12 @@ SpcStormReports::SpcStormReports(QWidget * parent, const string& spcStormReports
     calendar.connect([this] { onDateChanged(); });
     lsrWfoButton.connect([this] { new LsrByWfo{this}; });
 
-    boxImage.addWidget(photo.get());
-    boxImage.addWidget(calendar.get());
-    box.addWidget(lsrWfoButton.get());
-    box.addWidget(comboBox.get());
-    box.addLayout(boxImage.get());
-    box.addLayout(boxText.get());
+    boxImage.addWidget(photo);
+    boxImage.addWidget(calendar);
+    box.addWidget(lsrWfoButton);
+    box.addWidget(comboBox);
+    box.addLayout(boxImage);
+    box.addLayout(boxText);
 
     reload();
 }
@@ -95,14 +95,14 @@ void SpcStormReports::filterReports() {
     cardWidgets.clear();
     for (const auto& stormReport : stormReports) {
         if (stormReport.damageHeader.empty() && filter == "All") {
-            boxText.addLayout(ObjectCardStormReportItem(this, stormReport).get());
-            boxText.addWidget(ObjectDividerLine(this).get());
+            boxText.addLayout(CardStormReportItem(this, stormReport).getView());
+            boxText.addWidget(DividerLine(this).get());
         } else if (stormReport.damageHeader.empty() && stormReport.state == filter) {
-            boxText.addLayout(ObjectCardStormReportItem(this, stormReport).get());
-            boxText.addWidget(ObjectDividerLine(this).get());
+            boxText.addLayout(CardStormReportItem(this, stormReport).getView());
+            boxText.addWidget(DividerLine(this).get());
         } else if (!stormReport.damageHeader.empty()) {
-            boxText.addLayout(ObjectCardBlackHeaderText(this, stormReport.damageHeader).get());
-            boxText.addWidget(ObjectDividerLine(this).get());
+            boxText.addLayout(CardBlackHeaderText(this, stormReport.damageHeader).getView());
+            boxText.addWidget(DividerLine(this).get());
         }
     }
     boxText.addStretch();

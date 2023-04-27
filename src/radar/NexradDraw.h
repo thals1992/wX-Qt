@@ -15,14 +15,14 @@
 #include "objects/MemoryBuffer.h"
 #include "radar/NexradState.h"
 #include "radar/RadarGeometryTypeEnum.h"
-#include "radar/WXMetalTextObject.h"
+#include "radar/NexradRenderTextObject.h"
 #include "ui/TextViewMetal.h"
 
 using std::vector;
 
 class NexradDraw {
 public:
-    NexradDraw(NexradState *, FileStorage *, WXMetalTextObject *);
+    NexradDraw(NexradState *, FileStorage *, NexradRenderTextObject *);
     void initGeom();
     void convertGeomData(RadarGeometryTypeEnum type);
     void drawGenericCircles(QPainter&, double, const QColor&, const vector<double>&);
@@ -38,7 +38,7 @@ private:
     static constexpr double yShift{1.0};
     NexradState * nexradState;
     FileStorage * fileStorage;
-    WXMetalTextObject * textObject;
+    NexradRenderTextObject * textObject;
 };
 
 #endif  // NEXRADDRAW_H

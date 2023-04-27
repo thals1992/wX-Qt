@@ -6,7 +6,7 @@
 
 #include "objects/ObjectAnimateNexrad.h"
 #include <iostream>
-#include "radar/WXGLDownload.h"
+#include "radar/NexradDownload.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "util/UtilityLog.h"
@@ -68,7 +68,7 @@ void ObjectAnimateNexrad::downloadFrames() {
     // std::cout << "START: downloadFrames" << std::endl;
     for (auto nw : *nexradList) {
         // std::cout << "START: download" << std::endl;
-        WXGLDownload::getRadarFilesForAnimation(parent, frameCount, nw->nexradState.getRadarProduct(), nw->nexradState.getRadarSite(), &(nw->fileStorage));
+        NexradDownload::getRadarFilesForAnimation(parent, frameCount, nw->nexradState.getRadarProduct(), nw->nexradState.getRadarSite(), &(nw->fileStorage));
         nw->nexradState.levelDataList.clear();
         // std::cout << "START: process" << std::endl;
         nw->nexradState.processAnimationFiles(frameCount, &(nw->fileStorage));

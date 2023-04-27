@@ -12,7 +12,7 @@ Entry::Entry(QWidget * parent)
 {}
 
 void Entry::connect(const function<void()>& fn) {
-    QObject::connect(get(), &QLineEdit::textChanged, parent, fn);
+    QObject::connect(entry, &QLineEdit::textChanged, parent, fn);
 }
 
 void Entry::setText(const string& s) {
@@ -23,6 +23,6 @@ string Entry::getText() {
     return entry->text().toStdString();
 }
 
-QLineEdit * Entry::get() {
+QLineEdit * Entry::getView() {
     return entry;
 }

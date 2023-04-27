@@ -18,6 +18,10 @@ void RadarGeometry::initialize() {
         CaLines,
         MxLines,
     }) {
-        dataByType[t] = RadarGeomInfo{t};
+        if (dataByType.contains(t)) {
+            dataByType[t].update();
+        } else {
+            dataByType[t] = RadarGeomInfo{t};
+        }
     }
 }

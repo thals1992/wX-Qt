@@ -14,7 +14,7 @@ RainfallOutlook::RainfallOutlook(QWidget * parent, int day)
     : Window{parent}
     , photo{ Photo{this, Scaled} }
     , text{ Text{this} }
-    , sw{ ObjectTwoWidgetScroll{this, photo.get(), text.get()} }
+    , sw{ TwoWidgetScroll{this, photo, text} }
 {
     setTitle("Excessive Rainfall Outlook Day " + To::string(day + 1));
     const auto& url = UtilityWpcRainfallOutlook::urls[day];

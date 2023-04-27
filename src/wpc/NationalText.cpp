@@ -41,10 +41,10 @@ NationalText::NationalText(QWidget * parent, const string& prod)
         product = WString::split(UtilityWpcText::labels[index], ":")[0];
         reload();
     });
-    hbox.addWidget(buttonBack.get());
-    hbox.addWidget(buttonForward.get());
-    box.addLayout(hbox.get());
-    box.addWidget(text.get());
+    hbox.addWidget(buttonBack);
+    hbox.addWidget(buttonForward);
+    box.addLayout(hbox);
+    box.addWidget(text);
     box.addStretch();
 
     auto itemsSoFar = 0;
@@ -54,7 +54,7 @@ NationalText::NationalText(QWidget * parent, const string& prod)
     }
     for (auto& objectMenuTitle : UtilityWpcText::titles) {
         popoverMenus.emplace_back(this, objectMenuTitle.title, objectMenuTitle.get(), [this] (const auto& s) { changeProductByCode(s); });
-        hbox.addWidget(popoverMenus.back().get());
+        hbox.addWidget(popoverMenus.back());
     }
     reload();
 }

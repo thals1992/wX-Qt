@@ -7,15 +7,15 @@
 #include "UtilityWpcImages.h"
 #include "../common/GlobalVariables.h"
 
-vector<ObjectMenuTitle> UtilityWpcImages::titles{
-    ObjectMenuTitle{"Surface Analysis", 7},
-    ObjectMenuTitle{"Forecast Maps", 22},
-    ObjectMenuTitle{"QPF", 27},
-    ObjectMenuTitle{"Snow / Ice", 17},
-    ObjectMenuTitle{"National Digital Forecast Database", 15},
-    ObjectMenuTitle{"CPC Outlooks", 24},
-    ObjectMenuTitle{"Aviation", 17},
-    ObjectMenuTitle{"Space Weather", 3}
+vector<MenuTitle> UtilityWpcImages::titles{
+    MenuTitle{"Surface Analysis", 7},
+    MenuTitle{"Forecast Maps", 22},
+    MenuTitle{"QPF", 27},
+    MenuTitle{"Snow / Ice", 17},
+    MenuTitle{"National Digital Forecast Database", 15},
+    MenuTitle{"CPC Outlooks", 24},
+    MenuTitle{"Aviation", 17},
+    MenuTitle{"Space Weather", 3}
 };
 
 const vector<string> UtilityWpcImages::labels{

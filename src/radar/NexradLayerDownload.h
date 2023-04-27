@@ -8,7 +8,7 @@
 #define NEXRADLAYERDOWNLOAD_H
 
 #include <vector>
-#include "objects/ObjectPolygonWarning.h"
+#include "objects/PolygonWarning.h"
 #include "radar/NexradWidget.h"
 
 using std::vector;

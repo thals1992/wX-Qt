@@ -14,10 +14,14 @@ void StatusBar::addWidget(QWidget * w) {
     statusBar->addWidget(w);
 }
 
+void StatusBar::addWidget(Widget2& w) {
+    statusBar->addWidget(w.getView());
+}
+
 void StatusBar::setVisible(bool b) {
     statusBar->setVisible(b);
 }
 
-QStatusBar * StatusBar::get() {
+QStatusBar * StatusBar::getView() {
     return statusBar;
 }

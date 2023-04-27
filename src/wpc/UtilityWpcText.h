@@ -9,14 +9,14 @@
 
 #include <string>
 #include <vector>
-#include "../ui/ObjectMenuTitle.h"
+#include "../ui/MenuTitle.h"
 
 using std::string;
 using std::vector;
 
 class UtilityWpcText {
 public:
-    static vector<ObjectMenuTitle> titles;
+    static vector<MenuTitle> titles;
     static const vector<string> labels;
 };
 

@@ -26,8 +26,8 @@
 #include "radar/PolygonType.h"
 #include "radar/ProjectionNumbers.h"
 #include "radar/UIColorLegend.h"
-#include "radar/WXMetalNexradLevelData.h"
-#include "radar/WXMetalTextObject.h"
+#include "radar/NexradLevelData.h"
+#include "radar/NexradRenderTextObject.h"
 #include "ui/ComboBox.h"
 #include "ui/StatusBar.h"
 #include "ui/Text.h"
@@ -113,7 +113,7 @@ private:
     function<void(double, int)> fnZoom;
     function<void(int)> fnPosition;
     unordered_map<int, QVector<QLineF>> swoLinesMap;
-    WXMetalNexradLevelData levelData;
+    NexradLevelData levelData;
     int totalBins{};
     unordered_map<PolygonType, QVector<QLineF>> polygons;
     unordered_map<PolygonType, QLabel *> warningCountLabel;
@@ -130,7 +130,7 @@ private:
     string lastMouseType;
     UIColorLegend colorLegend;
 public:
-    WXMetalTextObject textObject;
+    NexradRenderTextObject textObject;
     NexradDraw nexradDraw;
 private:
     bool hideRadar{false};

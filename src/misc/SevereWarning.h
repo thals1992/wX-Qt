@@ -21,6 +21,7 @@ public:
     void generateString();
     string getName() const;
     string getCount() const;
+    int getCountAsInt() const;
     string getShortName() const;
     void download();
     vector<ObjectWarning> warningList;

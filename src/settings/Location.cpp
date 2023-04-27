@@ -7,7 +7,7 @@
 #include "settings/Location.h"
 #include <algorithm>
 #include "objects/WString.h"
-#include "radar/UtilityMetar.h"
+#include "radar/Metar.h"
 #include "settings/UtilityLocation.h"
 #include "util/To.h"
 #include "util/Utility.h"
@@ -171,7 +171,7 @@ vector<LatLon> Location::getListLatLons() {
 }
 
 string Location::getObs() {
-    return UtilityMetar::findClosestObservation(getLatLonCurrent()).name;
+    return Metar::findClosestObservation(getLatLonCurrent()).name;
 }
 
 int Location::getCurrentLocation() {

@@ -8,24 +8,22 @@
 #include <QApplication>
 #include <QMenu>
 #include <QPainter>
-#include <iostream>
 #include <memory>
 #include "common/GlobalArrays.h"
 #include "objects/Color.h"
-#include "objects/ObjectPolygonWarning.h"
-#include "objects/ObjectPolygonWatch.h"
+#include "objects/PolygonWarning.h"
+#include "objects/PolygonWatch.h"
 #include "objects/WString.h"
 #include "radar/Nexrad.h"
-#include "radar/RadarGeometryTypeEnum.h"
-#include "radar/UtilityRadarUI.h"
-#include "radar/UtilitySwoDayOne.h"
-#include "radar/UtilityWatch.h"
-#include "radar/UtilityWpcFronts.h"
-#include "radar/WXGLDownload.h"
-#include "radar/WXGLNexrad.h"
-#include "radar/WXGLNexradLevel3WindBarbs.h"
-#include "radar/WXGLPolygonWarnings.h"
-#include "settings/Location.h"
+#include "radar/NexradLongPressMenu.h"
+#include "radar/NexradRenderUI.h"
+#include "radar/SwoDayOne.h"
+#include "radar/Watch.h"
+#include "radar/WpcFronts.h"
+#include "radar/NexradDownload.h"
+#include "radar/NexradUtil.h"
+#include "radar/NexradLevel3WindBarbs.h"
+#include "radar/Warnings.h"
 #include "settings/RadarPreferences.h"
 #include "settings/UIPreferences.h"
 #include "util/To.h"
@@ -56,15 +54,15 @@ NexradWidget::NexradWidget(
     , fnSector{ fnSector }
     , fnZoom{ fnZoom }
     , fnPosition{ fnPosition }
-    , levelData{ WXMetalNexradLevelData{&nexradState, &fileStorage} }
+    , levelData{ NexradLevelData{&nexradState, &fileStorage} }
     , colorLegend{ UIColorLegend{nexradState.getRadarProduct()} }
-    , textObject{ WXMetalTextObject{1, nexradState, &fileStorage} }
+    , textObject{ NexradRenderTextObject{1, nexradState, &fileStorage} }
     , nexradDraw{ NexradDraw{ &nexradState, &fileStorage, &textObject } }
 {
     setAttribute(Qt::WA_DeleteOnClose);
     nexradState.radarStatusBox->connect([this] { toggleRadar(); });
     statusBarLabel.setWordWrap(false);
-    this->statusBar->addWidget(statusBarLabel.get());
+    this->statusBar->addWidget(statusBarLabel);
     colorLegend.update(nexradState.getRadarProduct());
     grabGesture(Qt::TapAndHoldGesture);
     grabGesture(Qt::PinchGesture);
@@ -159,15 +157,15 @@ void NexradWidget::paintEvent(QPaintEvent * event) {
 }
 
 void NexradWidget::drawSwo(QPainter& ctx) {
-    for (auto i : range(UtilitySwoDayOne::threatList.size())) {
-        if (UtilitySwoDayOne::hashSwo.find(i) != UtilitySwoDayOne::hashSwo.end() && swoLinesMap.find(i) != swoLinesMap.end()) {
-            nexradDraw.drawGenericLine(ctx, RadarPreferences::swoLinesize, UtilitySwoDayOne::swoPaints[i], swoLinesMap[i]);
+    for (auto i : range(SwoDayOne::threatList.size())) {
+        if (SwoDayOne::hashSwo.find(i) != SwoDayOne::hashSwo.end() && swoLinesMap.find(i) != swoLinesMap.end()) {
+            nexradDraw.drawGenericLine(ctx, RadarPreferences::swoLinesize, SwoDayOne::swoPaints[i], swoLinesMap[i]);
         }
     }
 }
 
 void NexradWidget::drawWpcFronts(QPainter& ctx) {
-    for (const auto& front : UtilityWpcFronts::fronts) {
+    for (const auto& front : WpcFronts::fronts) {
         if (front.coordinatesModified[nexradState.paneNumber].size() > 1 && front.coordinatesModified[nexradState.paneNumber].size() < 500) {
             nexradDraw.drawGenericLine(ctx, RadarPreferences::watmcdLinesize, front.penColor, front.coordinatesModified[nexradState.paneNumber]);
         }
@@ -177,24 +175,24 @@ void NexradWidget::drawWpcFronts(QPainter& ctx) {
 }
 
 void NexradWidget::drawWarnings(QPainter& ctx) {
-    for (const auto type1 : ObjectPolygonWarning::polygonList) {
-        if (polygons.find(type1) != polygons.end() && ObjectPolygonWarning::polygonDataByType[type1]->isEnabled) {
+    for (const auto type1 : PolygonWarning::polygonList) {
+        if (polygons.find(type1) != polygons.end() && PolygonWarning::byType[type1]->isEnabled) {
             nexradDraw.drawGenericLine(
                 ctx,
                 RadarPreferences::warnLinesize,
-                ObjectPolygonWarning::polygonDataByType[type1]->colorInt,
+                PolygonWarning::byType[type1]->colorInt,
                 polygons[type1]);
         }
     }
 }
 
 void NexradWidget::drawWatch(QPainter& ctx) {
-    for (const auto type1 : ObjectPolygonWatch::polygonList) {
-        if (polygons.find(type1) != polygons.end() && ObjectPolygonWatch::polygonDataByType[type1]->isEnabled) {
+    for (const auto type1 : PolygonWatch::polygonList) {
+        if (polygons.find(type1) != polygons.end() && PolygonWatch::byType[type1]->isEnabled) {
             nexradDraw.drawGenericLine(
                 ctx,
                 RadarPreferences::watmcdLinesize,
-                ObjectPolygonWatch::polygonDataByType[type1]->colorInt,
+                PolygonWatch::byType[type1]->colorInt,
                 polygons[type1]);
         }
     }
@@ -233,8 +231,8 @@ bool NexradWidget::gestureEvent(QGestureEvent * event) {
                 const auto posF = t->position();
                 const auto posGlobal = QPoint{static_cast<int>(posF.x()), static_cast<int>(posF.y())};
                 const auto positionRelative = mapFromGlobal(posGlobal);
-                const auto latLon = UtilityRadarUI::getLatLonFromScreenPosition(nexradState, positionRelative.x(), positionRelative.y());
-                UtilityRadarUI::setupContextMenu(this, posGlobal, nexradState, latLon, fnSector, fnProduct);
+                const auto latLon = NexradRenderUI::getLatLonFromScreenPosition(nexradState, positionRelative.x(), positionRelative.y());
+                NexradLongPressMenu::setupContextMenu(this, posGlobal, nexradState, latLon, fnSector, fnProduct);
             }
         } else if (t && t->state() == Qt::GestureFinished) {
             // qDebug() << "tap and hold end " << event;
@@ -327,8 +325,8 @@ void NexradWidget::mouseReleaseEvent([[maybe_unused]] QMouseEvent * event) {
 }
 
 void NexradWidget::contextMenuEvent(QContextMenuEvent * event) {
-    const auto latLon = UtilityRadarUI::getLatLonFromScreenPosition(nexradState, event->pos().x(), event->pos().y());
-    UtilityRadarUI::setupContextMenu(this, event->globalPos(), nexradState, latLon, fnSector, fnProduct);
+    const auto latLon = NexradRenderUI::getLatLonFromScreenPosition(nexradState, event->pos().x(), event->pos().y());
+    NexradLongPressMenu::setupContextMenu(this, event->globalPos(), nexradState, latLon, fnSector, fnProduct);
 }
 
 void NexradWidget::zoomIn() {
@@ -354,7 +352,7 @@ void NexradWidget::downloadDataForAnimation(int index) {
 //     statusBarLabel.setText(nexradState.levelDataList[index].radarInfo);
 //     const auto radarAgeString = "age: " + To::string(static_cast<int>(nexradState.levelDataList[index].radarAgeMilli / 60000.0)) + " min";
 //     const auto status = " / " + WString::split(nexradState.levelDataList[index].radarInfo, " ")[0];
-//     if (WXGLNexrad::isRadarTimeOld(nexradState.levelDataList[index].radarAgeMilli)) {
+//     if (NexradUtil::isRadarTimeOld(nexradState.levelDataList[index].radarAgeMilli)) {
 //         nexradState.radarStatusBox->setOld(radarAgeString + status);
 //     } else {
 //         nexradState.radarStatusBox->setCurrent(radarAgeString + status);
@@ -370,11 +368,11 @@ void NexradWidget::constructWBLines() {
         windBarbCircleColors.clear();
         wbLines.clear();
         wbGustLines.clear();
-        const auto wBFloats = WXGLNexradLevel3WindBarbs::decodeAndPlot(nexradState.getPn(), false, fileStorage);
+        const auto wBFloats = NexradLevel3WindBarbs::decodeAndPlot(nexradState.getPn(), false, fileStorage);
         for (auto x : range3(0, wBFloats.size(), 4)) {
             wbLines.push_back(QLineF{wBFloats[x], wBFloats[x + 1], wBFloats[x + 2], wBFloats[x + 3]});
         }
-        const auto wBGustFloats = WXGLNexradLevel3WindBarbs::decodeAndPlot(nexradState.getPn(), true, fileStorage);
+        const auto wBGustFloats = NexradLevel3WindBarbs::decodeAndPlot(nexradState.getPn(), true, fileStorage);
         for (auto x : range3(0, wBGustFloats.size(), 4)) {
             wbGustLines.push_back(QLineF{wBGustFloats[x], wBGustFloats[x + 1], wBGustFloats[x + 2], wBGustFloats[x + 3]});
         }
@@ -435,7 +433,7 @@ void NexradWidget::constructTvs() {
 }
 
 void NexradWidget::constructWpcFronts() {
-    for (auto& front : UtilityWpcFronts::fronts) {
+    for (auto& front : WpcFronts::fronts) {
         front.translate(nexradState.paneNumber, nexradState.getPn());
     }
     textObject.addWpcPressureCenters();
@@ -443,7 +441,7 @@ void NexradWidget::constructWpcFronts() {
 }
 
 void NexradWidget::process(PolygonType polygonType) {
-    const auto numbers = UtilityWatch::add(nexradState.getPn(), polygonType);
+    const auto numbers = Watch::add(nexradState.getPn(), polygonType);
     polygons[polygonType] = QVector<QLineF>();
     for (auto position : range3(0, numbers.size(), 4)) {
         polygons[polygonType].push_back(QLineF(numbers[position], numbers[position + 1], numbers[position + 2], numbers[position + 3]));
@@ -452,18 +450,18 @@ void NexradWidget::process(PolygonType polygonType) {
 }
 
 void NexradWidget::processWarnings(PolygonType polygonGenericType) {
-    if (ObjectPolygonWarning::areAnyEnabled()) {
+    if (PolygonWarning::areAnyEnabled()) {
         processVtec(polygonGenericType);
     }
     update();
 }
 
 void NexradWidget::constructSwo() {
-    for (auto riskLevelIndex : range(UtilitySwoDayOne::threatList.size())) {
-        if (UtilitySwoDayOne::hashSwo.find(riskLevelIndex) != UtilitySwoDayOne::hashSwo.end()) {
+    for (auto riskLevelIndex : range(SwoDayOne::threatList.size())) {
+        if (SwoDayOne::hashSwo.find(riskLevelIndex) != SwoDayOne::hashSwo.end()) {
             swoLinesMap[riskLevelIndex] = QVector<QLineF>();
-            for (auto x : range3(0, UtilitySwoDayOne::hashSwo[riskLevelIndex].size(), 4)) {
-                const auto floatList = UtilitySwoDayOne::hashSwo[riskLevelIndex];
+            for (auto x : range3(0, SwoDayOne::hashSwo[riskLevelIndex].size(), 4)) {
+                const auto floatList = SwoDayOne::hashSwo[riskLevelIndex];
                 const auto coords1 = UtilityCanvasProjection::computeMercatorNumbers(floatList[x], floatList[x + 1], nexradState.getPn());
                 const auto coords2 = UtilityCanvasProjection::computeMercatorNumbers(floatList[x + 2], floatList[x + 3], nexradState.getPn());
                 swoLinesMap[riskLevelIndex].push_back(QLineF{coords1[0], coords1[1], coords2[0], coords2[1]});
@@ -479,12 +477,12 @@ void NexradWidget::constructSwo() {
 
 void NexradWidget::processVtec(PolygonType polygonGenericType) {
     // string warningTitle;
-    const auto warningObject = ObjectPolygonWarning::polygonDataByType[polygonGenericType].get();
+    const auto warningObject = PolygonWarning::byType[polygonGenericType].get();
     if (warningObject->isEnabled) {
         // if (warningObject->getCount() > 0) {
         //     warningTitle += warningObject->typeNameUpper() + ": " + To::string(warningObject->getCount()) + " ";
         // }
-        const auto numbers = WXGLPolygonWarnings::addGeneric(nexradState.getPn(), warningObject);
+        const auto numbers = Warnings::addGeneric(nexradState.getPn(), warningObject);
         polygons[polygonGenericType] = QVector<QLineF>();
         for (auto position : range3(0, numbers.size(), 4)) {
             polygons[polygonGenericType].push_back(QLineF{numbers[position], numbers[position + 1], numbers[position + 2], numbers[position + 3]});
@@ -504,9 +502,9 @@ void NexradWidget::processVtec(PolygonType polygonGenericType) {
 }
 
 void NexradWidget::downloadData() {
-    if (contains(GlobalArrays::tdwrRadarCodes(), nexradState.getRadarSite()) && !WXGLNexrad::isProductTdwr(nexradState.getRadarProduct())) {
+    if (contains(GlobalArrays::tdwrRadarCodes(), nexradState.getRadarSite()) && !NexradUtil::isProductTdwr(nexradState.getRadarProduct())) {
         nexradState.radarProduct = "TZL";
-    } else if (contains(GlobalArrays::nexradRadarCodes(), nexradState.getRadarSite()) && WXGLNexrad::isProductTdwr(nexradState.getRadarProduct())) {
+    } else if (contains(GlobalArrays::nexradRadarCodes(), nexradState.getRadarSite()) && NexradUtil::isProductTdwr(nexradState.getRadarProduct())) {
         nexradState.radarProduct = "N0Q";
     }
     auto tmpRadarProduct = nexradState.radarProduct;
@@ -515,7 +513,7 @@ void NexradWidget::downloadData() {
     }
     nexradState.radarProduct = tmpRadarProduct;
     const auto isTdwr = contains(GlobalArrays::tdwrRadarCodes(), nexradState.getRadarSite());
-    const auto url = WXGLDownload::getRadarFileUrl(nexradState.getRadarSite(), nexradState.getRadarProduct(), isTdwr);
+    const auto url = NexradDownload::getRadarFileUrl(nexradState.getRadarSite(), nexradState.getRadarProduct(), isTdwr);
     new FutureBytes{this, url, [this] (const auto& ba) {
         fileStorage.setMemoryBuffer(ba);
         processDataAfterDownload();
@@ -537,7 +535,7 @@ void NexradWidget::updateStatusBar() {
     statusBarLabel.setText(fileStorage.radarInfo);
     const auto radarAgeString = "age: " + To::string(static_cast<int>(levelData.radarAgeMilli / 60000.0)) + " min";
     const auto status = " / " + WString::split(levelData.radarInfo, " ")[0];
-    if (WXGLNexrad::isRadarTimeOld(levelData.radarAgeMilli)) {
+    if (NexradUtil::isRadarTimeOld(levelData.radarAgeMilli)) {
         nexradState.radarStatusBox->setOld(radarAgeString + status);
     } else {
         nexradState.radarStatusBox->setCurrent(radarAgeString + status);

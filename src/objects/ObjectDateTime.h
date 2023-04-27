@@ -22,10 +22,13 @@ public:
     void addSecs(int);
     bool isBefore(const ObjectDateTime&) const;
     string toString(const string&);
+    string format(const string&);
+    void utcToLocal();
     QDateTime get() const;
     static ObjectDateTime fromObs(const string&);
     static ObjectDateTime decodeVtecTime(const string&);
     static ObjectDateTime fromString(const string&, const string&);
+    static ObjectDateTime parse(const string&, const string&);
     static QDateTime getCurrentTimeInUTC();
     static int offsetFromUtcInSeconds();
     static string getCurrentLocalTimeAsString();
@@ -44,6 +47,8 @@ public:
     static bool isDaytime(const RID&);
     static string getTimeFromPointAsString(uint64_t);
     static vector<string> generateModelRuns(const string&, int);
+    static string translateTimeForHourly(const string&);
+    static string getDayOfWeekForHourly(const string&);
 
 private:
     static string getDateAsString(const string&);

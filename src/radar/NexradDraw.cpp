@@ -15,7 +15,7 @@
 #include "util/UtilityCanvasProjection.h"
 #include "util/UtilityList.h"
 
-NexradDraw::NexradDraw(NexradState * nexradState, FileStorage * fileStorage, WXMetalTextObject * textObject)
+NexradDraw::NexradDraw(NexradState * nexradState, FileStorage * fileStorage, NexradRenderTextObject * textObject)
     : nexradState{ nexradState }
     , fileStorage{ fileStorage }
     , textObject{ textObject }
@@ -49,34 +49,36 @@ void NexradDraw::initGeom() {
 }
 
 void NexradDraw::convertGeomData(RadarGeometryTypeEnum type) {
-    if (!RadarGeometry::dataByType.at(type).isEnabled) {
+    if (RadarGeometry::dataByType.at(type).isEnabled) {
+        if (fileStorage->relativeBuffers[type].empty()) {
+            fileStorage->relativeBuffers[type] = QVector<QLineF>(RadarGeometry::dataByType.at(type).lineData.size() / 4);
+        }
+        const auto pnX = nexradState->getPn().x();
+        const auto pnY = nexradState->getPn().y();
+        const auto oneDegreeScaleFactor = nexradState->getPn().oneDegreeScaleFactor;
+        const auto xCenter = nexradState->getPn().xCenter;
+        const auto yCenter = nexradState->getPn().xCenter;
+        auto indexBuffer = 0;
+        for (auto indexRelative: range3(0, RadarGeometry::dataByType.at(type).lineData.size(), 4)) {
+            auto lat = RadarGeometry::dataByType.at(type).lineData[indexRelative];
+            auto lon = RadarGeometry::dataByType.at(type).lineData[indexRelative + 1];
+            auto test1 =
+                    180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + lat * (std::numbers::pi / 180.0) / 2.0));
+            auto test2 =
+                    180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + pnX * (std::numbers::pi / 180.0) / 2.0));
+            const auto y1 = -1.0 * ((test1 - test2) * oneDegreeScaleFactor) + yCenter;
+            const auto x1 = -1.0 * ((lon - pnY) * oneDegreeScaleFactor) + xCenter;
+            lat = RadarGeometry::dataByType.at(type).lineData[indexRelative + 2];
+            lon = RadarGeometry::dataByType.at(type).lineData[indexRelative + 3];
+            test1 = 180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + lat * (std::numbers::pi / 180.0) / 2.0));
+            // test2 = 180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + pnX * (std::numbers::pi / 180.0) / 2.0));
+            const auto y2 = -1.0 * ((test1 - test2) * oneDegreeScaleFactor) + yCenter;
+            const auto x2 = -1.0 * ((lon - pnY) * oneDegreeScaleFactor) + xCenter;
+            fileStorage->relativeBuffers[type][indexBuffer] = QLineF(x1, y1, x2, y2);
+            indexBuffer += 1;
+        }
+    } else {
         fileStorage->relativeBuffers[type].clear();
-        return;
-    }
-    if (fileStorage->relativeBuffers[type].empty()) {
-        fileStorage->relativeBuffers[type] = QVector<QLineF>(RadarGeometry::dataByType.at(type).lineData.size() / 4);
-    }
-    const auto pnX = nexradState->getPn().x();
-    const auto pnY = nexradState->getPn().y();
-    const auto oneDegreeScaleFactor = nexradState->getPn().oneDegreeScaleFactor;
-    const auto xCenter = nexradState->getPn().xCenter;
-    const auto yCenter = nexradState->getPn().xCenter;
-    auto indexBuffer = 0;
-    for (auto indexRelative : range3(0, RadarGeometry::dataByType.at(type).lineData.size(), 4)) {
-        auto lat = RadarGeometry::dataByType.at(type).lineData[indexRelative];
-        auto lon = RadarGeometry::dataByType.at(type).lineData[indexRelative + 1];
-        auto test1 = 180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + lat * (std::numbers::pi / 180.0) / 2.0));
-        auto test2 = 180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + pnX * (std::numbers::pi / 180.0) / 2.0));
-        const auto y1 = -1.0 * ((test1 - test2) * oneDegreeScaleFactor) + yCenter;
-        const auto x1 = -1.0 * ((lon - pnY) * oneDegreeScaleFactor) + xCenter;
-        lat = RadarGeometry::dataByType.at(type).lineData[indexRelative + 2];
-        lon = RadarGeometry::dataByType.at(type).lineData[indexRelative + 3];
-        test1 = 180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + lat * (std::numbers::pi / 180.0) / 2.0));
-        test2 = 180.0 / std::numbers::pi * log(tan(std::numbers::pi / 4.0 + pnX * (std::numbers::pi / 180.0) / 2.0));
-        const auto y2 = -1.0 * ((test1 - test2) * oneDegreeScaleFactor) + yCenter;
-        const auto x2 = -1.0 * ((lon - pnY) * oneDegreeScaleFactor) + xCenter;
-        fileStorage->relativeBuffers[type][indexBuffer] = QLineF(x1, y1, x2, y2);
-        indexBuffer += 1;
     }
 }
 
@@ -116,12 +118,12 @@ void NexradDraw::drawGenericLine(QPainter& painter, double lineWidth, const QCol
 }
 
 void NexradDraw::drawGeomLine(QPainter& painter, RadarGeometryTypeEnum type) {
-    if (!RadarGeometry::dataByType.at(type).isEnabled) {
-        return;
-    }
-    if (!fileStorage->relativeBuffers[type].empty()) {
-        painter.setPen(QPen{RadarGeometry::dataByType.at(type).qcolor, RadarGeometry::dataByType.at(type).lineSize / nexradState->zoom, Qt::SolidLine});
-        painter.drawLines(fileStorage->relativeBuffers[type]);
+    if (RadarGeometry::dataByType.at(type).isEnabled) {
+        if (!fileStorage->relativeBuffers[type].empty()) {
+            painter.setPen(QPen{RadarGeometry::dataByType.at(type).qcolor,
+                                RadarGeometry::dataByType.at(type).lineSize / nexradState->zoom, Qt::SolidLine});
+            painter.drawLines(fileStorage->relativeBuffers[type]);
+        }
     }
 }
 

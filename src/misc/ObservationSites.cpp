@@ -23,8 +23,8 @@ ObservationSites::ObservationSites(QWidget * parent)
     button1.connect([url] { launchAlert(url); });
     button2.connect([url2] { launchAlert(url2); });
 
-    box.addWidget(button1.get());
-    box.addWidget(button2.get());
+    box.addWidget(button1);
+    box.addWidget(button2);
     box.addStretch();
 
     box.getAndShow(this);

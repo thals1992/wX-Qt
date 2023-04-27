@@ -16,7 +16,7 @@ Image::Image(QWidget * parent)
     , image{ new ClickableLabel{parent} }
 {}
 
-ClickableLabel * Image::get() {
+ClickableLabel * Image::getView() {
     return image;
 }
 

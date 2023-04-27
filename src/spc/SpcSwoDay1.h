@@ -9,7 +9,7 @@
 
 #include <string>
 #include <vector>
-#include "ui/ObjectTwoWidgetScroll.h"
+#include "ui/TwoWidgetScroll.h"
 #include "ui/Photo.h"
 #include "ui/Text.h"
 #include "ui/Window.h"
@@ -24,8 +24,7 @@ public:
 private:
     VBox imageVBox;
     Text text;
-    ObjectTwoWidgetScroll sw;
-    string product;
+    TwoWidgetScroll sw;
     vector<string> urls;
     vector<Image> images;
 };

@@ -22,6 +22,8 @@ class RadarGeomInfo {
 public:
     RadarGeomInfo();  // needed for non-const unordered_map TODO FIXME
     explicit RadarGeomInfo(RadarGeometryTypeEnum);
+    void update();
+    RadarGeometryTypeEnum type;
     vector<float> lineData;
     vector<unsigned char> colorData;
     int colorInt{};

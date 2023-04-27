@@ -19,6 +19,6 @@ PopoverMenu::PopoverMenu(QWidget * parent, const string& buttonLabel, const vect
     button->setMenu(menu);
 }
 
-QPushButton * PopoverMenu::get() {
+QPushButton * PopoverMenu::getView() {
     return button;
 }

@@ -12,8 +12,8 @@
 #include <vector>
 #include "objects/Color.h"
 #include "objects/WString.h"
-#include "radar/WXGLNexrad.h"
-#include "radarcolorpalette/ObjectColorPalette.h"
+#include "radar/NexradUtil.h"
+#include "radarcolorpalette/ColorPalette.h"
 #include "util/To.h"
 #include "util/UtilityList.h"
 #include "ui/TextViewMetal.h"
@@ -48,9 +48,9 @@ int UIColorLegend::setColor(int red, int green, int blue) {
 
 void UIColorLegend::setColorWithBuffers(int prodId, int index) {
     color = setColor(
-        ObjectColorPalette::colorMap[prodId]->redValues->getByIndex(index),
-        ObjectColorPalette::colorMap[prodId]->greenValues->getByIndex(index),
-        ObjectColorPalette::colorMap[prodId]->blueValues->getByIndex(index));
+        ColorPalette::colorMap[prodId]->redValues->getByIndex(index),
+        ColorPalette::colorMap[prodId]->greenValues->getByIndex(index),
+        ColorPalette::colorMap[prodId]->blueValues->getByIndex(index));
 }
 
 void UIColorLegend::paintEvent(QPainter & painter, double zoom, double xPos, double yPos) {
@@ -267,17 +267,17 @@ void UIColorLegend::paintEvent(QPainter & painter, double zoom, double xPos, dou
                 index * scaledHeight + scaledHeight + startHeight);
         }
         units = " IN";
-        double j = WXGLNexrad::wxoglDspLegendMax;
+        double j = NexradUtil::wxoglDspLegendMax;
         while (j > 0) {
             double xVar = widthStarting + width + textFromLegend;
-            double yVar1 = (255.0 / WXGLNexrad::wxoglDspLegendMax) * scaledHeightVel * (WXGLNexrad::wxoglDspLegendMax - j);
+            double yVar1 = (255.0 / NexradUtil::wxoglDspLegendMax) * scaledHeightVel * (NexradUtil::wxoglDspLegendMax - j);
             double yVar = yVar1 + heightFudge + startHeight;
             drawText(&painter, To::string(j) + units, xVar, yVar);
             if (!unitsDrawn) {
                 unitsDrawn = true;
                 units = "";
             }
-            j -= WXGLNexrad::wxoglDspLegendMax / 16.0;
+            j -= NexradUtil::wxoglDspLegendMax / 16.0;
         }
     } else if (product == "DAA") {
         for (auto index : range(256)) {
@@ -290,17 +290,17 @@ void UIColorLegend::paintEvent(QPainter & painter, double zoom, double xPos, dou
                 index * scaledHeight + scaledHeight + startHeight);
         }
         units = " IN";
-        double j = WXGLNexrad::wxoglDspLegendMax;
+        double j = NexradUtil::wxoglDspLegendMax;
         while (j > 0) {
             double xVar = widthStarting + width + textFromLegend;
-            double yVar1 = (255.0 / WXGLNexrad::wxoglDspLegendMax) * scaledHeightVel * (WXGLNexrad::wxoglDspLegendMax - j);
+            double yVar1 = (255.0 / NexradUtil::wxoglDspLegendMax) * scaledHeightVel * (NexradUtil::wxoglDspLegendMax - j);
             double yVar = yVar1 + heightFudge + startHeight;
             drawText(&painter, To::string(j) + units, xVar, yVar);
             if (!unitsDrawn) {
                 unitsDrawn = true;
                 units = "";
             }
-            j -= WXGLNexrad::wxoglDspLegendMax / 16.0;
+            j -= NexradUtil::wxoglDspLegendMax / 16.0;
         }
     }
     painter.end();

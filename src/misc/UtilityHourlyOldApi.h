@@ -18,6 +18,7 @@ public:
     static string getHourlyString(int);
 
 private:
+    static const vector<string> regexpList;
     static string parseHourly(const string&);
 };
 

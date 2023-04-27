@@ -24,7 +24,3 @@ void FileStorage::setMemoryBuffer(const QByteArray& byteArray) {
 void FileStorage::setMemoryBufferForAnimation(int index, const QByteArray& byteArray) {
     animationMemoryBuffer[index] = MemoryBuffer{byteArray};
 }
-
-void FileStorage::setMemoryBufferForL3TextProducts(const string& product, const QByteArray& byteArray) {
-    level3TextProductMap[product] = string(byteArray.constData(), byteArray.length());
-}

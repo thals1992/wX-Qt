@@ -19,7 +19,7 @@ Hourly::Hourly(QWidget * parent)
     setSize(500, 900);
     setTitle("Hourly forecast for " + Location::locationName());
     text.setFixedWidth();
-    box.addWidget(text.get());
+    box.addWidget(text);
     box.addMargins();
     new FutureText{this, "HOURLY", [this] (const auto& s) { text.setText(s); }};
 }

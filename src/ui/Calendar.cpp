@@ -29,6 +29,6 @@ int Calendar::getYear() {
     return date.year();
 }
 
-QCalendarWidget * Calendar::get() {
+QCalendarWidget * Calendar::getView() {
     return cal;
 }

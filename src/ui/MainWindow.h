@@ -13,20 +13,20 @@
 #include "misc/SevereNotice.h"
 #include "radar/NexradWidget.h"
 #include "settings/UIPreferences.h"
-#include "ui/ObjectCardHazards.h"
-#include "ui/ObjectCardCurrentConditions.h"
-#include "ui/ObjectCardSevenDay.h"
+#include "ui/CardHazards.h"
+#include "ui/CardCurrentConditions.h"
+#include "ui/SevenDayCollection.h"
 #include "ui/ComboBox.h"
 #include "ui/HBox.h"
 #include "ui/Image.h"
-#include "ui/ObjectToolbar.h"
+#include "ui/Toolbar.h"
 #include "ui/ScrolledWindow.h"
 #include "ui/Text.h"
 #include "ui/VBox.h"
 #include "ui/Window.h"
-#include "util/ObjectCurrentConditions.h"
-#include "util/ObjectHazards.h"
-#include "util/ObjectSevenDay.h"
+#include "util/CurrentConditions.h"
+#include "util/Hazards.h"
+#include "util/SevenDay.h"
 
 using std::string;
 using std::unordered_map;
@@ -62,15 +62,15 @@ private:
     VBox boxHazards;
     ScrolledWindow sw;
     ComboBox comboBox;
-    ObjectToolbar objectToolbar;
-    ObjectCurrentConditions objectCurrentConditions;
-    ObjectHazards objectHazards;
-    ObjectSevenDay objectSevenDay;
+    Toolbar objectToolbar;
+    CurrentConditions currentConditions;
+    Hazards hazards;
+    SevenDay sevenDay;
     bool initializedCc{false};
     bool initialized7Day{false};
-    ObjectCardCurrentConditions objectCardCurrentConditions;
-    ObjectCardHazards objectCardHazards;
-    ObjectCardSevenDay objectCardSevenDay;
+    CardCurrentConditions cardCurrentConditions;
+    CardHazards cardHazards;
+    SevenDayCollection sevenDayCollection;
     int imageIndex{};
     Shortcut shortcutClose;
     Shortcut shortcutVis;
@@ -93,6 +93,7 @@ private:
     Shortcut shortcutReload;
     Shortcut shortcutKeyboard;
     Shortcut shortcutWpcText;
+    Shortcut shortcutRtma;
 
     unordered_map<string, Image> imageWidgets;
     unordered_map<string, Text> textWidgets;

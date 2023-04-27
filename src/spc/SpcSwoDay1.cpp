@@ -14,7 +14,7 @@
 SpcSwoDay1::SpcSwoDay1(QWidget * parent, const string& day)
     : Window{parent}
     , text{ Text{this} }
-    , sw{ ObjectTwoWidgetScroll{this, imageVBox.get(), text.get()} }
+    , sw{ TwoWidgetScroll{this, imageVBox, text} }
 {
     setTitle("SPC Convective Outlook Day " + day);
     if (To::Int(day) > 3) {
@@ -24,7 +24,7 @@ SpcSwoDay1::SpcSwoDay1(QWidget * parent, const string& day)
     }
     for ([[maybe_unused]] const auto& unused : urls) {
         images.emplace_back(this);
-        imageVBox.addWidget(images.back().get());
+        imageVBox.addWidget(images.back());
     }
     auto product = "SWODY" + day;
     if (day == "4" || day == "5" || day == "6" || day == "7" || day == "8" || day == "48") {

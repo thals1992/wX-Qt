@@ -8,13 +8,15 @@
 #define STATUSBAR_H
 
 #include <QStatusBar>
+#include "ui/Widget2.h"
 
-class StatusBar {
+class StatusBar : Widget2 {
 public:
     explicit StatusBar(QWidget *);
     void addWidget(QWidget *);
+    void addWidget(Widget2&);
     void setVisible(bool);
-    QStatusBar * get();
+    QStatusBar * getView();
 
 private:
     QStatusBar * statusBar;

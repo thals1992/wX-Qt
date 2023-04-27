@@ -11,6 +11,6 @@ ImageViewer::ImageViewer(QWidget * parent, const QByteArray& imageData)
     , photo { Photo{this, Full} }
 {
     photo.setBytes(imageData);
-    box.addWidgetAndCenter(photo.get());
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
 }

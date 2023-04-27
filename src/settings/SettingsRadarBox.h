@@ -13,8 +13,8 @@
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
 #include "ui/HBox.h"
-#include "ui/ObjectNumberPicker.h"
-#include "ui/ObjectSwitch.h"
+#include "ui/NumberPicker.h"
+#include "ui/Switch.h"
 #include "ui/Text.h"
 #include "ui/VBox.h"
 #include "ui/Widget.h"
@@ -44,8 +44,8 @@ private:
     Button button;
     Text text1;
     Text text2;
-    vector<std::unique_ptr<ObjectSwitch>> alertConfigs;
-    vector<std::unique_ptr<ObjectNumberPicker>> numberPickers;
+    vector<std::unique_ptr<Switch>> alertConfigs;
+    vector<std::unique_ptr<NumberPicker>> numberPickers;
     ComboBox comboBoxRefPal;
     ComboBox comboBoxVelPal;
 };

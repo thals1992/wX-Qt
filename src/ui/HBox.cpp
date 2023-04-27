@@ -21,8 +21,16 @@ void HBox::addWidget(QWidget * w, int stretch, Qt::Alignment alignment) {
     box->addWidget(w, stretch, alignment);
 }
 
+void HBox::addWidget(Widget2& w, int stretch, Qt::Alignment alignment) {
+    box->addWidget(w.getView(), stretch, alignment);
+}
+
 void HBox::addLayout(QLayout * w, int stretch) {
     box->addLayout(w, stretch);
+}
+
+void HBox::addLayout(Box& w, int stretch) {
+    box->addLayout(w.getView(), stretch);
 }
 
 void HBox::addStretch() {
@@ -30,7 +38,7 @@ void HBox::addStretch() {
 }
 
 void HBox::getAndShow(Window * win) {
-    win->centralWidget->setLayout(get());
+    win->centralWidget->setLayout(getView());
     win->show();
 }
 
@@ -38,17 +46,17 @@ void HBox::setSpacing(int i) {
     box->setSpacing(i);
 }
 
-QHBoxLayout * HBox::get() {
+QHBoxLayout * HBox::getView() {
     return box;
 }
 
 void HBox::addImageRow(QWidget * parent, const vector<string>& urls, vector<Image>& images) {
     for ([[maybe_unused]] auto index : range(urls.size())) {
         images.emplace_back(parent);
-        box->addWidget(images.back().get());
+        box->addWidget(images.back().getView());
     }
 }
 
 void HBox::removeChildren() {
-    UtilityUI::removeChildren(get());
+    UtilityUI::removeChildren(getView());
 }

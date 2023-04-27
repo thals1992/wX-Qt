@@ -10,7 +10,7 @@
 #include <vector>
 #include "ui/Button.h"
 #include "ui/ComboBox.h"
-#include "ui/ObjectCardLocationItem.h"
+#include "ui/CardLocationItem.h"
 #include "ui/Widget.h"
 
 using std::vector;
@@ -26,7 +26,7 @@ private:
     void moveDownClicked(int);
     void moveUpClicked(int);
     vector<Button> buttons;
-    vector<ObjectCardLocationItem> locationCards;
+    vector<CardLocationItem> locationCards;
     vector<HBox> hboxList;
     VBox box;
 };

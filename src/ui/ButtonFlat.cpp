@@ -26,12 +26,12 @@ ButtonFlat::ButtonFlat(const string& imageName, const string& label, QWidget * p
     }
 }
 
-QPushButton * ButtonFlat::get() {
+QPushButton * ButtonFlat::getView() {
     return button;
 }
 
 void ButtonFlat::connect(const function<void()>& fn) {
-    QObject::connect(get(), &QPushButton::released, parent, fn);
+    QObject::connect(button, &QPushButton::released, parent, fn);
 }
 
 void ButtonFlat::setText(const string& s) {

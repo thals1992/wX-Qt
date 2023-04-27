@@ -6,14 +6,14 @@
 
 #include "radar/NexradLayerDownload.h"
 #include "objects/FutureVoid.h"
-#include "objects/ObjectPolygonWatch.h"
+#include "objects/PolygonWatch.h"
 #include "radar/PolygonType.h"
-#include "radar/UtilityMetar.h"
-#include "radar/UtilitySwoDayOne.h"
-#include "radar/UtilityWpcFronts.h"
-#include "radar/WXGLNexradLevel3HailIndex.h"
-#include "radar/WXGLNexradLevel3StormInfo.h"
-#include "radar/WXGLNexradLevel3Tvs.h"
+#include "radar/Metar.h"
+#include "radar/SwoDayOne.h"
+#include "radar/WpcFronts.h"
+#include "radar/NexradLevel3HailIndex.h"
+#include "radar/NexradLevel3StormInfo.h"
+#include "radar/NexradLevel3Tvs.h"
 #include "settings/RadarPreferences.h"
 #include "util/UtilityList.h"
 
@@ -23,56 +23,56 @@ NexradLayerDownload::NexradLayerDownload(QWidget * parent, vector<NexradWidget *
 {}
 
 void NexradLayerDownload::downloadLayers() {
-    for (auto polygonGenericType : ObjectPolygonWarning::polygonList) {
-        if (ObjectPolygonWarning::polygonDataByType[polygonGenericType]->isEnabled) {
-            new FutureVoid{parent, [polygonGenericType] { ObjectPolygonWarning::polygonDataByType[polygonGenericType]->download(); }, [this, polygonGenericType] { updateWarnings(polygonGenericType); }};
+    for (auto polygonGenericType : PolygonWarning::polygonList) {
+        if (PolygonWarning::byType[polygonGenericType]->isEnabled) {
+            new FutureVoid{parent, [polygonGenericType] { PolygonWarning::byType[polygonGenericType]->download(); }, [this, polygonGenericType] { updateWarnings(polygonGenericType); }};
         }
     }
     auto col1 = {Mcd, Watch, Mpd};
     for (const auto t : col1) {
-        if (ObjectPolygonWatch::polygonDataByType[t]->isEnabled) {
+        if (PolygonWatch::byType[t]->isEnabled) {
             new FutureVoid{parent,
-                    [t] { ObjectPolygonWatch::polygonDataByType[t]->download(); },
+                    [t] { PolygonWatch::byType[t]->download(); },
                     [this, t] { processWatch(t); }};
         }
     }
     if (RadarPreferences::swo) {
         new FutureVoid{parent,
-            [] { UtilitySwoDayOne::get(); },
+            [] { SwoDayOne::get(); },
             [this] { constructSwo(); }};
     }
     // TODO FIXME support multiple frames using different radar sites for everything below
     if (RadarPreferences::obsWindbarbs || RadarPreferences::obs) {
         for (auto i : range(nexradList->size())) {
             new FutureVoid{parent,
-                [this, i] { UtilityMetar::getStateMetarArrayForWXOGL((*nexradList)[i]->nexradState.getRadarSite(), (*nexradList)[i]->fileStorage); },
+                [this, i] { Metar::getStateMetarArrayForWXOGL((*nexradList)[i]->nexradState.getRadarSite(), (*nexradList)[i]->fileStorage); },
                 [this, i] { constructWBLines(i); }};
         }
     }
     if (RadarPreferences::sti) {
         for (auto i : range(nexradList->size())) {
             new FutureVoid{parent,
-                [this, i] { WXGLNexradLevel3StormInfo::decode((*nexradList)[i]->nexradState.getPn(), (*nexradList)[i]->fileStorage); },
+                [this, i] { NexradLevel3StormInfo::decode((*nexradList)[i]->nexradState.getPn(), (*nexradList)[i]->fileStorage); },
                 [this, i] { constructSti(i); }};
         }
     }
     if (RadarPreferences::hi) {
         for (auto i : range(nexradList->size())) {
             new FutureVoid{parent,
-                [this, i] { WXGLNexradLevel3HailIndex::decode((*nexradList)[i]->nexradState.getPn(), (*nexradList)[i]->fileStorage); },
+                [this, i] { NexradLevel3HailIndex::decode((*nexradList)[i]->nexradState.getPn(), (*nexradList)[i]->fileStorage); },
                 [this, i] { constructHi(i); }};
         }
     }
     if (RadarPreferences::tvs) {
         for (auto i : range(nexradList->size())) {
             new FutureVoid{parent,
-                [this, i] { WXGLNexradLevel3Tvs::decode((*nexradList)[i]->nexradState.getPn(), (*nexradList)[i]->fileStorage); },
+                [this, i] { NexradLevel3Tvs::decode((*nexradList)[i]->nexradState.getPn(), (*nexradList)[i]->fileStorage); },
                 [this, i] { constructTvs(i); }};
         }
     }
     if (RadarPreferences::showWpcFronts) {
         new FutureVoid{parent,
-            [] { UtilityWpcFronts::get(); },
+            [] { WpcFronts::get(); },
             [this] { constructWpcFronts(); }};
     }
 }

@@ -23,8 +23,6 @@ private:
     static string getHourlyString(int);
     static string parse(const string&);
     static string shortenConditions(const string&);
-    static string translateTime(const string&);
-    static string getDayOfWeek(const string&);
 };
 
 #endif  // UTILITYHOURLY_H

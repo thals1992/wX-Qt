@@ -22,7 +22,7 @@ VBox::VBox()
 }
 
 void VBox::getAndShow(Window * win) {
-    win->centralWidget->setLayout(get());
+    win->centralWidget->setLayout(getView());
     win->show();
 }
 
@@ -30,13 +30,21 @@ void VBox::addWidget(QWidget * w, int stretch, Qt::Alignment alignment) {
     box->addWidget(w, stretch, alignment);
 }
 
-void VBox::addWidgetAndCenter(QWidget * w) {
-    box->addWidget(w);
-    box->setAlignment(w, Qt::AlignHCenter);
+void VBox::addWidget(Widget2& w, int stretch, Qt::Alignment alignment) {
+    box->addWidget(w.getView(), stretch, alignment);
+}
+
+void VBox::addWidgetAndCenter(Widget2& w) {
+    box->addWidget(w.getView());
+    box->setAlignment(w.getView(), Qt::AlignHCenter);
 }
 
 void VBox::addLayout(QLayout * w, int stretch) {
     box->addLayout(w, stretch);
+}
+
+void VBox::addLayout(Box& w, int stretch) {
+    box->addLayout(w.getView(), stretch);
 }
 
 void VBox::addStretch() {
@@ -56,8 +64,12 @@ void VBox::setAlignment(QWidget * w, Qt::Alignment alignment) {
     box->setAlignment(w, alignment);
 }
 
+void VBox::setAlignment(Widget2& w, Qt::Alignment alignment) {
+    box->setAlignment(w.getView(), alignment);
+}
+
 void VBox::removeChildren() {
-    UtilityUI::removeChildren(get());
+    UtilityUI::removeChildren(getView());
 }
 
 void VBox::addImageRows(QWidget * parent, const vector<string>& urls, vector<Image>& images, int imagesAcross) {
@@ -66,13 +78,13 @@ void VBox::addImageRows(QWidget * parent, const vector<string>& urls, vector<Ima
         if ((boxRows.size() <= static_cast<size_t>(index / imagesAcross))) {
             boxRows.emplace_back();
         }
-        boxRows.back().addWidget(images.back().get());
+        boxRows.back().addWidget(images.back());
     }
     for (auto& b : boxRows) {
-        box->addLayout(b.get());
+        box->addLayout(b.getView());
     }
 }
 
-QVBoxLayout * VBox::get() {
+QVBoxLayout * VBox::getView() {
     return box;
 }

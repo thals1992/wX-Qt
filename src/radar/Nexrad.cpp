@@ -13,10 +13,10 @@
 #include "objects/WString.h"
 #include "misc/TextViewerStatic.h"
 #include "objects/ObjectDateTime.h"
-#include "radar/WXGLNexrad.h"
+#include "radar/NexradUtil.h"
+#include "radar/RadarGeometry.h"
 #include "settings/RadarPreferences.h"
 #include "settings/SettingsMain.h"
-#include "ui/Icon.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
@@ -29,7 +29,7 @@ Nexrad::Nexrad(QWidget * parent, int numberOfPanes, bool useASpecificRadar, cons
     , statusBar{ StatusBar{this} }
     , reloadTimer{ Timer{this, [this] { autoUpdate(); }} }
     , comboboxSector{ ComboBox{this, GlobalArrays::radars()} }
-    , comboboxProduct{ ComboBox{this, WXGLNexrad::radarProductList} }
+    , comboboxProduct{ ComboBox{this, NexradUtil::radarProductList} }
     , comboboxTilt{ ComboBox{this} }
     , comboboxAnimCount{ ComboBox{this, {"5", "10", "15", "20", "25", "30", "40", "50"}} }
     , comboboxAnimSpeed{ ComboBox{this} }
@@ -96,7 +96,7 @@ Nexrad::Nexrad(QWidget * parent, int numberOfPanes, bool useASpecificRadar, cons
     //
     // Initialize main layout containers
     //
-    setStatusBar(statusBar.get());
+    setStatusBar(statusBar.getView());
     statusBar.setVisible(RadarPreferences::radarShowStatusBar);
     box.setSpacing(0);
     toolbarLayout.setSpacing(2);
@@ -183,27 +183,27 @@ void Nexrad::setupDropDowns() {
 }
 
 void Nexrad::setupToolbar() {
-    toolbarLayout.addWidget(settingsButton.get());
-    toolbarLayout.addWidget(comboboxSector.get());
-    toolbarLayout.addWidget(comboboxProduct.get());
-    toolbarLayout.addWidget(moveLeftButton.get());
-    toolbarLayout.addWidget(moveRightButton.get());
-    toolbarLayout.addWidget(moveUpButton.get());
-    toolbarLayout.addWidget(moveDownButton.get());
-    toolbarLayout.addWidget(zoomOutButton.get());
-    toolbarLayout.addWidget(zoomInButton.get());
-    toolbarLayout.addWidget(reloadButton.get());
-    toolbarLayout.addWidget(animateButton.get());
-    toolbarLayout.addWidget(textFrameCount.get(), 0, Qt::AlignCenter);
-    toolbarLayout.addWidget(comboboxAnimCount.get());
-    toolbarLayout.addWidget(textTilt.get(), 0, Qt::AlignCenter);
-    toolbarLayout.addWidget(comboboxTilt.get());
-    toolbarLayout.addWidget(textAnimSpeed.get(), 0, Qt::AlignCenter);
-    toolbarLayout.addWidget(comboboxAnimSpeed.get());
+    toolbarLayout.addWidget(settingsButton);
+    toolbarLayout.addWidget(comboboxSector);
+    toolbarLayout.addWidget(comboboxProduct);
+    toolbarLayout.addWidget(moveLeftButton);
+    toolbarLayout.addWidget(moveRightButton);
+    toolbarLayout.addWidget(moveUpButton);
+    toolbarLayout.addWidget(moveDownButton);
+    toolbarLayout.addWidget(zoomOutButton);
+    toolbarLayout.addWidget(zoomInButton);
+    toolbarLayout.addWidget(reloadButton);
+    toolbarLayout.addWidget(animateButton);
+    toolbarLayout.addWidget(textFrameCount, 0, Qt::AlignCenter);
+    toolbarLayout.addWidget(comboboxAnimCount);
+    toolbarLayout.addWidget(textTilt, 0, Qt::AlignCenter);
+    toolbarLayout.addWidget(comboboxTilt);
+    toolbarLayout.addWidget(textAnimSpeed, 0, Qt::AlignCenter);
+    toolbarLayout.addWidget(comboboxAnimSpeed);
     for (auto nw : nexradList) {
         toolbarLayout.addWidget(nw->nexradState.radarStatusBox->get());
     }
-    box.addLayout(toolbarLayout.get());
+    box.addLayout(toolbarLayout);
     if (!RadarPreferences::radarShowControls) {
         moveLeftButton.setVisible(false);
         moveRightButton.setVisible(false);
@@ -215,9 +215,9 @@ void Nexrad::setupToolbar() {
 }
 
 void Nexrad::setupBoxLayout() {
-    box.addLayout(radarLayout.get());
+    box.addLayout(radarLayout);
     if (numberOfPanes == 4) {
-        box.addLayout(radarLayout2.get());
+        box.addLayout(radarLayout2);
     }
     box.getAndShow(this);
 }
@@ -410,8 +410,8 @@ void Nexrad::changeProductFromChild(const string& productF, int paneNumber) {
     objectAnimateNexrad.stopAnimateNoDownload();
     const auto product = WString::split(productF, ":")[0];
     // TODO FIXME need to update combobox if tdwr, comboboxProduct.onAction = {}
-    if (paneNumber == 0 && !WXGLNexrad::isProductTdwr(product)) {
-        const auto productIndex = findex(product, WXGLNexrad::radarProductList);
+    if (paneNumber == 0 && !NexradUtil::isProductTdwr(product)) {
+        const auto productIndex = findex(product, NexradUtil::radarProductList);
         comboboxProduct.block();
         comboboxProduct.setIndex(productIndex);
         comboboxProduct.unblock();
@@ -444,6 +444,8 @@ void Nexrad::settingsCheck() {
     zoomOutButton.setVisible(RadarPreferences::radarShowControls);
     zoomInButton.setVisible(RadarPreferences::radarShowControls);
     statusBar.setVisible(RadarPreferences::radarShowStatusBar);
+    RadarGeometry::initialize();
+    RadarPreferences::initialize();
     for (auto nw : nexradList) {
         nw->textObject.initialize();
         nw->nexradDraw.initGeom();

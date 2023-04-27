@@ -11,11 +11,12 @@
 #include <string>
 #include <QPushButton>
 #include "ui/Icon.h"
+#include "ui/Widget2.h"
 
 using std::function;
 using std::string;
 
-class ButtonToggle {
+class ButtonToggle : public Widget2 {
 public:
     ButtonToggle(QWidget *, Icon, const string&);
     void connect(const function<void()>&);
@@ -25,7 +26,7 @@ public:
     void setChecked(bool);
     bool isChecked();
     void setActive(bool);
-    QPushButton * get();
+    QPushButton * getView();
 
 private:
     QWidget * parent;

@@ -18,8 +18,8 @@ Opc::Opc(QWidget * parent)
     setTitle("OPC");
     comboboxProduct.setIndexByValue(UtilityOpcImages::labels[index]);
     comboboxProduct.connect([this] { changeProduct(); });
-    box.addWidget(comboboxProduct.get());
-    box.addWidgetAndCenter(photo.get());
+    box.addWidget(comboboxProduct);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
     reload();
 }

@@ -11,7 +11,6 @@
 #include "objects/WString.h"
 #include "settings/Location.h"
 #include "settings/UIPreferences.h"
-#include "ui/Icon.h"
 #include "util/To.h"
 #include "util/Utility.h"
 #include "vis/UtilityGoes.h"
@@ -59,15 +58,15 @@ GoesViewer::GoesViewer(QWidget * parent, const string& url, const string& produc
     comboboxCount.connect([this] { changeCount(); });
 
     if (!goesFloater) {
-        boxH.addWidget(comboboxSector.get());
+        boxH.addWidget(comboboxSector);
     } else {
         comboboxSector.setVisible(false);
     }
-    boxH.addWidget(comboboxProduct.get());
-    boxH.addWidget(comboboxCount.get());
-    boxH.addWidget(animateButton.get());
-    box.addLayout(boxH.get());
-    box.addWidgetAndCenter(photo.get());
+    boxH.addWidget(comboboxProduct);
+    boxH.addWidget(comboboxCount);
+    boxH.addWidget(animateButton);
+    box.addLayout(boxH);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
 
     shortcutAnimate.connect([this] { objectAnimate.animateClicked(); });

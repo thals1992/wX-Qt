@@ -18,9 +18,9 @@ void ColoredBox::regenerate(const WXColor& wxcolor) {
 }
 
 void ColoredBox::connect(const function<void()>& fn) {
-    get()->connect([fn] { fn(); });
+    colorPatchCurrent->connect([fn] { fn(); });
 }
 
-ClickableLabel * ColoredBox::get() {
+ClickableLabel * ColoredBox::getView() {
     return colorPatchCurrent;
 }

@@ -12,11 +12,11 @@
 #include "util/UtilityList.h"
 #include "vis/GoesViewer.h"
 
-NhcStorm::NhcStorm(QWidget * parent, const ObjectNhcStormDetails& stormData)
+NhcStorm::NhcStorm(QWidget * parent, const NhcStormDetails& stormData)
     : Window{parent}
     , parent{ parent }
     , stormData{ stormData }
-    , sw{ ObjectTwoWidgetScroll{this, boxImages.get(), boxText.get()} }
+    , sw{ TwoWidgetScroll{this, boxImages, boxText} }
     , comboboxProduct{ ComboBox{this, UtilityNhc::stormTextProducts} }
     , goesButton{ Button{this, None, "GOES"} }
     , text{ Text{this} }
@@ -30,12 +30,12 @@ NhcStorm::NhcStorm(QWidget * parent, const ObjectNhcStormDetails& stormData)
     }
     comboboxProduct.setIndex(0);
     comboboxProduct.connect([this] { changeProduct(); });
-    boxText.addWidget(goesButton.get());
-    boxText.addWidget(comboboxProduct.get());
-    boxText.addWidget(text.get());
+    boxText.addWidget(goesButton);
+    boxText.addWidget(comboboxProduct);
+    boxText.addWidget(text);
     for ([[maybe_unused]] const auto& unused : urls) {
         images.emplace_back(this, Scaled);
-        boxImages.addWidget(images.back().get());
+        boxImages.addWidget(images.back());
     }
     for (auto index : range(urls.size())) {
         new FutureBytes{this, urls[index], [this, index] (const auto& ba) { images[index].setBytes(ba); }};

@@ -10,7 +10,6 @@
 #include "objects/WString.h"
 #include "models/ObjectModelGet.h"
 #include "models/UtilityModels.h"
-#include "ui/Icon.h"
 #include "util/UtilityList.h"
 #include "util/UtilityString.h"
 
@@ -44,15 +43,15 @@ ModelViewer::ModelViewer(QWidget * parent, const string& modelType)
     leftButton.connect([this] { moveLeftClicked(); });
     rightButton.connect([this] { moveRightClicked(); });
 
-    boxH.addWidget(comboboxModel.get());
-    boxH.addWidget(comboboxRun.get());
-    boxH.addWidget(comboboxSector.get());
-    boxH.addWidget(comboboxProduct.get());
-    boxH.addWidget(comboboxTime.get());
-    boxH.addWidget(leftButton.get());
-    boxH.addWidget(rightButton.get());
-    box.addLayout(boxH.get());
-    box.addWidgetAndCenter(photo.get());
+    boxH.addWidget(comboboxModel);
+    boxH.addWidget(comboboxRun);
+    boxH.addWidget(comboboxSector);
+    boxH.addWidget(comboboxProduct);
+    boxH.addWidget(comboboxTime);
+    boxH.addWidget(leftButton);
+    boxH.addWidget(rightButton);
+    box.addLayout(boxH);
+    box.addWidgetAndCenter(photo);
     box.getAndShow(this);
 
     getRun();

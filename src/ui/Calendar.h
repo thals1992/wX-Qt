@@ -9,17 +9,18 @@
 
 #include <functional>
 #include <QCalendarWidget>
+#include "ui/Widget2.h"
 
 using std::function;
 
-class Calendar {
+class Calendar : public Widget2 {
 public:
     explicit Calendar(QWidget * parent);
     void connect(const function<void()>&);
     int getYear();
     int getMonth();
     int getDayOfMonth();
-    QCalendarWidget * get();
+    QCalendarWidget * getView();
 
 private:
     QWidget * parent;

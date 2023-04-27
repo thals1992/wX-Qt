@@ -18,6 +18,9 @@ public:
     static vector<string> getCurrentConditionsUS(const string&, const string&);
     static string getLocationHtml(const string&, const string&);
     static string get7DayExt(const vector<string>&);
+
+private:
+    static const vector<string> regexpList;
 };
 
 #endif  // UTILITYUS_H

@@ -11,15 +11,16 @@
 #include <string>
 #include <vector>
 #include <QPushButton>
+#include "ui/Widget2.h"
 
 using std::function;
 using std::string;
 using std::vector;
 
-class PopoverMenu {
+class PopoverMenu : public Widget2 {
 public:
     PopoverMenu(QWidget *, const string&, const vector<string>&, const function<void(string)>&);
-    QPushButton * get();
+    QPushButton * getView();
 
 private:
     QPushButton * button;

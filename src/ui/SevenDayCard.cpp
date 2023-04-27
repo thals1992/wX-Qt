@@ -23,14 +23,14 @@ SevenDayCard::SevenDayCard(QWidget * parent, const string& row1, const string& r
     secondRow.setGray();
     photo.setNwsIcon(icon);
 
-    boxImage.addWidget(photo.get(), 0, Qt::AlignTop);
+    boxImage.addWidget(photo, 0, Qt::AlignTop);
     boxImage.addStretch();
-    boxText.addWidget(firstRow.get(), 0, Qt::AlignTop);
-    boxText.addWidget(secondRow.get(), 0, Qt::AlignTop);
+    boxText.addWidget(firstRow, 0, Qt::AlignTop);
+    boxText.addWidget(secondRow, 0, Qt::AlignTop);
     boxText.addStretch();
 
-    addLayout(boxImage.get(), 0);
-    addLayout(boxText.get(), 1);
+    addLayout(boxImage, 0);
+    addLayout(boxText, 1);
 }
 
 void SevenDayCard::update(const string& row1, const string& row2, const string& icon) {

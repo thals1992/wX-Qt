@@ -10,17 +10,18 @@
 #include <functional>
 #include <string>
 #include <QLineEdit>
+#include "ui/Widget2.h"
 
 using std::function;
 using std::string;
 
-class Entry {
+class Entry : public Widget2 {
 public:
     explicit Entry(QWidget *);
     void connect(const function<void()>&);
     void setText(const string&);
     string getText();
-    QLineEdit * get();
+    QLineEdit * getView();
 
 private:
     QWidget * parent;

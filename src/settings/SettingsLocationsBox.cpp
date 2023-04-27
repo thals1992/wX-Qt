@@ -6,13 +6,11 @@
 
 #include "settings/SettingsLocationsBox.h"
 #include "settings/Location.h"
-#include "settings/ObjectLocation.h"
-#include "ui/Icon.h"
 #include "util/UtilityList.h"
 
 SettingsLocationsBox::SettingsLocationsBox(QWidget * parent): Widget{parent} {
     addLocations();
-    setLayout(box.get());
+    setLayout(box.getView());
 }
 
 void SettingsLocationsBox::refresh() {
@@ -31,19 +29,19 @@ void SettingsLocationsBox::addLocations() {
 
         buttons.emplace_back(this, Down, "Move down");
         buttons.back().connect([this, index] () { moveDownClicked(index); });
-        hboxList.back().addWidget(buttons.back().get());
+        hboxList.back().addWidget(buttons.back());
 
         buttons.emplace_back(this, Up, "Move up");
         buttons.back().connect([this, index] () { moveUpClicked(index); });
-        hboxList.back().addWidget(buttons.back().get());
+        hboxList.back().addWidget(buttons.back());
 
         buttons.emplace_back(this, Delete, "Delete");
         buttons.back().connect([this, index] { deleteClicked(index); });
-        hboxList.back().addWidget(buttons.back().get());
+        hboxList.back().addWidget(buttons.back());
 
         locationCards.emplace_back(this, index);
-        hboxList.back().addLayout(locationCards.back().get());
-        box.addLayout(hboxList.back().get());
+        hboxList.back().addLayout(locationCards.back());
+        box.addLayout(hboxList.back());
     }
     box.addStretch();
 }

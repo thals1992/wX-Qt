@@ -7,7 +7,7 @@
 #include "ObjectWarning.h"
 #include "common/GlobalVariables.h"
 #include "objects/WString.h"
-#include "radar/WXGLNexrad.h"
+#include "radar/NexradUtil.h"
 #include "settings/UtilityLocation.h"
 #include "util/Utility.h"
 #include "util/UtilityList.h"
@@ -33,7 +33,7 @@ ObjectWarning::ObjectWarning(
     , sender{ sender }
     , polygon{ polygon }
     , vtec{ vtec }
-    , isCurrent{ WXGLNexrad::isVtecCurrent(this->vtec) }
+    , isCurrent{ NexradUtil::isVtecCurrent(this->vtec) }
 {
     this->effective = WString::replace(this->effective, "T", " ");
     this->effective = UtilityString::replaceRegex1(this->effective, ":00-0[0-9]:00", "");

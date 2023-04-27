@@ -12,7 +12,7 @@
 #include "spc/StormReport.h"
 #include "ui/Calendar.h"
 #include "ui/ComboBox.h"
-#include "ui/ObjectCardStormReportItem.h"
+#include "ui/CardStormReportItem.h"
 #include "ui/Photo.h"
 #include "ui/ScrolledWindow.h"
 #include "ui/VBox.h"

@@ -13,10 +13,9 @@ AlertsDetail::AlertsDetail(QWidget * parent, const string& url)
     , text{ Text{this} }
     , url{ url }
 {
-    setSize(700, 900);
     box.addMargins();
-    box.addWidget(text.get());
-    box.setAlignment(text.get(), Qt::AlignTop);
+    box.addWidget(text);
+    box.setAlignment(text, Qt::AlignTop);
     new FutureVoid{this, [this, url] { capAlert = CapAlert{url}; }, [this] { update(); }};
 }
 
