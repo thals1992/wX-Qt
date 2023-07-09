@@ -15,8 +15,8 @@ using std::vector;
 
 class UtilityWpcRainfallOutlook {
 public:
-    static const vector<string> urls;
     static const vector<string> codes;
+    static const vector<string> urls;
 };
 
 #endif  // WPCUTILITYWPCRAINFALLOUTLOOK_H

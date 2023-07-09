@@ -11,6 +11,7 @@
 #include "../settings/Location.h"
 #include "../settings/UtilityLocation.h"
 #include "../util/To.h"
+#include "../util/Utility.h"
 #include "../util/UtilityIO.h"
 #include "../util/UtilityString.h"
 #include <iostream>
@@ -75,9 +76,14 @@ string UtilityRtma::getUrl(int index, int indexSector, string runTime) {
 string UtilityRtma::getUrlForHomeScreen(string product) {
     const auto sector = getNearest(Location::getLatLonCurrent());
     const auto runTimes = getTimes();
-    const auto runTime = runTimes.front();
-    const auto currentRun = WString::split(runTime, " ")[1];
-    return "https://mag.ncep.noaa.gov/data/rtma/" + currentRun + "/rtma_" + sector + "_000_" + product + ".gif";
+    if (runTimes.empty()) {
+        return "";
+    } else {
+        const auto runTime = runTimes.front();
+        const auto tokens = WString::split(runTime, " ");
+        const auto currentRun = Utility::safeGet(tokens, 1);
+        return "https://mag.ncep.noaa.gov/data/rtma/" + currentRun + "/rtma_" + sector + "_000_" + product + ".gif";
+    }
 }
 
 const vector<string> UtilityRtma::labels{

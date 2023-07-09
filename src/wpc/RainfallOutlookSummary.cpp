@@ -17,6 +17,7 @@ RainfallOutlookSummary::RainfallOutlookSummary(QWidget * parent) : Window{parent
     box.getAndShow(this);
     for (auto index : range(urls.size())) {
         images[index].connect([this, index] { new RainfallOutlook{this, index}; });
+        images[index].setNumberAcross(5);
         new FutureBytes{this, urls[index], [this, index] (const auto& ba) { images[index].setBytes(ba); }};
     }
 }
