@@ -104,6 +104,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--singleThread', action='store_true')
     parser.add_argument('--pro', action='store_true')
+    parser.add_argument('--qt6', action='store_true')
     args = parser.parse_args()
 
     #
@@ -132,6 +133,8 @@ if __name__ == "__main__":
     # configure with qmake
     #
     qmakeCommand: str = "qmake"
+    if args.qt6:
+        qmakeCommand = "qmake6"
     osfile: str = "/etc/os-release"
     if os.path.exists(osfile):
         osFileData = open(osfile).read()
@@ -154,6 +157,6 @@ if __name__ == "__main__":
     runArg: str = ""
     if args.singleThread:
         runArg = " 1"
-    os.system("./run.bash" + runArg)
+    os.system(os.getcwd() + "/run.bash" + runArg)
     # out, err, returnCode = runMe("./run.bash" + runArg)
     # print(returnCode, ":", out + err)

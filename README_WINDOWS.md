@@ -22,12 +22,13 @@ pacman -S --needed base-devel mingw-w64-x86_64-toolchain
 pacman -S git
 pacman -S mingw-w64-x86_64-qt6-base
 pacman -S mingw-w64-x86_64-qt6-tools
+pacman -S mingw-w64-x86_64-qt6-location
 ```
 * Download **wxqt** and compile/run.
 ```bash
 git clone https://gitlab.com/joshua.tee/wxqt
 cd wxqt
-./makeAll.bash
+./makeAll.py
 # after the initial compile just use
 ./run.bash
 ```
