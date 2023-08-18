@@ -62,6 +62,7 @@ From the main screen and nexrad radar do `Ctrl-/` (? key) to get keyboard shortc
 ```bash
 git clone https://gitlab.com/joshua.tee/wxqt.git
 cd wxqt
+# NOTE: Windows requires additional steps, please see README_WINDOWS.md
 ./makeAll.py
 ```
 3. After compilation you can simply launch with script

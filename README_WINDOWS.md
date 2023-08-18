@@ -27,7 +27,10 @@ pacman -S mingw-w64-x86_64-qt6-location
 * Download **wxqt** and compile/run.
 ```bash
 git clone https://gitlab.com/joshua.tee/wxqt
-cd wxqt
+cd wxqt/resourceCreation
+./createResourcesImage.py
+./createResourcesRes.py
+cd ..
 ./makeAll.py
 # after the initial compile just use
 ./run.bash
