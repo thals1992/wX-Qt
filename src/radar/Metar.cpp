@@ -33,10 +33,11 @@ void Metar::getStateMetarArrayForWXOGL(const string& radarSite, FileStorage& fil
         vector<int> obsAlAviationColor;
         fileStorage.obsOldRadarSite = radarSite;
         const auto obsList = getNearbyObsSites(radarSite);
-        const auto url = GlobalVariables::nwsAWCwebsitePrefix + "/adds/metars/index?submit=1&station_ids=" + obsList + "&chk_metars=on";
+
+        const auto url = "https://aviationweather.gov/cgi-bin/data/metar.php?ids=" + obsList;
         const auto html = UtilityIO::getHtml(url);
-        const auto htmlColumn = UtilityString::parseColumn(html, "<FONT FACE=\"Monospace,Courier\">(.*?)</FONT><BR>");
-        const auto metarArr = condenseObs(htmlColumn);
+        const auto metarsTmp = WString::split(html, GlobalVariables::newline);
+        const auto metarArr = condenseObs(metarsTmp);
         mtx.lock();
         if (!initializedObsMap) {
             const auto lines = UtilityIO::rawFileToStringArray(GlobalVariables::resDir + metarFileName);
