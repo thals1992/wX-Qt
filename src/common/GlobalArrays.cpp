@@ -79,7 +79,7 @@ const vector<string> GlobalArrays::wfos{
     "LMK: KY, Louisville",
     "PAH: KY, Paducah",
     "LCH: LA, Lake Charles",
-    "LIX: LA, New Orleans",
+    "HDC: LA, Hammond",
     "SHV: LA, Shreveport",
     "BOX: MA, Boston",
     "CAR: ME, Caribou",
